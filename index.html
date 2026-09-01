@@ -42,7 +42,6 @@
     align-items: flex-start;
   }
 
-  /* Kontainer utama dibatasi agar mirip bingkai HP / App Frame di layar besar, tapi tetap fleksibel di HP */
   .wrap { 
     width: 100%; 
     max-width: 520px; 
@@ -50,13 +49,17 @@
     padding: 16px 14px 50px; 
   }
   
-  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 8px; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
   .brand { display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: center; background: var(--panel); padding: 14px; border-radius: 16px; border: 1px solid var(--line); backdrop-filter: blur(10px); }
   .brand h1 { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 20px; margin: 0; text-shadow: 0 0 10px rgba(0, 229, 255, 0.4); color: var(--cyan); }
   .brand span { color: var(--sub); font-size: 11.5px; letter-spacing: 0.3px; }
   
   .whoami { font-size: 12px; color: var(--sub); background: var(--panel2); border: 1px solid var(--line); padding: 8px 12px; border-radius: 12px; display: none; width: 100%; text-align: center; margin-bottom: 12px; backdrop-filter: blur(10px); }
   .whoami b { color: var(--cyan); }
+
+  .nav-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .tab-btn { flex: 1; padding: 10px 4px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); color: var(--sub); font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .tab-btn.active { background: rgba(0, 229, 255, 0.15); color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 10px rgba(0, 229, 255, 0.2) inset; }
 
   .panel { display: none; animation: fadeIn 0.3s ease; } 
   .panel.active { display: block; }
@@ -72,7 +75,10 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.4);
   }
 
-  /* ===== LOGIN ===== */
+  ruby { ruby-position: over; }
+  rt { font-size: 0.55em; color: var(--cyan); font-weight: normal; }
+
+  /* LOGIN */
   .login-wrap { max-width: 100%; margin: 10px auto; text-align: center; }
   .login-wrap h2 { font-family: "Noto Sans JP", sans-serif; font-size: 22px; margin: 0 0 6px; color: var(--ink); }
   .login-wrap p { color: var(--sub); font-size: 13px; margin: 0 0 20px; line-height: 1.5; }
@@ -83,17 +89,18 @@
   
   .login-btn { width: 100%; margin-top: 6px; padding: 15px; border-radius: 14px; border: none; cursor: pointer; background: linear-gradient(135deg, var(--sakura), var(--sakura-dk)); color: #fff; font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(255, 42, 122, 0.4); min-height: 50px; }
 
-  /* ===== STUDY ===== */
+  /* STUDY */
   .flash { border-radius: 16px; padding: 30px 18px; text-align: center; position: relative; background: radial-gradient(circle at top right, rgba(0, 229, 255, 0.1), transparent), rgba(0,0,0,0.3); border: 1px solid var(--line); min-height: 260px; display: flex; flex-direction: column; justify-content: center; gap: 12px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
   .flash .lvl { position: absolute; top: 12px; left: 14px; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; border: 1px solid; }
   .flash .lvl.n5 { background: rgba(0, 229, 255, 0.1); color: var(--n5); border-color: var(--n5); }
   .flash .lvl.n4 { background: rgba(255, 215, 0, 0.1); color: var(--n4); border-color: var(--n4); }
+  .flash .lvl.n3, .flash .lvl.n2 { background: rgba(255, 42, 122, 0.1); color: var(--sakura); border-color: var(--sakura); }
   .flash .src { position: absolute; top: 12px; right: 14px; font-size: 10.5px; color: var(--sub); background: rgba(255,255,255,0.05); padding: 3px 6px; border-radius: 6px; }
-  .flash .pattern { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 26px; line-height: 1.25; color: #fff; text-shadow: 0 0 12px rgba(255,255,255,0.3); }
+  .flash .pattern { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 24px; line-height: 1.4; color: #fff; text-shadow: 0 0 12px rgba(255,255,255,0.3); }
   .flash .meaning { color: var(--cyan); font-size: 14px; font-weight: 600; }
-  .flash .detail-box { color: var(--ink); font-size: 13px; line-height: 1.5; text-align: left; background: rgba(255,255,255,0.03); border-radius: 8px; padding: 10px 12px; margin-top: 4px; }
+  .flash .detail-box { color: var(--ink); font-size: 12.5px; line-height: 1.6; text-align: left; background: rgba(0, 229, 255, 0.05); border: 1px dashed var(--line); border-radius: 10px; padding: 12px 14px; margin-top: 4px; }
   .flash .example-box { background: rgba(255,255,255,0.03); border-left: 3px solid var(--sakura); border-radius: 8px; padding: 12px 14px; text-align: left; margin-top: 8px; }
-  .flash .example-jp { font-family: "Noto Sans JP", sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; color: #fff; }
+  .flash .example-jp { font-family: "Noto Sans JP", sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; color: #fff; line-height: 1.5; }
   .flash .example-id { color: var(--sub); font-size: 13px; font-style: italic; }
   
   .study-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; gap: 8px; }
@@ -101,7 +108,7 @@
   .navbtn:disabled { opacity: .3; cursor: not-allowed; }
   .progress-text { color: var(--cyan); font-size: 11.5px; font-family: monospace; white-space: nowrap; }
 
-  /* ===== GAME SETUP / PLAY ===== */
+  /* GAME SETUP / PLAY */
   .start-screen { text-align: center; padding: 4px; }
   .start-screen h2 { font-family: "Noto Sans JP", sans-serif; font-size: 22px; margin: 0 0 8px; color: #fff; }
   .start-screen p { color: var(--sub); font-size: 13.5px; margin: 0 0 20px; line-height: 1.5; }
@@ -110,7 +117,7 @@
   .setup-box { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 14px; padding: 14px; text-align: left; }
   .setup-box .lbl { font-size: 11px; color: var(--cyan); font-weight: 700; margin-bottom: 10px; letter-spacing: 1.2px; }
   .opt-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .opt-row button { flex: 1; min-width: calc(50% - 6px); padding: 9px 10px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--sub); font-size: 12px; font-weight: 600; cursor: pointer; min-height: 38px; }
+  .opt-row button { flex: 1; min-width: calc(33.3% - 6px); padding: 9px 6px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--sub); font-size: 12px; font-weight: 600; cursor: pointer; min-height: 38px; }
   .opt-row button.active { background: var(--sakura); border-color: var(--sakura); color: #fff; box-shadow: 0 0 8px rgba(255, 42, 122, 0.4); }
   
   .play-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; cursor: pointer; background: linear-gradient(135deg, var(--cyan), #0099FF); color: #000; font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 1.2px; box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); min-height: 52px; }
@@ -124,16 +131,24 @@
   .timerbar-fill.danger { background: linear-gradient(90deg, var(--red), var(--sakura)); }
 
   .qcard { background: rgba(0,0,0,0.25); border-left: 3px solid var(--cyan); border-radius: 10px; padding: 16px; margin-bottom: 18px; }
+  .qcard .qtype { font-size: 11px; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
   .qcard .qnum { font-size: 11px; color: var(--sub); margin-bottom: 8px; font-family: monospace; letter-spacing: 0.5px; }
   .qcard .qtext { font-size: 16px; line-height: 1.5; color: #fff; }
   .qcard .qtext b { color: var(--cyan); }
 
   .options { display: grid; grid-template-columns: 1fr; gap: 10px; }
-  .opt { text-align: left; padding: 15px 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--ink); cursor: pointer; font-family: "Noto Sans JP", sans-serif; font-weight: 700; font-size: 15px; min-height: 56px; display: flex; align-items: center; }
+  .opt { text-align: left; padding: 15px 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--ink); cursor: pointer; font-family: "Noto Sans JP", sans-serif; font-weight: 700; font-size: 15px; min-height: 54px; display: flex; align-items: center; }
   .opt.correct { background: rgba(0, 240, 181, 0.15); border-color: var(--mint); color: var(--mint); }
   .opt.wrong { background: rgba(255, 51, 102, 0.15); border-color: var(--red); color: var(--red); }
 
-  /* ===== RESULT ===== */
+  /* JUMBLE SENTENCE */
+  .jumble-ans-area { min-height: 54px; border: 2px dashed var(--line); border-radius: 12px; padding: 8px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; background: rgba(0,0,0,0.3); }
+  .jumble-pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; justify-content: center; }
+  .word-chip { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--cyan); background: rgba(0, 229, 255, 0.1); color: #fff; font-family: "Noto Sans JP", sans-serif; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.2s; }
+  .word-chip:active { transform: scale(0.92); }
+  .jumble-submit { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--mint); color: #000; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; }
+
+  /* RESULT */
   .result { text-align: center; padding: 4px; }
   .grade-badge { display: inline-block; width: 85px; height: 85px; border-radius: 50%; line-height: 81px; font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 36px; margin-bottom: 14px; }
   .result .id-line { color: var(--sub); font-size: 12px; margin-bottom: 10px; font-family: monospace; word-break: break-all; }
@@ -143,10 +158,11 @@
   .export-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 22px; }
   .export-row button { flex: 1; min-width: calc(50% - 4px); padding: 12px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.4); color: var(--cyan); font-weight: 600; font-size: 12.5px; cursor: pointer; min-height: 44px; }
   
-  .miss-list { text-align: left; max-height: 200px; overflow-y: auto; margin: 0 0 20px; padding-right: 4px; }
-  .miss-item { background: rgba(0,0,0,.2); border-left: 3px solid var(--sakura); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
-  .miss-item .mi-pattern { font-family: "Noto Sans JP", sans-serif; font-weight: 700; color: #fff; font-size: 14px; }
-  .miss-item .mi-meaning { color: var(--sub); font-size: 12px; margin-top: 2px; }
+  .miss-list, .history-list { text-align: left; max-height: 220px; overflow-y: auto; margin: 0 0 20px; padding-right: 4px; }
+  .miss-item, .history-item { background: rgba(0,0,0,.2); border-left: 3px solid var(--sakura); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+  .history-item { border-left-color: var(--cyan); }
+  .miss-item .mi-pattern, .history-item .hi-title { font-family: "Noto Sans JP", sans-serif; font-weight: 700; color: #fff; font-size: 14px; }
+  .miss-item .mi-meaning, .history-item .hi-sub { color: var(--sub); font-size: 12px; margin-top: 2px; }
   .no-miss { color: var(--mint); font-weight: 600; padding: 14px; background: rgba(0, 240, 181, 0.1); border-radius: 10px; border: 1px solid rgba(0, 240, 181, 0.3); font-size: 13.5px; }
   
   .dashboard-layout { display: flex; flex-direction: column; gap: 16px; }
@@ -168,12 +184,12 @@
   </header>
   <div class="whoami" id="whoami"></div>
 
-  <!-- ================= LOGIN PANEL ================= -->
+  <!-- LOGIN PANEL -->
   <div class="panel active" id="panel-login">
     <div class="card">
       <div class="login-wrap">
         <h2>ログイン、してください</h2>
-        <p>Isi nama dan NIS supaya hasil latihan bisa dikirim ke senseimu.</p>
+        <p>Isi nama dan NIS untuk memulai latihan.</p>
         <div class="field">
           <label>Nama Lengkap</label>
           <input type="text" id="loginNama" placeholder="Contoh: Muhammad Nafis">
@@ -191,11 +207,23 @@
     </div>
   </div>
 
-  <!-- ================= MAIN APP ================= -->
+  <!-- MAIN APP -->
   <div id="mainApp" style="display:none;" class="dashboard-layout">
     
-    <!-- KOLOM KIRI: MATERI -->
-    <div class="col-left" id="studyCol">
+    <!-- NAVIGATION TABS -->
+    <div class="nav-tabs" id="navTabs">
+      <div class="tab-btn active" id="tabGameBtn">🎮 Mode Kuis</div>
+      <div class="tab-btn" id="tabStudyBtn">📖 Pelajari Materi</div>
+      <div class="tab-btn" id="tabHistoryBtn">📜 Riwayat Saya</div>
+    </div>
+
+    <!-- TAB 1: KUIS / GAME PENILAIAN -->
+    <div class="panel active" id="panel-game">
+      <div class="card" id="gameArea"></div>
+    </div>
+
+    <!-- TAB 2: MATERI -->
+    <div class="panel" id="panel-study">
       <div class="card">
         <h3 class="col-title">📖 Pelajari Materi</h3>
         <div class="modern-select-wrap">
@@ -206,6 +234,7 @@
             <option value="mnn2">Minna no Nihongo 2 (N4)</option>
             <option value="irodori">Irodori Shokyuu 1</option>
             <option value="n3">Soumatome N3</option>
+            <option value="n2">Soumatome N2</option>
           </select>
         </div>
         <div class="flash" id="flashCard"></div>
@@ -217,163 +246,239 @@
       </div>
     </div>
 
-    <!-- KOLOM KANAN: GAME PENILAIAN -->
-    <div class="col-right">
-      <div class="card" id="gameArea"></div>
+    <!-- TAB 3: RIWAYAT SAYA -->
+    <div class="panel" id="panel-history">
+      <div class="card">
+        <h3 class="col-title">📜 Riwayat Permainan Saya</h3>
+        <div class="history-list" id="historyList"></div>
+      </div>
     </div>
 
   </div>
 </div>
 
 <script>
+/* MASUKKAN LINK GOOGLE APPS SCRIPT DI BAWAH INI BILA SUDAH ADA */
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQ6D2YcJWDNvrfKZzgvAjazDYNJh5kJNdEL12rXHec8h6k_gGDlMvTsrQ-Sbesho56sQ/exec"; 
+
+/* SFX SYNTHESIZER */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playSFX(type) {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  
+  if (type === 'correct') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+  } else if (type === 'wrong') {
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(110, audioCtx.currentTime + 0.12);
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+  }
+}
+
 const PATTERNS = [
-  {level:"N5", src:"Both", pattern:"N1は N2です", meaning:"Menyatakan bahwa N1 adalah N2", example:"わたしは学生です。", tr:"Saya adalah siswa."},
-  {level:"N5", src:"Both", pattern:"これ／それ／あれは Nです", meaning:"Menunjuk benda: “ini/itu/itu(jauh) adalah”", example:"これは辞書です。", tr:"Ini adalah kamus."},
-  {level:"N5", src:"Both", pattern:"Nは 形容詞です", meaning:"Menyatakan sifat/kondisi dari N", example:"この部屋は静かです。", tr:"Kamar ini tenang."},
-  {level:"N5", src:"Both", pattern:"Nが あります／います", meaning:"Menyatakan keberadaan benda (あります) atau makhluk hidup (います)", example:"机の上に本があります。", tr:"Ada buku di atas meja."},
-  {level:"N5", src:"Both", pattern:"Vます／ません", meaning:"Kata kerja bentuk sopan untuk sekarang/akan datang", example:"毎朝コーヒーを飲みます。", tr:"Setiap pagi saya minum kopi."},
-  {level:"N5", src:"Both", pattern:"Nから Nまで", meaning:"Menyatakan rentang “dari...sampai...”", example:"9時から5時まで働きます。", tr:"Saya bekerja dari jam 9 sampai jam 5."},
-  {level:"N5", src:"Both", pattern:"～てください", meaning:"Meminta tolong seseorang melakukan sesuatu", example:"ここに名前を書いてください。", tr:"Tolong tulis nama di sini."},
-  {level:"N5", src:"Both", pattern:"～たいです", meaning:"Menyatakan keinginan diri sendiri untuk melakukan sesuatu", example:"日本語を勉強したいです。", tr:"Saya ingin belajar bahasa Jepang."},
-  {level:"N4", src:"Both", pattern:"～ています", meaning:"Sedang berlangsung, kebiasaan, atau keadaan saat ini", example:"今、雨が降っています。", tr:"Sekarang sedang turun hujan."},
-  {level:"N4", src:"Both", pattern:"～てもいいです", meaning:"Menyatakan izin — “boleh melakukan”", example:"ここで写真を撮ってもいいです。", tr:"Boleh foto di sini."},
-  {level:"N4", src:"Both", pattern:"～てはいけません", meaning:"Menyatakan larangan — “tidak boleh/dilarang”", example:"ここでタバコを吸ってはいけません。", tr:"Dilarang merokok di sini."},
-  {level:"N4", src:"MNN", pattern:"～なければなりません", meaning:"Menyatakan kewajiban — “harus melakukan”", example:"明日早く起きなければなりません。", tr:"Besok saya harus bangun pagi."},
-  {level:"N4", src:"Both", pattern:"～たことがあります", meaning:"Menyatakan pengalaman — “pernah melakukan”", example:"日本へ行ったことがあります。", tr:"Saya pernah pergi ke Jepang."},
-  {level:"N4", src:"MNN", pattern:"～たり～たりします", meaning:"Menyebutkan beberapa kegiatan sebagai contoh", example:"週末は本を読んだり映画を見たりします。", tr:"Akhir pekan saya baca buku, nonton film, dsb."},
-  {level:"N4", src:"MNN", pattern:"～ながら", meaning:"Menyatakan dua kegiatan dilakukan bersamaan — “sambil”", example:"音楽を聞きながら勉強します。", tr:"Saya belajar sambil dengar musik."},
-  {level:"N4", src:"MNN", pattern:"～まえに", meaning:"Menyatakan sesuatu dilakukan sebelum hal lain", example:"仕事のまえに、コーヒーを飲みます。", tr:"Sebelum bekerja, saya minum kopi."},
-  {level:"N4", src:"MNN", pattern:"～あとで", meaning:"Menyatakan sesuatu dilakukan sesudah hal lain", example:"薬を飲んだあと、すぐに寝ます。", tr:"Setelah minum obat, saya langsung tidur."},
-  {level:"N4", src:"Both", pattern:"～と思います", meaning:"Menyatakan pendapat/perkiraan pribadi — “saya rasa/pikir”", example:"明日は晴れると思います。", tr:"Saya rasa besok akan cerah."},
-  {level:"N4", src:"MNN", pattern:"～ようになります", meaning:"Menyatakan perubahan kemampuan — “menjadi bisa”", example:"漢字が読めるようになりました。", tr:"Sekarang saya sudah bisa membaca kanji."},
-  {level:"N4", src:"MNN", pattern:"～かもしれません", meaning:"Menyatakan kemungkinan — “mungkin”", example:"彼は来ないかもしれません。", tr:"Dia mungkin tidak akan datang."},
-  {level:"N4", src:"MNN", pattern:"～たら", meaning:"Menyatakan pengandaian — “jika/kalau”", example:"雨が降ったら、行きません。", tr:"Kalau hujan, saya tidak akan pergi."},
-  {level:"N5", src:"MNN", pattern:"この／その／あの N", meaning:"Menunjuk benda + kata benda: “N ini/itu/itu(jauh)”", example:"そのかばんは私のです。", tr:"Tas itu punya saya."},
-  {level:"N5", src:"MNN", pattern:"N1の N2", meaning:"Menyatakan kepemilikan/keterangan — “N2 milik/dari N1”", example:"これは私の本です。", tr:"Ini buku saya."},
-  {level:"N5", src:"MNN", pattern:"ここ／そこ／あそこ", meaning:"Menunjuk tempat: “di sini/situ/sana”", example:"トイレはあそこです。", tr:"Toiletnya di sana."},
-  {level:"N5", src:"Both", pattern:"Nへ 行きます／来ます／帰ります", meaning:"Kata kerja arah/perpindahan ke suatu tempat", example:"来週、国へ帰ります。", tr:"Minggu depan saya pulang ke negara asal."},
-  {level:"N5", src:"Both", pattern:"～で（乗り物・道具）", meaning:"Menyatakan alat/sarana yang dipakai untuk melakukan sesuatu", example:"バスで学校へ行きます。", tr:"Saya pergi ke sekolah naik bus."},
-  {level:"N5", src:"MNN", pattern:"～と一緒に", meaning:"Menyatakan “bersama dengan”", example:"友達と一緒に映画を見ます。", tr:"Saya menonton film bersama teman."},
-  {level:"N5", src:"MNN", pattern:"～ませんか", meaning:"Mengajak seseorang melakukan sesuatu dengan sopan", example:"一緒に昼ごはんを食べませんか。", tr:"Mau makan siang bersama?"},
-  {level:"N5", src:"Both", pattern:"～ましょう", meaning:"Mengajak melakukan sesuatu bersama", example:"少し休みましょう。", tr:"Ayo istirahat sebentar."},
-  {level:"N5", src:"MNN", pattern:"～に～をあげます", meaning:"Menyatakan memberi sesuatu kepada orang lain", example:"妹にチョコレートをあげます。", tr:"Saya memberi cokelat kepada adik perempuan saya."},
-  {level:"N5", src:"MNN", pattern:"～は（私に）～をくれます", meaning:"Menyatakan orang lain memberi sesuatu kepada saya", example:"父は私にTシャツをくれました。", tr:"Ayah memberi saya kaos."},
-  {level:"N5", src:"MNN", pattern:"私は～に～をもらいました", meaning:"Menyatakan saya menerima sesuatu dari orang lain", example:"私は先生にノートをもらいました。", tr:"Saya menerima buku catatan dari guru."},
-  {level:"N5", src:"MNN", pattern:"～は～が 好きです／嫌いです", meaning:"Menyatakan suka atau tidak suka terhadap sesuatu", example:"私は日本の音楽が好きです。", tr:"Saya suka musik Jepang."},
-  {level:"N5", src:"MNN", pattern:"～は～が わかります", meaning:"Menyatakan mengerti/memahami sesuatu", example:"私はタイ語がわかりません。", tr:"Saya tidak mengerti bahasa Thailand."},
-  {level:"N5", src:"MNN", pattern:"～は～が あります（予定・用事）", meaning:"Menyatakan punya rencana/keperluan", example:"今日は約束があります。", tr:"Hari ini saya ada janji."},
-  {level:"N5", src:"Both", pattern:"Nに Nが あります／います", meaning:"Menyatakan sesuatu/seseorang ada di suatu tempat", example:"教室に学生がいます。", tr:"Ada siswa di kelas."},
-  {level:"N5", src:"MNN", pattern:"～に～回", meaning:"Menyatakan frekuensi dalam satu periode waktu", example:"一週間に二回、運動します。", tr:"Saya olahraga dua kali seminggu."},
-  {level:"N5", src:"MNN", pattern:"～ないでください", meaning:"Meminta seseorang untuk tidak melakukan sesuatu", example:"ここに車をとめないでください。", tr:"Tolong jangan parkir mobil di sini."},
-  {level:"N4", src:"Both", pattern:"～なくてもいいです", meaning:"Menyatakan tidak perlu/tidak wajib melakukan sesuatu", example:"明日は来なくてもいいです。", tr:"Besok tidak perlu datang."},
-  {level:"N4", src:"MNN", pattern:"～ことができます", meaning:"Menyatakan kemampuan untuk melakukan sesuatu", example:"私は漢字を書くことができます。", tr:"Saya bisa menulis kanji."},
-  {level:"N5", src:"MNN", pattern:"趣味は～ことです", meaning:"Menyatakan hobi seseorang", example:"趣味は写真を撮ることです。", tr:"Hobi saya adalah memotret."},
-  {level:"N4", src:"Irodori", pattern:"～という", meaning:"Menyatakan sesuatu disebut/dinamakan demikian", example:"「桜」という花が好きです。", tr:"Saya suka bunga yang disebut “sakura”."},
-  {level:"N4", src:"Irodori", pattern:"～し、～し", meaning:"Menyebutkan beberapa alasan sekaligus — “selain itu...”", example:"この店は安いし、おいしいです。", tr:"Toko ini murah, dan enak juga."},
-  {level:"N4", src:"Irodori", pattern:"～てもらえませんか／～ていただけませんか", meaning:"Meminta tolong dengan sangat sopan", example:"荷物を持ってもらえませんか。", tr:"Bisakah tolong bawakan barang saya?"},
-  {level:"N4", src:"Irodori", pattern:"～について教えてください", meaning:"Meminta penjelasan tentang suatu hal", example:"この仕事について教えてください。", tr:"Tolong jelaskan tentang pekerjaan ini."},
-  {level:"N4", src:"Irodori", pattern:"～ておきます", meaning:"Melakukan sesuatu sebagai persiapan lebih awal", example:"会議の前に資料を準備しておきます。", tr:"Saya siapkan dokumen sebelum rapat."},
-  {level:"N4", src:"Irodori", pattern:"～そうです（様態）", meaning:"Menyatakan kesan dari penampilan — “kelihatannya”", example:"この料理はおいしそうです。", tr:"Masakan ini kelihatannya enak."},
-  {level:"N4", src:"Both", pattern:"～すぎます", meaning:"Menyatakan sesuatu berlebihan — “terlalu”", example:"この靴は小さすぎます。", tr:"Sepatu ini terlalu kecil."},
-  {level:"N4", src:"Irodori", pattern:"～てしまいました", meaning:"Menyatakan sesuatu selesai total, sering dengan nuansa menyesal", example:"財布をなくしてしまいました。", tr:"Saya kehilangan dompet saya."},
-  {level:"N4", src:"Both", pattern:"～んです", meaning:"Memberi alasan/penjelasan atas suatu keadaan", example:"今日は頭が痛いんです。", tr:"Hari ini kepala saya sakit."},
-  {level:"N4", src:"Irodori", pattern:"～ようにしています", meaning:"Menyatakan usaha membiasakan diri melakukan sesuatu", example:"毎日野菜を食べるようにしています。", tr:"Saya berusaha makan sayur tiap hari."},
-  {level:"N4", src:"Both", pattern:"～てくれました", meaning:"Menyatakan orang lain melakukan sesuatu untuk kita", example:"友達が駅まで送ってくれました。", tr:"Teman saya mengantar saya sampai stasiun."},
-  {level:"N4", src:"MNN", pattern:"～ば", meaning:"Menyatakan pengandaian — “kalau/jika”", example:"時間があれば、旅行に行きます。", tr:"Kalau ada waktu, saya akan bepergian."},
-  {level:"N5", src:"MNN", pattern:"より", meaning:"Membandingkan dua hal — “lebih ... daripada”", example:"サラティガはスマランより涼しいです。", tr:"Salatiga lebih sejuk daripada Semarang."},
-  {level:"N5", src:"MNN", pattern:"でよいちばん", meaning:"Menyatakan yang paling unggul dalam suatu kelompok", example:"野菜でにんじんがいちばん好きです。", tr:"Di antara sayuran, saya paling suka wortel."},
-  {level:"N5", src:"MNN", pattern:"かった／くなかった", meaning:"Bentuk lampau kata sifat -i (positif/negatif)", example:"昨日のパーティーは楽しかったです。", tr:"Pesta kemarin menyenangkan."},
-  {level:"N5", src:"MNN", pattern:"だった／じゃなかった", meaning:"Bentuk lampau kata benda / kata sifat -na (positif/negatif)", example:"先週は病気だった。", tr:"Minggu lalu saya sakit."},
-  {level:"N5", src:"MNN", pattern:"がほしいです", meaning:"Menyatakan ingin memiliki suatu benda", example:"今はうちが欲しいです。", tr:"Sekarang saya ingin punya rumah."},
-  {level:"N5", src:"MNN", pattern:"にいきます", meaning:"Menyatakan tujuan pergi ke suatu tempat", example:"スーパーへ牛乳を買いに行きます。", tr:"Saya pergi ke supermarket untuk membeli susu."},
-  {level:"N5", src:"MNN", pattern:"て、て", meaning:"Merangkai beberapa kegiatan berurutan dalam satu kalimat", example:"うちへ帰って、シャワーを浴びて、ご飯を食べます。", tr:"Saya pulang, mandi, lalu makan."},
-  {level:"N5", src:"MNN", pattern:"adj て／で、adj", meaning:"Merangkai dua kata sifat dalam satu kalimat", example:"父はハンサムで、元気です。", tr:"Ayah saya tampan dan sehat."},
-  {level:"N5", src:"MNN", pattern:"といいます", meaning:"Melaporkan ucapan orang lain — “mengatakan bahwa”", example:"山田さんは今の仕事が大変だと言いました。", tr:"Yamada berkata bahwa pekerjaannya sekarang berat."},
-  {level:"N5", src:"MNN", pattern:"とき", meaning:"Menyatakan waktu terjadinya sesuatu — “saat/ketika”", example:"道をわたるとき、気をつけましょう。", tr:"Hati-hati saat menyeberang jalan."},
-  {level:"N5", src:"MNN", pattern:"これは（anak kalimat）Nです", meaning:"Menerangkan kata benda dengan anak kalimat di depannya", example:"これは父にもらったぼうしです。", tr:"Ini adalah topi yang saya terima dari ayah."},
-  {level:"N5", src:"MNN", pattern:"てもらう", meaning:"Menyatakan menerima bantuan/perbuatan dari orang lain", example:"兄に駅まで送ってもらいました。", tr:"Saya diantar kakak laki-laki sampai stasiun."},
-  {level:"N5", src:"MNN", pattern:"ても", meaning:"Menyatakan “meskipun/walaupun” — hasil tidak berubah", example:"明日雨が降っても、行きます。", tr:"Meskipun besok hujan, saya tetap pergi."},
-  {level:"N4", src:"MNN", pattern:"かどうか", meaning:"Menyatakan ketidakpastian — “apakah ... atau tidak”", example:"あそこにあるかどうか、確認します。", tr:"Saya akan pastikan apakah ada di sana atau tidak."},
-  {level:"N4", src:"MNN", pattern:"たまま", meaning:"Menyatakan suatu keadaan dibiarkan tetap seperti itu", example:"テレビをつけたまま、寝てしまった。", tr:"Saya tertidur dengan TV masih menyala."},
-  {level:"N4", src:"MNN", pattern:"てばかり", meaning:"Menyatakan hanya melakukan satu hal terus-menerus", example:"弟は毎日遂んでばかりいる。", tr:"Adik laki-laki saya main terus setiap hari."},
-  {level:"N4", src:"MNN", pattern:"おわる", meaning:"Menyatakan selesai melakukan sesuatu", example:"レポートを書きおわった。", tr:"Saya selesai menulis laporan."},
-  {level:"N4", src:"MNN", pattern:"しか～ない", meaning:"Menyatakan “hanya” dengan makna terbatas/kurang", example:"昨日はラーメンしか食べていない。", tr:"Kemarin saya hanya makan ramen."},
-  {level:"N4", src:"MNN", pattern:"そうだ（伝聞）", meaning:"Menyampaikan informasi dari sumber lain — “katanya”", example:"天気予報によると、明日は晴れるそうです。", tr:"Menurut ramalan cuaca, katanya besok akan cerah."},
-  {level:"N4", src:"MNN", pattern:"やすい", meaning:"Menyatakan sesuatu mudah dilakukan", example:"この肉は柔らかくて、食べやすいです。", tr:"Daging ini empuk dan mudah dimakan."},
-  {level:"N4", src:"MNN", pattern:"にくい", meaning:"Menyatakan sesuatu sulit dilakukan", example:"この靴は歩きにくいです。", tr:"Sepatu ini sulit dipakai jalan."},
-  {level:"N4", src:"MNN", pattern:"（よ）うとおもう", meaning:"Menyatakan niat/rencana melakukan sesuatu", example:"来年日本に留学しようと思う。", tr:"Saya berniat kuliah ke Jepang tahun depan."},
-  {level:"N4", src:"MNN", pattern:"命令形（け／ろ）", meaning:"Bentuk perintah kasar/tegas, biasa untuk situasi mendesak", example:"速く走れ！", tr:"Lari cepat!"},
-  {level:"N4", src:"MNN", pattern:"な（禁止形）", meaning:"Bentuk larangan kasar/tegas — “jangan lakukan”", example:"廊下で走るな！", tr:"Jangan lari di koridor!"},
-  {level:"N4", src:"Irodori", pattern:"でしょう", meaning:"Menyatakan dugaan yang cukup yakin — “kemungkinan besar”", example:"明日は晴れるでしょう。", tr:"Besok kemungkinan besar cerah."},
-  {level:"N5", src:"Irodori", pattern:"のが好きです", meaning:"Menyatakan suka melakukan suatu kegiatan", example:"音楽を聞くのが好きです。", tr:"Saya suka mendengarkan musik."},
-  {level:"N4", src:"Irodori", pattern:"ようにします", meaning:"Menyatakan keputusan untuk mulai berusaha melakukan sesuatu", example:"明日から早く寝るようにします。", tr:"Mulai besok saya akan berusaha tidur lebih awal."},
-  {level:"N4", src:"Irodori", pattern:"てみます", meaning:"Menyatakan mencoba melakukan sesuatu", example:"この料理を作ってみます。", tr:"Ikan/masakan ini akan saya coba buat."},
-  {level:"N4", src:"Irodori", pattern:"ていきます／てきます", meaning:"Menyatakan perubahan yang berkelanjutan", example:"これからも日本語を勉強していきます。", tr:"Saya akan terus belajar bahasa Jepang."},
-  {level:"N4", src:"Irodori", pattern:"可能形（える／られる）", meaning:"Bentuk potensial — menyatakan bisa melakukan sesuatu", example:"漢字が読めます。", tr:"Saya bisa membaca kanji."},
-  {level:"N4", src:"Irodori", pattern:"受身形（られる）", meaning:"Bentuk pasif dalam kalimat", example:"この本はたくさんの人に読まれています。", tr:"Buku ini dibaca oleh banyak orang."},
-  {level:"N4", src:"Irodori", pattern:"ばいいですか", meaning:"Menanyakan saran — “sebaiknya bagaimana”", example:"どこで払えばいいですか。", tr:"Sebaiknya bayar di mana?"},
-  {level:"N5", src:"Irodori", pattern:"かた", meaning:"Menyatakan cara melakukan sesuatu", example:"漢字の書き方を教えてください。", tr:"Tolong ajarkan cara menulis kanji."},
-  {level:"N5", src:"Irodori", pattern:"から（理由）", meaning:"Menyatakan alasan — “karena”", example:"眠いから、コーヒーを飲みます。", tr:"Karena mengantuk, saya minum kopi."},
-  {level:"N3", src:"N3", pattern:"使役形（～せる／させる）", meaning:"Menyatakan menyuruh/memaksa orang lain melakukan sesuatu", detail:"Dipakai saat subjek menyuruh atau mengizinkan pihak lain.", example:"母は妹に野菜を食べさせました。", tr:"Ibu menyuruh adik makan sayur."},
-  {level:"N3", src:"N3", time:30, pattern:"使役受身形（～させられる）", meaning:"Terpaksa melakukan sesuatu karena disuruh orang lain", detail:"Menunjukkan rasa terpaksa atau pengalaman tidak menyenangkan.", example:"子供のとき、よく野菜を食べさせられました。", tr:"Waktu kecil, saya sering dipaksa makan sayur."},
-  {level:"N3", src:"N3", pattern:"～ないと", meaning:"Peringatan halus bahwa sesuatu harus dilakukan", example:"もう行かないと、電車に間に合いません。", tr:"Kalau tidak berangkat sekarang, bisa ketinggalan kereta."},
-  {level:"N3", src:"N3", pattern:"～ちゃう／～じゃう", meaning:"Bentuk santai dari ～てしまう (selesai total/tidak sengaja)", example:"宿題、もうやっちゃった。", tr:"Tugasnya udah aku kerjain."},
-  {level:"N3", src:"N3", pattern:"～とく", meaning:"Bentuk santai dari ～ておく (persiapan awal)", example:"飲み物、買っとくね。", tr:"Aku beliin minuman dulu ya."},
-  {level:"N3", src:"N3", pattern:"～みたい", meaning:"Kesan berdasarkan penglihatan (mirip ようだ yang santai)", example:"あの人、有名人みたい。", tr:"Orang itu kelihatannya orang terkenal."},
-  {level:"N3", src:"N3", pattern:"～らしい", meaning:"Berdasarkan informasi yang didengar dari luar", example:"明日は台風が来るらしいです。", tr:"Katanya besok akan ada topan."},
-  {level:"N3", src:"N3", pattern:"～っぽい", meaning:"Cenderung atau terkesan memiliki sifat tertentu", example:"彼は子供っぽい性格です。", tr:"Sifatnya kekanak-kanakan."},
-  {level:"N3", src:"N3", pattern:"～ために", meaning:"Menyatakan tujuan usaha aktif", example:"日本語を勉強しています。", tr:"Saya belajar bahasa Jepang."},
-  {level:"N3", src:"N3", pattern:"～ように", meaning:"Menyatakan harapan/tujuan di luar kontrol langsung", example:"大きい声で話してください。", tr:"Tolong bicara dengan suara keras."},
-  {level:"N3", src:"N3", pattern:"～ようとする", meaning:"Sedang berusaha atau baru mau melakukan sesuatu", example:"出かけようとしたとき、電話が鳴りました。", tr:"Saat baru mau berangkat, telepon berbunyi."},
-  {level:"N3", src:"N3", pattern:"～ばかり", meaning:"Baru saja selesai atau melakukan itu terus-menerus", example:"昼ご飯を食べたばかりです。", tr:"Saya baru saja makan siang."},
-  {level:"N3", src:"N3", time:30, pattern:"～さえ", meaning:"Bahkan hal paling sederhana pun termasuk", example:"時間恵まれません。", tr:"Waktu saja tidak ada."},
-  {level:"N3", src:"N3", time:30, pattern:"～こそ", meaning:"Menonjolkan dan menegaskan hal tertentu (justru)", example:"こちらこそ、よろしくお願いします。", tr:"Justru saya yang mohon bantuannya."},
-  {level:"N3", src:"N3", pattern:"～について", meaning:"Topik pembicaraan — “tentang/mengenai”", example:"日本の文化について話しましょう。", tr:"Ayo bicara tentang budaya Jepang."},
-  {level:"N3", src:"N3", time:30, pattern:"～によって", meaning:"Sebab, sarana, atau bervariasi tergantung sesuatu", example:"国によって、習慣が違います。", tr:"Kebiasaan berbeda tergantung negaranya."},
-  {level:"N3", src:"N3", pattern:"名詞化（～こと／～の）", meaning:"Mengubah kata kerja menjadi kata benda", example:"彼が歌っているのが聞こえます。", tr:"Saya dengar dia bernyanyi."},
-  {level:"N3", src:"N3", pattern:"～ということだ", meaning:"Menjelaskan makna / \"artinya adalah\"", example:"忙しいということです。", tr:"Artinya sedang sibuk."},
-  {level:"N3", src:"N3", time:30, pattern:"～というより", meaning:"Ungkapan yang lebih tepat dibanding yang lain", example:"友達のようです。", tr:"Lebih terasa seperti teman."},
-  {level:"N3", src:"N3", pattern:"～としても", meaning:"Meskipun dianggap/misalkan begitu pun", example:"お金があったとしても、買いません。", tr:"Meskipun punya uang, tidak akan beli."},
-  {level:"N3", src:"N3", time:30, pattern:"～と言われている", meaning:"Pendapat umum / konon dikatakan", example:"体にいいと言われています。", tr:"Konon bagus untuk kesehatan."},
-  {level:"N3", src:"N3", pattern:"～ずに", meaning:"Melakukan sesuatu tanpa lebih dulu (formal ～ないで)", example:"朝ご飯を食べずに学校へ行きました。", tr:"Pergi sekolah tanpa sarapan."},
-  {level:"N3", src:"N3", pattern:"～として", meaning:"Peran atau kedudukan — “sebagai”", example:"リーダーとしてまとめました。", tr:"Menyatukan sebagai pemimpin."},
-  {level:"N3", src:"N3", time:30, pattern:"～にしても", meaning:"Meskipun mempertimbangkan sudut pandang lain", example:"忙しいにしても、返信してほしい。", tr:"Meskipun sibuk, tolong balas."},
-  {level:"N3", src:"N3", pattern:"～はず", meaning:"Dugaan kuat berdasarkan logika — “seharusnya”", example:"彼はもう着いたはずです。", tr:"Dia seharusnya sudah sampai."},
-  {level:"N3", src:"N3", pattern:"～べき", meaning:"Kewajiban moral — “seharusnya dilakukan”", example:"もっと勉強するべきです。", tr:"Seharusnya lebih rajin belajar."},
-  {level:"N3", src:"N3", pattern:"～たとたん", meaning:"Begitu... langsung (kejadian sangat cepat)", example:"ドアを開けたとたん、犬が走ってきた。", tr:"Begitu pintu dibuka, anjing lari."},
-  {level:"N3", src:"N3", pattern:"～最中に", meaning:"Tepat di tengah-tengah kegiatan berlangsung", example:"会議の最中に電話が鳴りました。", tr:"Di tengah rapat, telepon berbunyi."},
-  {level:"N3", src:"N3", pattern:"～とおり", meaning:"Sesuai dengan contoh/petunjuk", example:"言ったとおりにやってください。", tr:"Lakukan sesuai yang dikatakan."},
-  {level:"N3", src:"N3", time:30, pattern:"～っぱなし", meaning:"Dibiarkan begitu saja tanpa diurus", example:"窓を開けっぱなしにしました。", tr:"Jendela dibiarkan terbuka."},
-  {level:"N3", src:"N3", pattern:"～たがる", meaning:"Orang lain terlihat ingin melakukan sesuatu", example:"弟はゲームを買いたがる。", tr:"Adik ingin beli game."},
-  {level:"N3", src:"N3", pattern:"～てほしい", meaning:"Berharap orang lain melakukan sesuatu", example:"もっと野菜を食べてほしい。", tr:"Berharap kamu makan sayur."},
-  {level:"N3", src:"N3", pattern:"～にとって", meaning:"Sudut pandang seseorang — “bagi/menurut”", example:"子供にとって大切です。", tr:"Bagi anak-anak itu penting."},
-  {level:"N3", src:"N3", time:30, pattern:"～くせに", meaning:"Kontras dengan nada mencela — “padahal”", example:"下手くせに自信満々です。", tr:"Padahal jelek tapi percaya diri."},
-  {level:"N3", src:"N3", pattern:"～おかげで", meaning:"Sebab dengan hasil positif — “berkat”", example:"先生のおかげで上手になりました。", tr:"Berkat guru jadi lancar."},
-  {level:"N3", src:"N3", pattern:"～せいで", meaning:"Sebab dengan hasil negatif — “gara-gara”", example:"雨のせいで中止になりました。", tr:"Gara-gara hujan dibatalkan."},
-  {level:"N3", src:"N3", pattern:"～くらい", meaning:"Tingkatan atau perkiraan jumlah — “sampai/kira-kira”", example:"泣きたいくらい嬉しかった。", tr:"Senang sampai mau nangis."},
-  {level:"N3", src:"N3", time:30, pattern:"～ば～ほど", meaning:"Semakin bertambah, semakin bertambah pula", example:"練習すればするほど上手になる。", tr:"Semakin latihan semakin mahir."},
-  {level:"N3", src:"N3", pattern:"～ことはない", meaning:"Tidak perlu repot-repot melakukan sesuatu", example:"心配することはないですよ。", tr:"Tidak perlu khawatir."},
-  {level:"N3", src:"N3", pattern:"～しかない", meaning:"Tidak ada pilihan lain — “terpaksa harus”", example:"歩くしかありません。", tr:"Terpaksa jalan kaki."},
-  {level:"N3", src:"N3", pattern:"～つまり", meaning:"Kesimpulan / \"singkatnya\"", example:"私のおじです。", tr:"Singkatnya paman saya."},
-  {level:"N3", src:"N3", pattern:"～に比べて", meaning:"Perbandingan — “dibandingkan dengan”", example:"去年に比べて暑いです。", tr:"Dibandingkan tahun lalu lebih panas."},
-  {level:"N3", src:"N3", pattern:"～に対して", meaning:"Sikap/arah tindakan — “terhadap”", example:"先生に対して礼儀正しい。", tr:"Sopan terhadap guru."},
-  {level:"N3", src:"N3", pattern:"～きる", meaning:"Melakukan sesuatu sampai tuntas sepenuhnya", example:"最後まで走りきりました。", tr:"Berlari sampai garis akhir."},
-  {level:"N3", src:"N3", time:30, pattern:"～ばよかった", meaning:"Penyesalan masa lalu — “andai saja tadi...”", example:"勉強すればよかったです。", tr:"Andai saja tadi belajar."},
-  {level:"N3", src:"N3", time:30, pattern:"～において", meaning:"Tempat/bidang formal — “di dalam/pada”", example:"専門家です。", tr:"Dia ahli dalam bidang ini."},
-  {level:"N3", src:"N3", time:30, pattern:"～とは限らない", meaning:"Tidak selalu benar — “belum tentu”", example:"お金持ちが幸せとは限らない。", tr:"Orang kaya belum tentu bahagia."},
-  {level:"N3", src:"N3", pattern:"～ところが", meaning:"Hasil tak terduga — “namun ternyata”", example:"雨が降り始めました。", tr:"Namun ternyata hujan turun."},
-  {level:"N3", src:"N3", pattern:"～としたら", meaning:"Pengandaian hipotetis — “seandainya”", example:"宝くじが当たったら。", tr:"Seandainya menang undian."},
-  {level:"N3", src:"N3", time:30, pattern:"～ことになる", meaning:"Keputusan dari keadaan/pihak lain", example:"大阪に転勤することになりました。", tr:"Ditugaskan pindah ke Osaka."},
-  {level:"N3", src:"N3", pattern:"～ことにする", meaning:"Keputusan yang diambil sendiri", example:"毎日運動することにしました。", tr:"Memutuskan olahraga tiap hari."},
-  {level:"N3", src:"N3", time:30, pattern:"～たところ", meaning:"Hasil setelah mencoba melakukan sesuatu", example:"病院に行ったところ、風邪でした。", tr:"Setelah ke rumah sakit, ternyata flu."},
-  {level:"N3", src:"N3", time:30, pattern:"～わけだ", meaning:"Kesimpulan logis — “pantas saja”", example:"道理で上手なわけです。", tr:"Pantas saja lancar."},
-  {level:"N3", src:"N3", time:30, pattern:"～わけではない", meaning:"Tidak sepenuhnya benar — “bukan berarti”", example:"嫌いなわけではない。", tr:"Bukan berarti tidak suka."},
-  {level:"N3", src:"N3", pattern:"決して～ない", meaning:"Penegasan kuat negatif — “sama sekali tidak”", example:"秘密は決して言いません。", tr:"Sama sekali tidak akan bilang."},
-  {level:"N3", src:"N3", pattern:"～そのうえ", meaning:"Tambahan informasi — “selain itu”", example:"とてもおいしいです。", tr:"Selain itu sangat enak."}
+  /* LEVEL N5 */
+  {
+    level:"N5", src:"Both", pattern:"N1 は N2 です", meaning:"Menyatakan bahwa N1 adalah N2",
+    detail:"<b>Penggunaan:</b> Pola dasar mengenalkan identitas/status. Partikel は (wa) menandai topik, です (desu) penutup sopan.",
+    example:"わたしは学生です。", tr:"Saya adalah siswa.",
+    blankQ: "わたし＿学生です。", blankAns: "は", blankOpts: ["は", "が", "に", "で"],
+    jumble: ["わたし", "は", "学生", "です"]
+  },
+  {
+    level:"N5", src:"Both", pattern:"これ／それ／あれ は Nです", meaning:"Menunjuk benda: “ini/itu/itu(jauh) adalah...”",
+    detail:"<b>Penggunaan:</b> これ (dekat pembicara), それ (dekat lawan bicara), あれ (jauh dari keduanya).",
+    example:"これは辞書です。", tr:"Ini adalah kamus.",
+    blankQ: "これ＿辞書です。", blankAns: "は", blankOpts: ["は", "を", "へ", "に"],
+    jumble: ["これ", "は", "辞書", "です"]
+  },
+  {
+    level:"N5", src:"Both", pattern:"N は 形容詞です", meaning:"Menyatakan sifat/kondisi dari kata benda",
+    detail:"<b>Penggunaan:</b> Menggambarkan sifat. Adj-i berakhiran い, Adj-na ditutup langsung dengan です.",
+    example:"この部屋は静かです。", tr:"Kamar ini tenang.",
+    blankQ: "この部屋は静か＿。", blankAns: "です", blankOpts: ["です", "ます", "でした", "じゃない"],
+    jumble: ["この", "部屋", "は", "静かです"]
+  },
+  {
+    level:"N5", src:"Both", pattern:"N が あります／います", meaning:"Menyatakan keberadaan benda atau makhluk hidup",
+    detail:"<b>Penggunaan:</b> あります (benda mati/tanaman), います (manusia/hewan).",
+    example:"机の上に本があります。", tr:"Ada buku di atas meja.",
+    blankQ: "机の上に本＿あります。", blankAns: "が", blankOpts: ["が", "を", "は", "に"],
+    jumble: ["机の", "上に", "本が", "あります"]
+  },
+
+  /* LEVEL N4 */
+  {
+    level:"N4", src:"Both", pattern:"～ています", meaning:"Sedang berlangsung, kebiasaan, atau kondisi saat ini",
+    detail:"<b>Perubahan:</b> V-て + います. Dipakai untuk aksi berlangsung, kebiasaan, atau status.",
+    example:"今、雨が降っています。", tr:"Sekarang sedang turun hujan.",
+    blankQ: "今、雨が降っ＿います。", blankAns: "て", blankOpts: ["て", "た", "で", "ない"],
+    jumble: ["今、", "雨が", "降って", "います"]
+  },
+  {
+    level:"N4", src:"Both", pattern:"～てもいいです", meaning:"Menyatakan izin: “Boleh melakukan sesuatu”",
+    detail:"<b>Perubahan:</b> V-て + もいいです. Mengizinkan atau meminta izin aksi.",
+    example:"ここで写真を撮ってもいいです。", tr:"Boleh foto di sini.",
+    blankQ: "ここで写真を撮っ＿いいです。", blankAns: "ても", blankOpts: ["ても", "たら", "ては", "てもん"],
+    jumble: ["ここで", "写真を", "撮っても", "いいです"]
+  },
+
+  /* IRODORI SHOKYUU */
+  {
+    level:"N4", src:"Irodori", pattern:"～という N", meaning:"Menyatakan sebutan: “N yang bernama / disebut...”",
+    detail:"<b>Penggunaan:</b> Mengenalkan nama benda/tempat/orang ke lawan bicara.",
+    example:"「桜」という花が好きです。", tr:"Saya suka bunga yang disebut “sakura”.",
+    blankQ: "「桜」＿いう花が好きです。", blankAns: "と", blankOpts: ["と", "に", "へ", "が"],
+    jumble: ["「桜」と", "いう花が", "好きです"]
+  },
+
+  /* SOUMATOME N3 DENGAN FURIGANA */
+  {
+    level:"N3", src:"N3",
+    pattern:"<ruby>使<rt>し</rt></ruby><ruby>役<rt>やく</rt></ruby><ruby>形<rt>けい</rt></ruby>（～せる／させる）",
+    meaning:"Bentuk Kausatif: Menyuruh, membiarkan, atau memaksa orang lain",
+    detail:"<b>Penggunaan:</b> Subjek membuat orang lain melakukan tindakan.",
+    example:"<ruby>母<rt>はは</rt></ruby>は<ruby>妹<rt>いもうと</rt></ruby>に<ruby>野<rt>や</rt></ruby><ruby>菜<rt>さい</rt></ruby>を<ruby>食<rt>た</rt></ruby>べさせました。",
+    tr:"Ibu menyuruh adik makan sayur.",
+    blankQ: "母は妹に野菜を＿させました。", blankAns: "食べ", blankOpts: ["食べ", "飲む", "見る", "行き"],
+    jumble: ["母は", "妹に", "野菜を", "食べさせました"]
+  },
+
+  /* SOUMATOME N2 DENGAN FURIGANA & WAKTU 45 DETIK */
+  {
+    level: "N2", src: "N2", time: 45,
+    pattern: "～げ", meaning: "Kelihatannya / Berkesan seperti (Ekspresi seseorang)",
+    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Menggambarkan suasana atau ekspresi wajah orang lain dari penampilannya.",
+    example: "<ruby>彼<rt>かの</rt></ruby><ruby>女<rt>じょ</rt></ruby>は<ruby>寂<rt>さび</rt></ruby>しげな<ruby>顔<rt>かお</rt></ruby>をしていた。",
+    tr: "Dia menunjukkan ekspresi kelihatannya kesepian.",
+    blankQ: "彼女は寂し＿な顔をしていた。", blankAns: "げ", blankOpts: ["げ", "がち", "っぽい", "ぎみ"],
+    jumble: ["彼女は", "寂しげな", "顔を", "していた"]
+  },
+  {
+    level: "N2", src: "N2", time: 45,
+    pattern: "～がち", meaning: "Cenderung / Sering kali melakukan (Kecenderungan negatif)",
+    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Menyatakan hal negatif yang sering terjadi atau cenderung dilakukan.",
+    example: "<ruby>一<rt>ひとり</rt></ruby><ruby>人<rt>ぐらし</rt></ruby><ruby>暮<rt>ぐらし</rt></ruby>らしは<ruby>病<rt>びょう</rt></ruby><ruby>気<rt>き</rt></ruby>になりがちだ。",
+    tr: "Hidup sendiri cenderung mudah sakit.",
+    blankQ: "一人暮らしは病気になり＿だ。", blankAns: "がち", blankOpts: ["がち", "げ", "ぎみ", "っぽい"],
+    jumble: ["一人暮らしは", "病気に", "なりがちだ"]
+  },
+  {
+    level: "N2", src: "N2", time: 45,
+    pattern: "～っぽい", meaning: "Kelihatannya / Terkesan seperti sifat tertentu",
+    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Terkesan mirip sifat tertentu dari penampilan luar.",
+    example: "この<ruby>服<rt>ふく</rt></ruby>は<ruby>安<rt>やす</rt></ruby>っぽい。",
+    tr: "Baju ini terkesan murah.",
+    blankQ: "この服は安＿。", blankAns: "っぽい", blankOpts: ["っぽい", "げ", "がち", "ぎみ"],
+    jumble: ["この服は", "安っぽい"]
+  },
+  {
+    level: "N2", src: "N2", time: 45,
+    pattern: "～ぎみ", meaning: "Agak / Sedikit merasa (Gejala awal kondisi tubuh/mental)",
+    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Kondisi fisik atau perasaan yang sedikit memburuk.",
+    example: "<ruby>最<rt>さい</rt></ruby><ruby>近<rt>きん</rt></ruby><ruby>風<rt>かぜ</rt></ruby><ruby>邪<rt>じゃ</rt></ruby>ぎみで、<ruby>熱<rt>ねつ</rt></ruby>がある。",
+    tr: "Belakangan ini agak sedikit flu dan demam.",
+    blankQ: "最近風邪＿で、熱がある。", blankAns: "ぎみ", blankOpts: ["ぎみ", "がち", "げ", "っぽい"],
+    jumble: ["最近", "風邪ぎみで、", "熱がある"]
+  },
+  {
+    level: "N2", src: "N2", time: 45,
+    pattern: "～ものなら", meaning: "Seandainya bisa dilakukan (Harapan yang hampir mustahil)",
+    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> V-Bentuk Potensial + ものなら. Mengungkapkan harapan melakukan hal yang sangat sulit.",
+    example: "やり<ruby>直<rt>なお</rt></ruby>せるものなら、やり直したい。",
+    tr: "Seandainya bisa mengulang kembali, saya ingin mengulangnya.",
+    blankQ: "やり直せる＿、やり直したい。", blankAns: "ものなら", blankOpts: ["ものなら", "ものだから", "ものの", "もの"],
+    jumble: ["やり直せる", "ものなら、", "やり直したい"]
+  },
+  {
+    level: "N2", src: "N2", time: 45,
+    pattern: "～ものだから", meaning: "Karena / Habisnya (Alasan pribadi/pembenaran)",
+    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Memberikan alasan khusus atau meminta pemakluman atas kesalahan.",
+    example: "バスが<ruby>遅<rt>おく</rt></ruby>れたものだから、<ruby>遅<rt>ち</rt></ruby><ruby>刻<rt>こく</rt></ruby>した。",
+    tr: "Karena busnya terlambat, saya jadi datang terlambat.",
+    blankQ: "バスが遅れた＿、遅刻した。", blankAns: "ものだから", blankOpts: ["ものだから", "ものの", "ものなら", "もの"],
+    jumble: ["バスが", "遅れたものだから、", "遅刻した"]
+  },
+  {
+    level: "N2", src: "N2", time: 45,
+    pattern: "～ものの", meaning: "Meskipun / Walaupun demikian (Kenyataan tak sesuai harapan)",
+    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Mengungkapkan kontras antara fakta ideal dengan kenyataan yang terjadi.",
+    example: "<ruby>免<rt>めん</rt></ruby><ruby>許<rt>きょ</rt></ruby>は<ruby>取<rt>と</rt></ruby>ったものの、<ruby>車<rt>くるま</rt></ruby>がない。",
+    tr: "Meskipun sudah dapat SIM, tetapi tidak punya mobil.",
+    blankQ: "免許は取った＿、車がない。", blankAns: "ものの", blankOpts: ["ものの", "ものなら", "ものだから", "もの"],
+    jumble: ["免許は", "取ったものの、", "車がない"]
+  },
+  {
+    level: "N2", src: "N2", time: 45,
+    pattern: "～はもとより", meaning: "Jangankan... (A apalagi B / A sudah pasti, demikian pula B)",
+    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Menegaskan bahwa A sudah pasti, dan B yang tingkatannya lebih tinggi pun sama.",
+    example: "<ruby>彼<rt>かれ</rt></ruby>は<ruby>日<rt>に</rt></ruby><ruby>本<rt>ほん</rt></ruby><ruby>語<rt>ご</rt></ruby>はもとより、<ruby>英<rt>えい</rt></ruby><ruby>語<rt>ご</rt></ruby>も<ruby>話<rt>はな</rt></ruby>せる。",
+    tr: "Jangankan bahasa Jepang, bahasa Inggris pun dia bisa.",
+    blankQ: "彼は日本語＿、英語も話せる。", blankAns: "はもとより", blankOpts: ["はもとより", "はともかく", "抜き", "ならまだしも"],
+    jumble: ["彼は", "日本語はもとより、", "英語も話せる"]
+  },
+  {
+    level: "N2", src: "N2", time: 45,
+    pattern: "～はともかく", meaning: "Mengecualikan / Terlepas dari... (Fokus pada hal lain)",
+    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Menyampingkan topik A dulu untuk memprioritaskan topik B.",
+    example: "<ruby>味<rt>あじ</rt></ruby>はともかく、<ruby>見<rt>み</rt></ruby>た<ruby>目<rt>め</rt></ruby>はいい。",
+    tr: "Terlepas dari rasanya, tampilannya bagus.",
+    blankQ: "味＿、見た目はいい。", blankAns: "はともかく", blankOpts: ["はともかく", "はもとより", "抜きで", "ならまだしも"],
+    jumble: ["味はともかく、", "見た目はいい"]
+  },
+  {
+    level: "N2", src: "N2", time: 45,
+    pattern: "～てたまらない", meaning: "Sangat / Tak tertahankan (Perasaan/sensasi fisik kuat)",
+    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Menjelaskan emosi/sensasi pribadi yang sangat kuat hingga tak tertahankan.",
+    example: "お<ruby>腹<rt>なか</rt></ruby>がすいてたまらない。",
+    tr: "Lapar sekali sampai tak tertahankan.",
+    blankQ: "お腹がすい＿たまらない。", blankAns: "て", blankOpts: ["て", "た", "で", "ない"],
+    jumble: ["お腹が", "すいてたまらない"]
+  },
+  {
+    level: "N2", src: "N2", time: 45,
+    pattern: "～て仕方がない", meaning: "Sangat / Sangat tidak terhindarkan",
+    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Menyatakan perasaan spontan yang muncul alami dan tak bisa ditahan.",
+    example: "<ruby>暇<rt>ひま</rt></ruby>で<ruby>仕<rt>しか</rt></ruby><ruby>方<rt>かた</rt></ruby>がない。",
+    tr: "Sangat senggang sampai bingung mau melakukan apa.",
+    blankQ: "暇＿仕方がない。", blankAns: "で", blankOpts: ["で", "て", "に", "を"],
+    jumble: ["暇で", "仕方がない"]
+  }
 ];
 
 const $ = id => document.getElementById(id);
 let student = null;
+
+$("tabGameBtn").addEventListener("click", () => switchTab('game'));
+$("tabStudyBtn").addEventListener("click", () => switchTab('study'));
+$("tabHistoryBtn").addEventListener("click", () => switchTab('history'));
+
+function switchTab(tab) {
+  document.querySelectorAll(".nav-tabs .tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".dashboard-layout > .panel").forEach(p => p.classList.remove("active"));
+  
+  if (tab === 'game') {
+    $("tabGameBtn").classList.add("active");
+    $("panel-game").classList.add("active");
+  } else if (tab === 'study') {
+    $("tabStudyBtn").classList.add("active");
+    $("panel-study").classList.add("active");
+  } else if (tab === 'history') {
+    $("tabHistoryBtn").classList.add("active");
+    $("panel-history").classList.add("active");
+    renderHistory();
+  }
+}
 
 $("loginBtn").addEventListener("click", ()=>{
   const nama = $("loginNama").value.trim();
@@ -381,14 +486,27 @@ $("loginBtn").addEventListener("click", ()=>{
   const kelas = $("loginKelas").value.trim();
   if(!nama || !nis){ alert("Nama dan NIS wajib diisi ya."); return; }
   student = { nama, nis, kelas };
+  localStorage.setItem("nafis_student", JSON.stringify(student));
+  initApp();
+});
+
+window.addEventListener("load", ()=>{
+  const saved = localStorage.getItem("nafis_student");
+  if(saved){
+    student = JSON.parse(saved);
+    initApp();
+  }
+});
+
+function initApp(){
   $("panel-login").classList.remove("active");
   $("mainApp").style.display = "flex";
   const w = $("whoami");
   w.style.display = "block";
-  w.innerHTML = `👤 <b>${nama}</b> &middot; NIS ${nis}${kelas ? " &middot; "+kelas : ""}`;
+  w.innerHTML = `👤 <b>${student.nama}</b> &middot; NIS ${student.nis}${student.kelas ? " &middot; "+student.kelas : ""}`;
   renderFlash();
   renderStart();
-});
+}
 
 let studyBookFilter = "all";
 let studyList = PATTERNS.slice();
@@ -406,6 +524,7 @@ function matchesBook(p, filterVal){
     case "mnn2": return p.level==="N4" && (p.src==="MNN" || p.src==="Both");
     case "irodori": return p.src==="Irodori" || p.src==="Both";
     case "n3": return p.src==="N3";
+    case "n2": return p.level==="N2";
     default: return true;
   }
 }
@@ -422,7 +541,7 @@ function renderFlash(){
     return;
   }
   const p = studyList[studyIdx];
-  const srcLabel = p.src==="Both" ? "MNN &amp; Irodori" : (p.src==="MNN" ? (p.level==="N5" ? "MNN 1" : "MNN 2") : (p.src==="Irodori" ? "Irodori" : "N3"));
+  const srcLabel = p.src==="Both" ? "MNN &amp; Irodori" : (p.src==="MNN" ? (p.level==="N5" ? "MNN 1" : "MNN 2") : (p.src==="Irodori" ? "Irodori" : (p.level==="N3" ? "Soumatome N3" : "Soumatome N2")));
   $("flashCard").innerHTML = `
     <div class="lvl ${p.level.toLowerCase()}">${p.level}</div>
     <div class="src">${srcLabel}</div>
@@ -443,10 +562,12 @@ $("nextBtn").addEventListener("click", ()=>{ if(studyIdx<studyList.length-1){stu
 
 function timeForPattern(p){
   if(p.time) return p.time;
+  if(p.level==="N2") return 45;
   if(p.level==="N3") return 25;
   if(p.level==="N4") return 20;
   return 15;
 }
+
 let gState = null;
 let setupScope = "all";
 let setupCount = 20;
@@ -461,20 +582,56 @@ function buildQuestions(scope, count){
   const pool = PATTERNS.filter(p=>matchesBook(p, scope));
   const n = count==="semua" ? pool.length : Math.min(parseInt(count), pool.length);
   const chosen = shuffle(pool).slice(0, n);
-  return chosen.map(correct=>{
-    const distractorsPool = PATTERNS.filter(p=>p.pattern!==correct.pattern);
-    const distractors = shuffle(distractorsPool).slice(0,3);
-    const options = shuffle([correct, ...distractors]);
-    return {correct, options};
+  
+  const qTypes = ['mc_pattern', 'mc_translation', 'fill_blank', 'jumble'];
+  
+  return chosen.map(correct => {
+    const type = qTypes[Math.floor(Math.random() * qTypes.length)];
+    
+    if (type === 'fill_blank' && correct.blankQ) {
+      const distractors = shuffle(correct.blankOpts.filter(o => o !== correct.blankAns)).slice(0,3);
+      return {
+        type: 'fill_blank', correct,
+        qText: `Isi bagian kosong: <b>${correct.blankQ}</b><br><small style="color:var(--sub)">(${correct.tr})</small>`,
+        correctAns: correct.blankAns,
+        options: shuffle([correct.blankAns, ...distractors])
+      };
+    } else if (type === 'jumble' && correct.jumble) {
+      return {
+        type: 'jumble', correct,
+        qText: `Susun kata menjadi kalimat yang tepat untuk terjemahan:<br><b>“${correct.tr}”</b>`,
+        words: shuffle(correct.jumble),
+        correctSeq: correct.jumble.join("")
+      };
+    } else if (type === 'mc_translation') {
+      const distractorsPool = PATTERNS.filter(p=>p.tr!==correct.tr);
+      const distractors = shuffle(distractorsPool).slice(0,3);
+      const options = shuffle([correct, ...distractors]);
+      return {
+        type: 'mc_translation', correct,
+        qText: `Apa arti terjemahan dari pola <b>${correct.pattern}</b>?`,
+        correctAns: correct.meaning,
+        options: options.map(o => o.meaning)
+      };
+    } else {
+      const distractorsPool = PATTERNS.filter(p=>p.pattern!==correct.pattern);
+      const distractors = shuffle(distractorsPool).slice(0,3);
+      const options = shuffle([correct, ...distractors]);
+      return {
+        type: 'mc_pattern', correct,
+        qText: `Pola kalimat untuk: <b>${correct.meaning}</b>?`,
+        correctAns: correct.pattern,
+        options: options.map(o => o.pattern)
+      };
+    }
   });
 }
 
 function renderStart(){
-  $("studyCol").style.display = "block";
   $("gameArea").innerHTML = `
     <div class="start-screen">
       <h2>Siap uji ingatan pola kalimatmu?</h2>
-      <p>Pilih cakupan dan jumlah soal, lalu jawab sebelum waktu habis.</p>
+      <p>Kuis berisi variasi Pilihan Ganda, Isi Titik-Titik, dan Susun Kalimat.</p>
       <div class="setup-grid">
         <div class="setup-box">
           <div class="lbl">CAKUPAN SOAL</div>
@@ -483,7 +640,8 @@ function renderStart(){
             <button data-v="mnn1">MNN 1</button>
             <button data-v="mnn2">MNN 2</button>
             <button data-v="irodori">Irodori</button>
-            <button data-v="n3" style="width:100%">Soumatome N3</button>
+            <button data-v="n3">Soumatome N3</button>
+            <button data-v="n2">Soumatome N2</button>
           </div>
         </div>
         <div class="setup-box">
@@ -515,12 +673,12 @@ function renderStart(){
 }
 
 function startGame(){
-  $("studyCol").style.display = "none";
   gState = {
     questions: buildQuestions(setupScope, setupCount),
     qi: 0, score: 0, streak: 0, correctCount: 0, misses: [],
-    timer: null, timeLeft: 15, timeTotal: 15, locked: false,
+    timer: null, timeLeft: 20, timeTotal: 20, locked: false,
     startedAt: new Date(),
+    userJumble: []
   };
   renderQuestion();
 }
@@ -529,9 +687,13 @@ function renderQuestion(){
   clearInterval(gState.timer);
   const q = gState.questions[gState.qi];
   const qTime = timeForPattern(q.correct);
-  gState.timeLeft = qTime;
-  gState.timeTotal = qTime;
+  gState.timeLeft = qTime; gState.timeTotal = qTime;
   gState.locked = false;
+  gState.userJumble = [];
+
+  let typeLabel = "Pilihan Ganda";
+  if (q.type === 'fill_blank') typeLabel = "Isi Titik-Titik";
+  if (q.type === 'jumble') typeLabel = "Susun Kalimat";
 
   $("gameArea").innerHTML = `
     <div class="hud">
@@ -540,17 +702,49 @@ function renderQuestion(){
     </div>
     <div class="timerbar-track"><div class="timerbar-fill" id="timerFill"></div></div>
     <div class="qcard">
+      <div class="qtype">[ ${typeLabel} ]</div>
       <div class="qnum">Soal ${gState.qi+1}/${gState.questions.length} &middot; <span style="color:${q.correct.level==='N5'?'var(--n5)':(q.correct.level==='N4'?'var(--n4)':'var(--sakura)')}">${q.correct.level}</span> &middot; ${qTime}d</div>
-      <div class="qtext">Pola kalimat untuk: <b>${q.correct.meaning}</b>?</div>
+      <div class="qtext">${q.qText}</div>
     </div>
-    <div class="options" id="optionsWrap">
-      ${q.options.map((o,i)=>`<button class="opt" data-i="${i}">${o.pattern}</button>`).join("")}
-    </div>
+    
+    ${q.type === 'jumble' ? `
+      <div class="jumble-ans-area" id="jumbleAns"></div>
+      <div class="jumble-pool" id="jumblePool">
+        ${q.words.map((w,i) => `<button class="word-chip" data-w="${w}" id="chip-${i}">${w}</button>`).join("")}
+      </div>
+      <button class="jumble-submit" id="jumbleSub">Jawab / Periksa</button>
+    ` : `
+      <div class="options" id="optionsWrap">
+        ${q.options.map((o,i)=>`<button class="opt" data-v="${o}">${o}</button>`).join("")}
+      </div>
+    `}
   `;
 
-  document.querySelectorAll(".opt").forEach(btn=>{
-    btn.addEventListener("click", ()=> selectAnswer(parseInt(btn.dataset.i)));
-  });
+  if (q.type === 'jumble') {
+    document.querySelectorAll(".word-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        if (gState.locked) return;
+        const w = chip.dataset.w;
+        gState.userJumble.push(w);
+        chip.style.visibility = "hidden";
+        
+        const ansArea = $("jumbleAns");
+        const node = document.createElement("span");
+        node.className = "word-chip";
+        node.textContent = w;
+        ansArea.appendChild(node);
+      });
+    });
+    
+    $("jumbleSub").addEventListener("click", () => {
+      const userStr = gState.userJumble.join("");
+      selectAnswer(userStr === q.correctSeq);
+    });
+  } else {
+    document.querySelectorAll(".opt").forEach(btn=>{
+      btn.addEventListener("click", ()=> selectAnswer(btn.dataset.v === q.correctAns));
+    });
+  }
 
   const fill = $("timerFill");
   gState.timer = setInterval(()=>{
@@ -558,26 +752,24 @@ function renderQuestion(){
     const pct = Math.max(0, (gState.timeLeft/gState.timeTotal)*100);
     fill.style.width = pct+"%";
     if(pct < 30) fill.classList.add("danger"); else fill.classList.remove("danger");
-    if(gState.timeLeft <= 0){ clearInterval(gState.timer); selectAnswer(-1); }
+    if(gState.timeLeft <= 0){ clearInterval(gState.timer); selectAnswer(false); }
   }, 100);
 }
 
-function selectAnswer(idx){
+function selectAnswer(isCorrect){
   if(gState.locked) return;
   gState.locked = true;
   clearInterval(gState.timer);
 
   const q = gState.questions[gState.qi];
-  const correctIdx = q.options.findIndex(o=>o.pattern===q.correct.pattern);
-  const isCorrect = idx === correctIdx;
-
-  document.querySelectorAll(".opt").forEach(btn=> btn.disabled = true);
 
   if(isCorrect){
+    playSFX('correct');
     gState.streak++;
     gState.correctCount++;
     gState.score += (10 + Math.min(gState.streak-1,5)*2);
   } else {
+    playSFX('wrong');
     gState.streak = 0;
     gState.misses.push(q.correct);
   }
@@ -606,6 +798,32 @@ function renderResult(){
   const grade = gradeFor(acc);
   const dateStr = gState.startedAt.toLocaleString("id-ID");
 
+  saveHistoryToLocal({
+    tanggal: dateStr,
+    skor: gState.score,
+    benar: gState.correctCount,
+    total: total,
+    akurasi: acc,
+    nilai: grade.letter
+  });
+
+  if(GOOGLE_SCRIPT_URL) {
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tanggal: dateStr,
+        nama: student.nama,
+        nis: student.nis,
+        kelas: student.kelas || "-",
+        skor: gState.score,
+        akurasi: acc,
+        nilai: grade.letter
+      })
+    }).catch(e=>console.log(e));
+  }
+
   $("gameArea").innerHTML = `
     <div class="result">
       <div class="grade-badge" style="background:${grade.color}22;color:${grade.color};border:2px solid ${grade.color};">${grade.letter}</div>
@@ -613,8 +831,8 @@ function renderResult(){
       <div class="big-score">${gState.score}</div>
       <div class="sub">poin &middot; ${gState.correctCount}/${total} benar (${acc}%)</div>
       <div class="export-row">
-        <button id="copyBtn">📋 Salin</button>
-        <button id="downloadBtn">🖼️ Unduh</button>
+        <button id="copyBtn">📋 Salin Hasil</button>
+        <button id="downloadBtn">🖼️ Unduh Gambar</button>
       </div>
       ${gState.misses.length ? `
         <div style="text-align:left;font-weight:700;font-size:13px;margin-bottom:8px;">Perlu diulang:</div>
@@ -630,12 +848,37 @@ function renderResult(){
     const text = `HASIL PENILAIAN POLA KALIMAT\nNama: ${student.nama}\nNIS: ${student.nis}\nKelas: ${student.kelas||"-"}\nSkor: ${gState.score} poin\nBenar: ${gState.correctCount}/${total} (${acc}%)\nNilai: ${grade.letter}`;
     navigator.clipboard.writeText(text).then(()=>{
       $("copyBtn").textContent = "✓ Tersalin";
-      setTimeout(()=> $("copyBtn").textContent = "📋 Salin", 1500);
+      setTimeout(()=> $("copyBtn").textContent = "📋 Salin Hasil", 1500);
     });
   });
 
   $("downloadBtn").addEventListener("click", ()=> downloadResultCard(total, acc, grade, dateStr));
   $("againBtn").addEventListener("click", renderStart);
+}
+
+function saveHistoryToLocal(record) {
+  let list = [];
+  const saved = localStorage.getItem("nafis_history");
+  if(saved) list = JSON.parse(saved);
+  list.unshift(record);
+  if(list.length > 20) list.pop();
+  localStorage.setItem("nafis_history", JSON.stringify(list));
+}
+
+function renderHistory() {
+  const listEl = $("historyList");
+  const saved = localStorage.getItem("nafis_history");
+  if (!saved || JSON.parse(saved).length === 0) {
+    listEl.innerHTML = `<div style="text-align:center;color:var(--sub);padding:20px;">Belum ada riwayat kuis yang dimainkan.</div>`;
+    return;
+  }
+  const list = JSON.parse(saved);
+  listEl.innerHTML = list.map(h => `
+    <div class="history-item">
+      <div class="hi-title">⭐ Skor: ${h.skor} (${h.benar}/${h.total} Benar - ${h.akurasi}%) - Nilai: ${h.nilai}</div>
+      <div class="hi-sub">🕒 ${h.tanggal}</div>
+    </div>
+  `).join("");
 }
 
 function downloadResultCard(total, acc, grade, dateStr){
