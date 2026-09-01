@@ -22,6 +22,8 @@
     --red: #FF3366;
     --n5: #00E5FF; 
     --n4: #FFD700;
+    --n3: #FF9F5B;
+    --n2: #FF2A7A;
   }
   
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -32,7 +34,7 @@
       radial-gradient(circle at 15% 10%, rgba(255, 42, 122, 0.15) 0%, transparent 45%),
       radial-gradient(circle at 85% 90%, rgba(0, 229, 255, 0.15) 0%, transparent 45%),
       var(--bg);
-    background-image: url('data:image/svg+xml;utf8,<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><text x="15" y="45" font-size="20" fill="rgba(255,255,255,0.015)" font-family="sans-serif">文法</text></svg>'),
+    background-image: url('data:image/svg+xml;utf8,<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><text x="15" y="45" font-size="20" fill="rgba(255,255,255,0.015)" font-family="sans-serif">語彙</text></svg>'),
                       radial-gradient(circle at 15% 10%, rgba(255, 42, 122, 0.15) 0%, transparent 45%),
       radial-gradient(circle at 85% 90%, rgba(0, 229, 255, 0.15) 0%, transparent 45%), var(--bg);
     color: var(--ink); 
@@ -89,19 +91,23 @@
   
   .login-btn { width: 100%; margin-top: 6px; padding: 15px; border-radius: 14px; border: none; cursor: pointer; background: linear-gradient(135deg, var(--sakura), var(--sakura-dk)); color: #fff; font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(255, 42, 122, 0.4); min-height: 50px; }
 
-  /* STUDY */
+  /* STUDY & FLASHCARD */
   .flash { border-radius: 16px; padding: 30px 18px; text-align: center; position: relative; background: radial-gradient(circle at top right, rgba(0, 229, 255, 0.1), transparent), rgba(0,0,0,0.3); border: 1px solid var(--line); min-height: 260px; display: flex; flex-direction: column; justify-content: center; gap: 12px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
   .flash .lvl { position: absolute; top: 12px; left: 14px; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; border: 1px solid; }
   .flash .lvl.n5 { background: rgba(0, 229, 255, 0.1); color: var(--n5); border-color: var(--n5); }
   .flash .lvl.n4 { background: rgba(255, 215, 0, 0.1); color: var(--n4); border-color: var(--n4); }
-  .flash .lvl.n3, .flash .lvl.n2 { background: rgba(255, 42, 122, 0.1); color: var(--sakura); border-color: var(--sakura); }
+  .flash .lvl.n3 { background: rgba(255, 159, 91, 0.1); color: var(--n3); border-color: var(--n3); }
+  .flash .lvl.n2 { background: rgba(255, 42, 122, 0.1); color: var(--n2); border-color: var(--n2); }
   .flash .src { position: absolute; top: 12px; right: 14px; font-size: 10.5px; color: var(--sub); background: rgba(255,255,255,0.05); padding: 3px 6px; border-radius: 6px; }
+  
   .flash .pattern { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 24px; line-height: 1.4; color: #fff; text-shadow: 0 0 12px rgba(255,255,255,0.3); }
   .flash .meaning { color: var(--cyan); font-size: 14px; font-weight: 600; }
   .flash .detail-box { color: var(--ink); font-size: 12.5px; line-height: 1.6; text-align: left; background: rgba(0, 229, 255, 0.05); border: 1px dashed var(--line); border-radius: 10px; padding: 12px 14px; margin-top: 4px; }
   .flash .example-box { background: rgba(255,255,255,0.03); border-left: 3px solid var(--sakura); border-radius: 8px; padding: 12px 14px; text-align: left; margin-top: 8px; }
   .flash .example-jp { font-family: "Noto Sans JP", sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; color: #fff; line-height: 1.5; }
   .flash .example-id { color: var(--sub); font-size: 13px; font-style: italic; }
+  
+  .flash.kotoba-mode .pattern { font-size: 32px; color: var(--mint); letter-spacing: 1px; }
   
   .study-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; gap: 8px; }
   .navbtn { flex: 1; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: rgba(0,0,0,0.3); color: var(--ink); font-weight: 600; font-size: 12.5px; cursor: pointer; min-height: 42px; }
@@ -115,9 +121,9 @@
   
   .setup-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 22px; }
   .setup-box { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 14px; padding: 14px; text-align: left; }
-  .setup-box .lbl { font-size: 11px; color: var(--cyan); font-weight: 700; margin-bottom: 10px; letter-spacing: 1.2px; }
+  .setup-box .lbl { font-size: 11px; color: var(--cyan); font-weight: 700; margin-bottom: 10px; letter-spacing: 1.2px; text-transform: uppercase; }
   .opt-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .opt-row button { flex: 1; min-width: calc(33.3% - 6px); padding: 9px 6px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--sub); font-size: 12px; font-weight: 600; cursor: pointer; min-height: 38px; }
+  .opt-row button { flex: 1; min-width: calc(20% - 6px); padding: 9px 4px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--sub); font-size: 12px; font-weight: 600; cursor: pointer; min-height: 38px; }
   .opt-row button.active { background: var(--sakura); border-color: var(--sakura); color: #fff; box-shadow: 0 0 8px rgba(255, 42, 122, 0.4); }
   
   .play-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; cursor: pointer; background: linear-gradient(135deg, var(--cyan), #0099FF); color: #000; font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 1.2px; box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); min-height: 52px; }
@@ -140,13 +146,6 @@
   .opt { text-align: left; padding: 15px 14px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--ink); cursor: pointer; font-family: "Noto Sans JP", sans-serif; font-weight: 700; font-size: 15px; min-height: 54px; display: flex; align-items: center; }
   .opt.correct { background: rgba(0, 240, 181, 0.15); border-color: var(--mint); color: var(--mint); }
   .opt.wrong { background: rgba(255, 51, 102, 0.15); border-color: var(--red); color: var(--red); }
-
-  /* JUMBLE SENTENCE */
-  .jumble-ans-area { min-height: 54px; border: 2px dashed var(--line); border-radius: 12px; padding: 8px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; background: rgba(0,0,0,0.3); }
-  .jumble-pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; justify-content: center; }
-  .word-chip { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--cyan); background: rgba(0, 229, 255, 0.1); color: #fff; font-family: "Noto Sans JP", sans-serif; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.2s; }
-  .word-chip:active { transform: scale(0.92); }
-  .jumble-submit { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--mint); color: #000; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; }
 
   /* RESULT */
   .result { text-align: center; padding: 4px; }
@@ -200,7 +199,7 @@
         </div>
         <div class="field">
           <label>Kelas (opsional)</label>
-          <input type="text" id="loginKelas" placeholder="Contoh: PCL/N5L1">
+          <input type="text" id="loginKelas" placeholder="Contoh: JLPT N2">
         </div>
         <button class="login-btn" id="loginBtn">Masuk &amp; Mulai</button>
       </div>
@@ -226,17 +225,26 @@
     <div class="panel" id="panel-study">
       <div class="card">
         <h3 class="col-title">📖 Pelajari Materi</h3>
+        
         <div class="modern-select-wrap">
-          <label>Filter Buku / Level</label>
-          <select id="bookSelect" class="modern-select">
-            <option value="all">Semua Level &amp; Buku</option>
-            <option value="mnn1">Minna no Nihongo 1 (N5)</option>
-            <option value="mnn2">Minna no Nihongo 2 (N4)</option>
-            <option value="irodori">Irodori Shokyuu 1</option>
-            <option value="n3">Soumatome N3</option>
-            <option value="n2">Soumatome N2</option>
+          <label>Jenis Materi</label>
+          <select id="typeSelect" class="modern-select">
+            <option value="bunpo">Pola Kalimat (文法)</option>
+            <option value="kotoba">Kosakata &amp; Kanji (N5 - N2)</option>
           </select>
         </div>
+        
+        <div class="modern-select-wrap">
+          <label>Filter Level</label>
+          <select id="bookSelect" class="modern-select">
+            <option value="all">Semua Level</option>
+            <option value="n5">Level N5</option>
+            <option value="n4">Level N4</option>
+            <option value="n3">Level N3</option>
+            <option value="n2" selected>Level N2 (Mulai dari 雨水)</option>
+          </select>
+        </div>
+        
         <div class="flash" id="flashCard"></div>
         <div class="study-nav">
           <button class="navbtn" id="prevBtn">← Sebelumnya</button>
@@ -258,10 +266,8 @@
 </div>
 
 <script>
-/* MASUKKAN LINK GOOGLE APPS SCRIPT DI BAWAH INI BILA SUDAH ADA */
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQ6D2YcJWDNvrfKZzgvAjazDYNJh5kJNdEL12rXHec8h6k_gGDlMvTsrQ-Sbesho56sQ/exec"; 
+const GOOGLE_SCRIPT_URL = ""; 
 
-/* SFX SYNTHESIZER */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playSFX(type) {
   if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -287,173 +293,83 @@ function playSFX(type) {
 }
 
 const PATTERNS = [
-  /* LEVEL N5 */
   {
     level:"N5", src:"Both", pattern:"N1 は N2 です", meaning:"Menyatakan bahwa N1 adalah N2",
     detail:"<b>Penggunaan:</b> Pola dasar mengenalkan identitas/status. Partikel は (wa) menandai topik, です (desu) penutup sopan.",
     example:"わたしは学生です。", tr:"Saya adalah siswa.",
-    blankQ: "わたし＿学生です。", blankAns: "は", blankOpts: ["は", "が", "に", "で"],
-    jumble: ["わたし", "は", "学生", "です"]
+    blankQ: "わたし＿学生です。", blankAns: "は", blankOpts: ["は", "が", "に", "で"], jumble: ["わたし", "は", "学生", "です"]
   },
   {
-    level:"N5", src:"Both", pattern:"これ／それ／あれ は Nです", meaning:"Menunjuk benda: “ini/itu/itu(jauh) adalah...”",
-    detail:"<b>Penggunaan:</b> これ (dekat pembicara), それ (dekat lawan bicara), あれ (jauh dari keduanya).",
-    example:"これは辞書です。", tr:"Ini adalah kamus.",
-    blankQ: "これ＿辞書です。", blankAns: "は", blankOpts: ["は", "を", "へ", "に"],
-    jumble: ["これ", "は", "辞書", "です"]
-  },
-  {
-    level:"N5", src:"Both", pattern:"N は 形容詞です", meaning:"Menyatakan sifat/kondisi dari kata benda",
-    detail:"<b>Penggunaan:</b> Menggambarkan sifat. Adj-i berakhiran い, Adj-na ditutup langsung dengan です.",
-    example:"この部屋は静かです。", tr:"Kamar ini tenang.",
-    blankQ: "この部屋は静か＿。", blankAns: "です", blankOpts: ["です", "ます", "でした", "じゃない"],
-    jumble: ["この", "部屋", "は", "静かです"]
-  },
-  {
-    level:"N5", src:"Both", pattern:"N が あります／います", meaning:"Menyatakan keberadaan benda atau makhluk hidup",
-    detail:"<b>Penggunaan:</b> あります (benda mati/tanaman), います (manusia/hewan).",
-    example:"机の上に本があります。", tr:"Ada buku di atas meja.",
-    blankQ: "机の上に本＿あります。", blankAns: "が", blankOpts: ["が", "を", "は", "に"],
-    jumble: ["机の", "上に", "本が", "あります"]
-  },
-
-  /* LEVEL N4 */
-  {
-    level:"N4", src:"Both", pattern:"～ています", meaning:"Sedang berlangsung, kebiasaan, atau kondisi saat ini",
-    detail:"<b>Perubahan:</b> V-て + います. Dipakai untuk aksi berlangsung, kebiasaan, atau status.",
-    example:"今、雨が降っています。", tr:"Sekarang sedang turun hujan.",
-    blankQ: "今、雨が降っ＿います。", blankAns: "て", blankOpts: ["て", "た", "で", "ない"],
-    jumble: ["今、", "雨が", "降って", "います"]
-  },
-  {
-    level:"N4", src:"Both", pattern:"～てもいいです", meaning:"Menyatakan izin: “Boleh melakukan sesuatu”",
-    detail:"<b>Perubahan:</b> V-て + もいいです. Mengizinkan atau meminta izin aksi.",
-    example:"ここで写真を撮ってもいいです。", tr:"Boleh foto di sini.",
-    blankQ: "ここで写真を撮っ＿いいです。", blankAns: "ても", blankOpts: ["ても", "たら", "ては", "てもん"],
-    jumble: ["ここで", "写真を", "撮っても", "いいです"]
-  },
-
-  /* IRODORI SHOKYUU */
-  {
-    level:"N4", src:"Irodori", pattern:"～という N", meaning:"Menyatakan sebutan: “N yang bernama / disebut...”",
-    detail:"<b>Penggunaan:</b> Mengenalkan nama benda/tempat/orang ke lawan bicara.",
-    example:"「桜」という花が好きです。", tr:"Saya suka bunga yang disebut “sakura”.",
-    blankQ: "「桜」＿いう花が好きです。", blankAns: "と", blankOpts: ["と", "に", "へ", "が"],
-    jumble: ["「桜」と", "いう花が", "好きです"]
-  },
-
-  /* SOUMATOME N3 DENGAN FURIGANA */
-  {
-    level:"N3", src:"N3",
-    pattern:"<ruby>使<rt>し</rt></ruby><ruby>役<rt>やく</rt></ruby><ruby>形<rt>けい</rt></ruby>（～せる／させる）",
-    meaning:"Bentuk Kausatif: Menyuruh, membiarkan, atau memaksa orang lain",
-    detail:"<b>Penggunaan:</b> Subjek membuat orang lain melakukan tindakan.",
-    example:"<ruby>母<rt>はは</rt></ruby>は<ruby>妹<rt>いもうと</rt></ruby>に<ruby>野<rt>や</rt></ruby><ruby>菜<rt>さい</rt></ruby>を<ruby>食<rt>た</rt></ruby>べさせました。",
-    tr:"Ibu menyuruh adik makan sayur.",
-    blankQ: "母は妹に野菜を＿させました。", blankAns: "食べ", blankOpts: ["食べ", "飲む", "見る", "行き"],
-    jumble: ["母は", "妹に", "野菜を", "食べさせました"]
-  },
-
-  /* SOUMATOME N2 DENGAN FURIGANA & WAKTU 45 DETIK */
-  {
-    level: "N2", src: "N2", time: 45,
-    pattern: "～げ", meaning: "Kelihatannya / Berkesan seperti (Ekspresi seseorang)",
-    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Menggambarkan suasana atau ekspresi wajah orang lain dari penampilannya.",
-    example: "<ruby>彼<rt>かの</rt></ruby><ruby>女<rt>じょ</rt></ruby>は<ruby>寂<rt>さび</rt></ruby>しげな<ruby>顔<rt>かお</rt></ruby>をしていた。",
-    tr: "Dia menunjukkan ekspresi kelihatannya kesepian.",
-    blankQ: "彼女は寂し＿な顔をしていた。", blankAns: "げ", blankOpts: ["げ", "がち", "っぽい", "ぎみ"],
-    jumble: ["彼女は", "寂しげな", "顔を", "していた"]
-  },
-  {
-    level: "N2", src: "N2", time: 45,
-    pattern: "～がち", meaning: "Cenderung / Sering kali melakukan (Kecenderungan negatif)",
-    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Menyatakan hal negatif yang sering terjadi atau cenderung dilakukan.",
-    example: "<ruby>一<rt>ひとり</rt></ruby><ruby>人<rt>ぐらし</rt></ruby><ruby>暮<rt>ぐらし</rt></ruby>らしは<ruby>病<rt>びょう</rt></ruby><ruby>気<rt>き</rt></ruby>になりがちだ。",
-    tr: "Hidup sendiri cenderung mudah sakit.",
-    blankQ: "一人暮らしは病気になり＿だ。", blankAns: "がち", blankOpts: ["がち", "げ", "ぎみ", "っぽい"],
-    jumble: ["一人暮らしは", "病気に", "なりがちだ"]
-  },
-  {
-    level: "N2", src: "N2", time: 45,
-    pattern: "～っぽい", meaning: "Kelihatannya / Terkesan seperti sifat tertentu",
-    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Terkesan mirip sifat tertentu dari penampilan luar.",
-    example: "この<ruby>服<rt>ふく</rt></ruby>は<ruby>安<rt>やす</rt></ruby>っぽい。",
-    tr: "Baju ini terkesan murah.",
-    blankQ: "この服は安＿。", blankAns: "っぽい", blankOpts: ["っぽい", "げ", "がち", "ぎみ"],
-    jumble: ["この服は", "安っぽい"]
-  },
-  {
-    level: "N2", src: "N2", time: 45,
-    pattern: "～ぎみ", meaning: "Agak / Sedikit merasa (Gejala awal kondisi tubuh/mental)",
-    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Kondisi fisik atau perasaan yang sedikit memburuk.",
-    example: "<ruby>最<rt>さい</rt></ruby><ruby>近<rt>きん</rt></ruby><ruby>風<rt>かぜ</rt></ruby><ruby>邪<rt>じゃ</rt></ruby>ぎみで、<ruby>熱<rt>ねつ</rt></ruby>がある。",
-    tr: "Belakangan ini agak sedikit flu dan demam.",
-    blankQ: "最近風邪＿で、熱がある。", blankAns: "ぎみ", blankOpts: ["ぎみ", "がち", "げ", "っぽい"],
-    jumble: ["最近", "風邪ぎみで、", "熱がある"]
-  },
-  {
-    level: "N2", src: "N2", time: 45,
-    pattern: "～ものなら", meaning: "Seandainya bisa dilakukan (Harapan yang hampir mustahil)",
-    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> V-Bentuk Potensial + ものなら. Mengungkapkan harapan melakukan hal yang sangat sulit.",
-    example: "やり<ruby>直<rt>なお</rt></ruby>せるものなら、やり直したい。",
-    tr: "Seandainya bisa mengulang kembali, saya ingin mengulangnya.",
-    blankQ: "やり直せる＿、やり直したい。", blankAns: "ものなら", blankOpts: ["ものなら", "ものだから", "ものの", "もの"],
-    jumble: ["やり直せる", "ものなら、", "やり直したい"]
-  },
-  {
-    level: "N2", src: "N2", time: 45,
-    pattern: "～ものだから", meaning: "Karena / Habisnya (Alasan pribadi/pembenaran)",
-    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Memberikan alasan khusus atau meminta pemakluman atas kesalahan.",
-    example: "バスが<ruby>遅<rt>おく</rt></ruby>れたものだから、<ruby>遅<rt>ち</rt></ruby><ruby>刻<rt>こく</rt></ruby>した。",
-    tr: "Karena busnya terlambat, saya jadi datang terlambat.",
-    blankQ: "バスが遅れた＿、遅刻した。", blankAns: "ものだから", blankOpts: ["ものだから", "ものの", "ものなら", "もの"],
-    jumble: ["バスが", "遅れたものだから、", "遅刻した"]
-  },
-  {
-    level: "N2", src: "N2", time: 45,
-    pattern: "～ものの", meaning: "Meskipun / Walaupun demikian (Kenyataan tak sesuai harapan)",
-    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Mengungkapkan kontras antara fakta ideal dengan kenyataan yang terjadi.",
-    example: "<ruby>免<rt>めん</rt></ruby><ruby>許<rt>きょ</rt></ruby>は<ruby>取<rt>と</rt></ruby>ったものの、<ruby>車<rt>くるま</rt></ruby>がない。",
-    tr: "Meskipun sudah dapat SIM, tetapi tidak punya mobil.",
-    blankQ: "免許は取った＿、車がない。", blankAns: "ものの", blankOpts: ["ものの", "ものなら", "ものだから", "もの"],
-    jumble: ["免許は", "取ったものの、", "車がない"]
-  },
-  {
-    level: "N2", src: "N2", time: 45,
-    pattern: "～はもとより", meaning: "Jangankan... (A apalagi B / A sudah pasti, demikian pula B)",
-    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Menegaskan bahwa A sudah pasti, dan B yang tingkatannya lebih tinggi pun sama.",
-    example: "<ruby>彼<rt>かれ</rt></ruby>は<ruby>日<rt>に</rt></ruby><ruby>本<rt>ほん</rt></ruby><ruby>語<rt>ご</rt></ruby>はもとより、<ruby>英<rt>えい</rt></ruby><ruby>語<rt>ご</rt></ruby>も<ruby>話<rt>はな</rt></ruby>せる。",
-    tr: "Jangankan bahasa Jepang, bahasa Inggris pun dia bisa.",
-    blankQ: "彼は日本語＿、英語も話せる。", blankAns: "はもとより", blankOpts: ["はもとより", "はともかく", "抜き", "ならまだしも"],
-    jumble: ["彼は", "日本語はもとより、", "英語も話せる"]
-  },
-  {
-    level: "N2", src: "N2", time: 45,
-    pattern: "～はともかく", meaning: "Mengecualikan / Terlepas dari... (Fokus pada hal lain)",
-    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Menyampingkan topik A dulu untuk memprioritaskan topik B.",
-    example: "<ruby>味<rt>あじ</rt></ruby>はともかく、<ruby>見<rt>み</rt></ruby>た<ruby>目<rt>め</rt></ruby>はいい。",
-    tr: "Terlepas dari rasanya, tampilannya bagus.",
-    blankQ: "味＿、見た目はいい。", blankAns: "はともかく", blankOpts: ["はともかく", "はもとより", "抜きで", "ならまだしも"],
-    jumble: ["味はともかく、", "見た目はいい"]
-  },
-  {
-    level: "N2", src: "N2", time: 45,
-    pattern: "～てたまらない", meaning: "Sangat / Tak tertahankan (Perasaan/sensasi fisik kuat)",
-    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Menjelaskan emosi/sensasi pribadi yang sangat kuat hingga tak tertahankan.",
-    example: "お<ruby>腹<rt>なか</rt></ruby>がすいてたまらない。",
-    tr: "Lapar sekali sampai tak tertahankan.",
-    blankQ: "お腹がすい＿たまらない。", blankAns: "て", blankOpts: ["て", "た", "で", "ない"],
-    jumble: ["お腹が", "すいてたまらない"]
-  },
-  {
-    level: "N2", src: "N2", time: 45,
-    pattern: "～て仕方がない", meaning: "Sangat / Sangat tidak terhindarkan",
-    detail: "<b><ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>:</b> Menyatakan perasaan spontan yang muncul alami dan tak bisa ditahan.",
-    example: "<ruby>暇<rt>ひま</rt></ruby>で<ruby>仕<rt>しか</rt></ruby><ruby>方<rt>かた</rt></ruby>がない。",
-    tr: "Sangat senggang sampai bingung mau melakukan apa.",
-    blankQ: "暇＿仕方がない。", blankAns: "で", blankOpts: ["で", "て", "に", "を"],
-    jumble: ["暇で", "仕方がない"]
+    level:"N2", src:"N2", pattern:"～げ", meaning:"Kelihatannya / Berkesan seperti (Ekspresi seseorang)",
+    detail:"<b>使い方:</b> Menggambarkan suasana atau ekspresi wajah orang lain dari penampilannya.",
+    example:"彼女は寂しげな顔をしていた。", tr:"Dia menunjukkan ekspresi kelihatannya kesepian.",
+    blankQ: "彼女は寂し＿な顔をしていた。", blankAns: "げ", blankOpts: ["げ", "がち", "っぽい", "ぎみ"], jumble: ["彼女は", "寂しげな", "顔を", "していた"]
   }
+];
+
+/* DATABASE KOTOBA & KANJI (Lengkap N5, N4, N3, dan N2 dari data yang diberikan) */
+const KOTOBA = [
+  // --- N2 (Dimulai dari 雨水) ---
+  { level: "N2", src: "N2", jp: "雨水", meaning: "rain water" },
+  { level: "N2", src: "N2", jp: "甘やかす", meaning: "to pamper; to spoil" },
+  { level: "N2", src: "N2", jp: "案外", meaning: "unexpectedly; surprisingly" },
+  { level: "N2", src: "N2", jp: "安易", meaning: "easy; simple; lighthearted" },
+  { level: "N2", src: "N2", jp: "安価", meaning: "low-priced; cheap; inexpensive" },
+  { level: "N2", src: "N2", jp: "仰向け", meaning: "face up" },
+  { level: "N2", src: "N2", jp: "荒い", meaning: "rough; wild; violent; rude" },
+  { level: "N2", src: "N2", jp: "洗い出す", meaning: "to reveal something by washing the surface" },
+  { level: "N2", src: "N2", jp: "予め", meaning: "beforehand; in advance; previously" },
+  { level: "N2", src: "N2", jp: "争う", meaning: "to compete; to contest; to contend" },
+  { level: "N2", src: "N2", jp: "改める", meaning: "to change; to alter; to revise" },
+  { level: "N2", src: "N2", jp: "荒れる", meaning: "to be stormy; to be rough" },
+  { level: "N2", src: "N2", jp: "焦り", meaning: "impatience" },
+  { level: "N2", src: "N2", jp: "焦る", meaning: "to be in a hurry; to be impatient" },
+  { level: "N2", src: "N2", jp: "足を運ぶ", meaning: "to go; to come; to show up" },
+  { level: "N2", src: "N2", jp: "圧勝", meaning: "complete victory" },
+  { level: "N2", src: "N2", jp: "宛", meaning: "addressed to" },
+  { level: "N2", src: "N2", jp: "当てはまる", meaning: "to apply; to be applicable" },
+  { level: "N2", src: "N2", jp: "後回し", meaning: "putting off; postponing" },
+  { level: "N2", src: "N2", jp: "後戻り", meaning: "going backward; turning back" },
+  { level: "N2", src: "N2", jp: "あっという間", meaning: "a blink of time" },
+  { level: "N2", src: "N2", jp: "厚かましい", meaning: "impudent; shameless; brazen" },
+  { level: "N2", src: "N2", jp: "怪しい", meaning: "suspicious; dubious; doubtful" },
+  { level: "N2", src: "N2", jp: "歩み寄る", meaning: "to compromise; to meet halfway" },
+  { level: "N2", src: "N2", jp: "歩む", meaning: "to walk; to go on foot" },
+  { level: "N2", src: "N2", jp: "鮮やか", meaning: "vivid; bright; brilliant" },
+  { level: "N2", src: "N2", jp: "倍増", meaning: "double" },
+  { level: "N2", src: "N2", jp: "離れ", meaning: "separation from; loss of interest in" },
+  { level: "N2", src: "N2", jp: "別荘", meaning: "holiday house; vacation home; villa" },
+  { level: "N2", src: "N2", jp: "敏感", meaning: "sensitive; alert; aware" },
+  { level: "N2", src: "N2", jp: "牧場", meaning: "farm (livestock); ranch" },
+  { level: "N2", src: "N2", jp: "膨大", meaning: "huge; vast; enormous" },
+  { level: "N2", src: "N2", jp: "分解", meaning: "disassembly; analysis" },
+  { level: "N2", src: "N2", jp: "着実", meaning: "steady; sound; solid" },
+
+  // --- N3 ---
+  { level: "N3", src: "N3", jp: "油", meaning: "oil" },
+  { level: "N3", src: "N3", jp: "愛", meaning: "love, affection, care" },
+  { level: "N3", src: "N3", jp: "愛情", meaning: "love, affection" },
+  { level: "N3", src: "N3", jp: "相変わらず", meaning: "as ever, as usual, the same" },
+  { level: "N3", src: "N3", jp: "影響", meaning: "influence, effect" },
+  { level: "N3", src: "N3", jp: "緊張", meaning: "tension, nervousness" },
+  { level: "N3", src: "N3", jp: "工夫", meaning: "solving ingeniously" },
+  { level: "N3", src: "N3", jp: "満足", meaning: "satisfaction, contentment" },
+
+  // --- N4 ---
+  { level: "N4", src: "N4", jp: "上がる", meaning: "to rise, to ascend" },
+  { level: "N4", src: "N4", jp: "挨拶", meaning: "greeting, salutation" },
+  { level: "N4", src: "N4", jp: "味", meaning: "flavor, taste" },
+  { level: "N4", src: "N4", jp: "赤ちゃん", meaning: "baby, infant" },
+  { level: "N4", src: "N4", jp: "案内", meaning: "guidance, leading" },
+  { level: "N4", src: "N4", jp: "安心", meaning: "relief, peace of mind" },
+  { level: "N4", src: "N4", jp: "安全", meaning: "safety" },
+  { level: "N4", src: "N4", jp: "引っ越す", meaning: "to move (house)" },
+
+  // --- N5 ---
+  { level: "N5", src: "N5", jp: "秋", meaning: "musim gugur" },
+  { level: "N5", src: "N5", jp: "朝", meaning: "pagi" },
+  { level: "N5", src: "N5", jp: "朝ご飯", meaning: "sarapan" },
+  { level: "N5", src: "N5", jp: "友達", meaning: "teman" }
 ];
 
 const $ = id => document.getElementById(id);
@@ -470,9 +386,11 @@ function switchTab(tab) {
   if (tab === 'game') {
     $("tabGameBtn").classList.add("active");
     $("panel-game").classList.add("active");
+    renderStart();
   } else if (tab === 'study') {
     $("tabStudyBtn").classList.add("active");
     $("panel-study").classList.add("active");
+    applyStudyFilter();
   } else if (tab === 'history') {
     $("tabHistoryBtn").classList.add("active");
     $("panel-history").classList.add("active");
@@ -504,14 +422,19 @@ function initApp(){
   const w = $("whoami");
   w.style.display = "block";
   w.innerHTML = `👤 <b>${student.nama}</b> &middot; NIS ${student.nis}${student.kelas ? " &middot; "+student.kelas : ""}`;
-  renderFlash();
+  applyStudyFilter();
   renderStart();
 }
 
-let studyBookFilter = "all";
-let studyList = PATTERNS.slice();
+let studyMode = "bunpo";
+let studyBookFilter = "n2";
+let studyList = [];
 let studyIdx = 0;
 
+$("typeSelect").addEventListener("change", (e)=>{
+  studyMode = e.target.value;
+  applyStudyFilter();
+});
 $("bookSelect").addEventListener("change", (e)=>{
   studyBookFilter = e.target.value;
   applyStudyFilter();
@@ -520,39 +443,56 @@ $("bookSelect").addEventListener("change", (e)=>{
 function matchesBook(p, filterVal){
   switch(filterVal){
     case "all": return true;
-    case "mnn1": return p.level==="N5" && (p.src==="MNN" || p.src==="Both");
-    case "mnn2": return p.level==="N4" && (p.src==="MNN" || p.src==="Both");
-    case "irodori": return p.src==="Irodori" || p.src==="Both";
-    case "n3": return p.src==="N3";
+    case "n5": return p.level==="N5";
+    case "n4": return p.level==="N4";
+    case "n3": return p.level==="N3";
     case "n2": return p.level==="N2";
     default: return true;
   }
 }
 
 function applyStudyFilter(){
-  studyList = PATTERNS.filter(p=>matchesBook(p, studyBookFilter));
+  let dataSource = studyMode === "bunpo" ? PATTERNS : KOTOBA;
+  studyList = dataSource.filter(p=>matchesBook(p, studyBookFilter));
   studyIdx = 0;
   renderFlash();
 }
 
 function renderFlash(){
   if(!studyList.length){
-    $("flashCard").innerHTML = `<div class="meaning">Tidak ada pola untuk filter ini.</div>`;
+    $("flashCard").innerHTML = `<div class="meaning">Tidak ada materi untuk filter ini.</div>`;
+    $("flashCard").classList.remove("kotoba-mode");
+    $("studyProgress").textContent = `0/0`;
+    $("prevBtn").disabled = true; $("nextBtn").disabled = true;
     return;
   }
+  
   const p = studyList[studyIdx];
-  const srcLabel = p.src==="Both" ? "MNN &amp; Irodori" : (p.src==="MNN" ? (p.level==="N5" ? "MNN 1" : "MNN 2") : (p.src==="Irodori" ? "Irodori" : (p.level==="N3" ? "Soumatome N3" : "Soumatome N2")));
-  $("flashCard").innerHTML = `
-    <div class="lvl ${p.level.toLowerCase()}">${p.level}</div>
-    <div class="src">${srcLabel}</div>
-    <div class="pattern">${p.pattern}</div>
-    <div class="meaning">${p.meaning}</div>
-    ${p.detail ? `<div class="detail-box">${p.detail}</div>` : ""}
-    <div class="example-box">
-      <div class="example-jp">${p.example}</div>
-      <div class="example-id">${p.tr}</div>
-    </div>
-  `;
+  const srcLabel = p.level;
+  
+  if (studyMode === "bunpo") {
+    $("flashCard").classList.remove("kotoba-mode");
+    $("flashCard").innerHTML = `
+      <div class="lvl ${p.level.toLowerCase()}">${p.level}</div>
+      <div class="src">${srcLabel}</div>
+      <div class="pattern">${p.pattern}</div>
+      <div class="meaning">${p.meaning}</div>
+      ${p.detail ? `<div class="detail-box">${p.detail}</div>` : ""}
+      <div class="example-box">
+        <div class="example-jp">${p.example}</div>
+        <div class="example-id">${p.tr}</div>
+      </div>
+    `;
+  } else {
+    $("flashCard").classList.add("kotoba-mode");
+    $("flashCard").innerHTML = `
+      <div class="lvl ${p.level.toLowerCase()}">${p.level}</div>
+      <div class="src">${srcLabel}</div>
+      <div class="pattern">${p.jp}</div>
+      <div class="meaning" style="margin-top:15px;font-size:18px;">${p.meaning}</div>
+    `;
+  }
+  
   $("studyProgress").textContent = `${studyIdx+1}/${studyList.length}`;
   $("prevBtn").disabled = studyIdx===0;
   $("nextBtn").disabled = studyIdx===studyList.length-1;
@@ -560,17 +500,9 @@ function renderFlash(){
 $("prevBtn").addEventListener("click", ()=>{ if(studyIdx>0){studyIdx--; renderFlash();} });
 $("nextBtn").addEventListener("click", ()=>{ if(studyIdx<studyList.length-1){studyIdx++; renderFlash();} });
 
-function timeForPattern(p){
-  if(p.time) return p.time;
-  if(p.level==="N2") return 45;
-  if(p.level==="N3") return 25;
-  if(p.level==="N4") return 20;
-  return 15;
-}
-
-let gState = null;
-let setupScope = "all";
+let setupScope = "n2";
 let setupCount = 20;
+let setupType = "kotoba";
 
 function shuffle(arr){
   const a = arr.slice();
@@ -578,75 +510,79 @@ function shuffle(arr){
   return a;
 }
 
-function buildQuestions(scope, count){
-  const pool = PATTERNS.filter(p=>matchesBook(p, scope));
-  const n = count==="semua" ? pool.length : Math.min(parseInt(count), pool.length);
-  const chosen = shuffle(pool).slice(0, n);
-  
-  const qTypes = ['mc_pattern', 'mc_translation', 'fill_blank', 'jumble'];
-  
-  return chosen.map(correct => {
-    const type = qTypes[Math.floor(Math.random() * qTypes.length)];
+function buildQuestions(scope, count, typeMode){
+  if (typeMode === "bunpo") {
+    const pool = PATTERNS.filter(p=>matchesBook(p, scope));
+    if(!pool.length) return [];
+    const n = count==="semua" ? pool.length : Math.min(parseInt(count), pool.length);
+    const chosen = shuffle(pool).slice(0, n);
     
-    if (type === 'fill_blank' && correct.blankQ) {
-      const distractors = shuffle(correct.blankOpts.filter(o => o !== correct.blankAns)).slice(0,3);
-      return {
-        type: 'fill_blank', correct,
-        qText: `Isi bagian kosong: <b>${correct.blankQ}</b><br><small style="color:var(--sub)">(${correct.tr})</small>`,
-        correctAns: correct.blankAns,
-        options: shuffle([correct.blankAns, ...distractors])
-      };
-    } else if (type === 'jumble' && correct.jumble) {
-      return {
-        type: 'jumble', correct,
-        qText: `Susun kata menjadi kalimat yang tepat untuk terjemahan:<br><b>“${correct.tr}”</b>`,
-        words: shuffle(correct.jumble),
-        correctSeq: correct.jumble.join("")
-      };
-    } else if (type === 'mc_translation') {
-      const distractorsPool = PATTERNS.filter(p=>p.tr!==correct.tr);
-      const distractors = shuffle(distractorsPool).slice(0,3);
-      const options = shuffle([correct, ...distractors]);
-      return {
-        type: 'mc_translation', correct,
-        qText: `Apa arti terjemahan dari pola <b>${correct.pattern}</b>?`,
-        correctAns: correct.meaning,
-        options: options.map(o => o.meaning)
-      };
-    } else {
+    return chosen.map(correct => {
       const distractorsPool = PATTERNS.filter(p=>p.pattern!==correct.pattern);
       const distractors = shuffle(distractorsPool).slice(0,3);
       const options = shuffle([correct, ...distractors]);
       return {
         type: 'mc_pattern', correct,
         qText: `Pola kalimat untuk: <b>${correct.meaning}</b>?`,
-        correctAns: correct.pattern,
-        options: options.map(o => o.pattern)
+        correctAns: correct.pattern, options: options.map(o => o.pattern)
       };
-    }
-  });
+    });
+  } 
+  else if (typeMode === "kotoba") {
+    const pool = KOTOBA.filter(p=>matchesBook(p, scope));
+    if(!pool.length) return [];
+    const n = count==="semua" ? pool.length : Math.min(parseInt(count), pool.length);
+    const chosen = shuffle(pool).slice(0, n);
+    
+    return chosen.map(correct => {
+      const rand = Math.random();
+      if (rand < 0.5) {
+        const distractors = shuffle(KOTOBA.filter(p=>p.jp!==correct.jp)).slice(0,3);
+        const options = shuffle([correct, ...distractors]);
+        return {
+          type: 'mc_kotoba_jp', correct,
+          qText: `Apa bahasa Jepangnya <b>"${correct.meaning}"</b>?`,
+          correctAns: correct.jp, options: options.map(o => o.jp)
+        };
+      } else {
+        const distractors = shuffle(KOTOBA.filter(p=>p.meaning!==correct.meaning)).slice(0,3);
+        const options = shuffle([correct, ...distractors]);
+        return {
+          type: 'mc_kotoba_id', correct,
+          qText: `Apa arti dari kanji/kosakata <b>${correct.jp}</b>?`,
+          correctAns: correct.meaning, options: options.map(o => o.meaning)
+        };
+      }
+    });
+  }
 }
 
 function renderStart(){
   $("gameArea").innerHTML = `
     <div class="start-screen">
-      <h2>Siap uji ingatan pola kalimatmu?</h2>
-      <p>Kuis berisi variasi Pilihan Ganda, Isi Titik-Titik, dan Susun Kalimat.</p>
+      <h2>Siap uji ingatanmu?</h2>
+      <p>Pilih jenis dan cakupan kuis, lalu jawab sebelum waktu habis!</p>
       <div class="setup-grid">
         <div class="setup-box">
-          <div class="lbl">CAKUPAN SOAL</div>
+          <div class="lbl">JENIS KUIS</div>
+          <div class="opt-row" id="typeRow">
+            <button data-v="bunpo">Pola Kalimat</button>
+            <button data-v="kotoba" class="active">Kosakata &amp; Kanji</button>
+          </div>
+        </div>
+        <div class="setup-box">
+          <div class="lbl">CAKUPAN LEVEL</div>
           <div class="opt-row" id="scopeRow">
-            <button data-v="all" class="active">Semua</button>
-            <button data-v="mnn1">MNN 1</button>
-            <button data-v="mnn2">MNN 2</button>
-            <button data-v="irodori">Irodori</button>
-            <button data-v="n3">Soumatome N3</button>
-            <button data-v="n2">Soumatome N2</button>
+            <button data-v="all">Semua</button>
+            <button data-v="n5">N5</button>
+            <button data-v="n4">N4</button>
+            <button data-v="n3">N3</button>
+            <button data-v="n2" class="active">N2</button>
           </div>
         </div>
         <div class="setup-box">
           <div class="lbl">JUMLAH SOAL</div>
-          <div class="opt-row" id="countRow">
+          <div class="opt-row" id="countRow" style="grid-template-columns: repeat(4, 1fr);">
             <button data-v="10">10</button>
             <button data-v="20" class="active">20</button>
             <button data-v="30">30</button>
@@ -654,9 +590,16 @@ function renderStart(){
           </div>
         </div>
       </div>
-      <button class="play-btn" id="startBtn">▶ Mulai Penilaian</button>
+      <button class="play-btn" id="startBtn">▶ Mulai Kuis</button>
     </div>
   `;
+  
+  document.querySelectorAll("#typeRow button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      document.querySelectorAll("#typeRow button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active"); setupType = b.dataset.v;
+    });
+  });
   document.querySelectorAll("#scopeRow button").forEach(b=>{
     b.addEventListener("click", ()=>{
       document.querySelectorAll("#scopeRow button").forEach(x=>x.classList.remove("active"));
@@ -669,16 +612,22 @@ function renderStart(){
       b.classList.add("active"); setupCount = b.dataset.v;
     });
   });
+  
   $("startBtn").addEventListener("click", startGame);
 }
 
+let gState = null;
 function startGame(){
+  const qs = buildQuestions(setupScope, setupCount, setupType);
+  if(qs.length === 0) {
+    alert("Maaf, belum ada soal untuk filter tersebut."); return;
+  }
+  
   gState = {
-    questions: buildQuestions(setupScope, setupCount),
+    questions: qs,
     qi: 0, score: 0, streak: 0, correctCount: 0, misses: [],
     timer: null, timeLeft: 20, timeTotal: 20, locked: false,
-    startedAt: new Date(),
-    userJumble: []
+    startedAt: new Date(), userJumble: []
   };
   renderQuestion();
 }
@@ -686,14 +635,11 @@ function startGame(){
 function renderQuestion(){
   clearInterval(gState.timer);
   const q = gState.questions[gState.qi];
-  const qTime = timeForPattern(q.correct);
+  const qTime = 20;
   gState.timeLeft = qTime; gState.timeTotal = qTime;
   gState.locked = false;
-  gState.userJumble = [];
 
-  let typeLabel = "Pilihan Ganda";
-  if (q.type === 'fill_blank') typeLabel = "Isi Titik-Titik";
-  if (q.type === 'jumble') typeLabel = "Susun Kalimat";
+  let typeLabel = setupType === "bunpo" ? "Pola Kalimat" : "Kosakata & Kanji";
 
   $("gameArea").innerHTML = `
     <div class="hud">
@@ -703,48 +649,18 @@ function renderQuestion(){
     <div class="timerbar-track"><div class="timerbar-fill" id="timerFill"></div></div>
     <div class="qcard">
       <div class="qtype">[ ${typeLabel} ]</div>
-      <div class="qnum">Soal ${gState.qi+1}/${gState.questions.length} &middot; <span style="color:${q.correct.level==='N5'?'var(--n5)':(q.correct.level==='N4'?'var(--n4)':'var(--sakura)')}">${q.correct.level}</span> &middot; ${qTime}d</div>
+      <div class="qnum">Soal ${gState.qi+1}/${gState.questions.length} &middot; <span style="color:${q.correct.level==='N2'?'var(--n2)':(q.correct.level==='N3'?'var(--n3)':'var(--n5)')}">${q.correct.level}</span></div>
       <div class="qtext">${q.qText}</div>
     </div>
     
-    ${q.type === 'jumble' ? `
-      <div class="jumble-ans-area" id="jumbleAns"></div>
-      <div class="jumble-pool" id="jumblePool">
-        ${q.words.map((w,i) => `<button class="word-chip" data-w="${w}" id="chip-${i}">${w}</button>`).join("")}
-      </div>
-      <button class="jumble-submit" id="jumbleSub">Jawab / Periksa</button>
-    ` : `
-      <div class="options" id="optionsWrap">
-        ${q.options.map((o,i)=>`<button class="opt" data-v="${o}">${o}</button>`).join("")}
-      </div>
-    `}
+    <div class="options" id="optionsWrap">
+      ${q.options.map((o,i)=>`<button class="opt" data-v="${o}">${o}</button>`).join("")}
+    </div>
   `;
 
-  if (q.type === 'jumble') {
-    document.querySelectorAll(".word-chip").forEach(chip => {
-      chip.addEventListener("click", () => {
-        if (gState.locked) return;
-        const w = chip.dataset.w;
-        gState.userJumble.push(w);
-        chip.style.visibility = "hidden";
-        
-        const ansArea = $("jumbleAns");
-        const node = document.createElement("span");
-        node.className = "word-chip";
-        node.textContent = w;
-        ansArea.appendChild(node);
-      });
-    });
-    
-    $("jumbleSub").addEventListener("click", () => {
-      const userStr = gState.userJumble.join("");
-      selectAnswer(userStr === q.correctSeq);
-    });
-  } else {
-    document.querySelectorAll(".opt").forEach(btn=>{
-      btn.addEventListener("click", ()=> selectAnswer(btn.dataset.v === q.correctAns));
-    });
-  }
+  document.querySelectorAll(".opt").forEach(btn=>{
+    btn.addEventListener("click", ()=> selectAnswer(btn.dataset.v === q.correctAns));
+  });
 
   const fill = $("timerFill");
   gState.timer = setInterval(()=>{
@@ -800,29 +716,13 @@ function renderResult(){
 
   saveHistoryToLocal({
     tanggal: dateStr,
+    jenis: setupType === 'bunpo' ? 'Pola Kalimat' : 'Kosakata & Kanji',
     skor: gState.score,
     benar: gState.correctCount,
     total: total,
     akurasi: acc,
     nilai: grade.letter
   });
-
-  if(GOOGLE_SCRIPT_URL) {
-    fetch(GOOGLE_SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tanggal: dateStr,
-        nama: student.nama,
-        nis: student.nis,
-        kelas: student.kelas || "-",
-        skor: gState.score,
-        akurasi: acc,
-        nilai: grade.letter
-      })
-    }).catch(e=>console.log(e));
-  }
 
   $("gameArea").innerHTML = `
     <div class="result">
@@ -832,12 +732,11 @@ function renderResult(){
       <div class="sub">poin &middot; ${gState.correctCount}/${total} benar (${acc}%)</div>
       <div class="export-row">
         <button id="copyBtn">📋 Salin Hasil</button>
-        <button id="downloadBtn">🖼️ Unduh Gambar</button>
       </div>
       ${gState.misses.length ? `
         <div style="text-align:left;font-weight:700;font-size:13px;margin-bottom:8px;">Perlu diulang:</div>
         <div class="miss-list">
-          ${gState.misses.map(m=>`<div class="miss-item"><div class="mi-pattern">${m.pattern}</div><div class="mi-meaning">${m.meaning}</div></div>`).join("")}
+          ${gState.misses.map(m=>`<div class="miss-item"><div class="mi-pattern">${setupType === 'bunpo' ? m.pattern : m.jp}</div><div class="mi-meaning">${m.meaning}</div></div>`).join("")}
         </div>
       ` : `<div class="no-miss">🏆 Sempurna! Semua benar.</div>`}
       <button class="play-btn" id="againBtn" style="margin-top:10px;">↻ Main Lagi</button>
@@ -845,14 +744,13 @@ function renderResult(){
   `;
 
   $("copyBtn").addEventListener("click", ()=>{
-    const text = `HASIL PENILAIAN POLA KALIMAT\nNama: ${student.nama}\nNIS: ${student.nis}\nKelas: ${student.kelas||"-"}\nSkor: ${gState.score} poin\nBenar: ${gState.correctCount}/${total} (${acc}%)\nNilai: ${grade.letter}`;
+    const text = `HASIL PENILAIAN ${setupType === 'bunpo' ? 'POLA KALIMAT' : 'KOSAKATA & KANJI'}\nNama: ${student.nama}\nNIS: ${student.nis}\nKelas: ${student.kelas||"-"}\nSkor: ${gState.score} poin\nBenar: ${gState.correctCount}/${total} (${acc}%)\nNilai: ${grade.letter}`;
     navigator.clipboard.writeText(text).then(()=>{
       $("copyBtn").textContent = "✓ Tersalin";
       setTimeout(()=> $("copyBtn").textContent = "📋 Salin Hasil", 1500);
     });
   });
 
-  $("downloadBtn").addEventListener("click", ()=> downloadResultCard(total, acc, grade, dateStr));
   $("againBtn").addEventListener("click", renderStart);
 }
 
@@ -875,82 +773,10 @@ function renderHistory() {
   const list = JSON.parse(saved);
   listEl.innerHTML = list.map(h => `
     <div class="history-item">
-      <div class="hi-title">⭐ Skor: ${h.skor} (${h.benar}/${h.total} Benar - ${h.akurasi}%) - Nilai: ${h.nilai}</div>
+      <div class="hi-title">[${h.jenis}] ⭐ Skor: ${h.skor} (${h.benar}/${h.total} Benar - ${h.akurasi}%) - Nilai: ${h.nilai}</div>
       <div class="hi-sub">🕒 ${h.tanggal}</div>
     </div>
   `).join("");
-}
-
-function downloadResultCard(total, acc, grade, dateStr){
-  const cv = document.createElement("canvas");
-  cv.width = 900; cv.height = 560;
-  const ctx = cv.getContext("2d");
-  ctx.fillStyle = "#0A0A14"; ctx.fillRect(0,0,900,560);
-
-  let glow = ctx.createRadialGradient(120,90,0,120,90,320);
-  glow.addColorStop(0,"rgba(255,42,122,0.25)"); glow.addColorStop(1,"rgba(255,42,122,0)");
-  ctx.fillStyle = glow; ctx.fillRect(0,0,900,560);
-  glow = ctx.createRadialGradient(800,480,0,800,480,320);
-  glow.addColorStop(0,"rgba(0,229,255,0.22)"); glow.addColorStop(1,"rgba(0,229,255,0)");
-  ctx.fillStyle = glow; ctx.fillRect(0,0,900,560);
-
-  ctx.shadowColor = "#00E5FF"; ctx.shadowBlur = 12;
-  ctx.fillStyle = "#00E5FF"; ctx.font = "bold 24px Arial";
-  ctx.fillText("🎮 NAFIS SENSEI ゲームコーナー", 50, 58);
-  ctx.shadowBlur = 0;
-  ctx.fillStyle = "#94A3B8"; ctx.font = "bold 15px Arial";
-  ctx.fillText("HASIL PENILAIAN — POLA KALIMAT", 50, 80);
-
-  ctx.strokeStyle = "rgba(0,229,255,0.25)"; ctx.lineWidth=2;
-  ctx.beginPath(); ctx.moveTo(50,96); ctx.lineTo(850,96); ctx.stroke();
-
-  ctx.fillStyle = "#E2E8F0"; ctx.font = "bold 30px Arial";
-  ctx.fillText(student.nama, 50, 150);
-  ctx.fillStyle = "#94A3B8"; ctx.font = "18px Arial";
-  ctx.fillText(`NIS ${student.nis}${student.kelas ? "  ·  "+student.kelas : ""}`, 50, 180);
-  ctx.fillText(dateStr, 50, 207);
-
-  const gradeColorMap = {"A":"#00F0B5","B":"#00E5FF","C":"#FFD700","D":"#FF9F5B","E":"#FF3366"};
-  const gc = gradeColorMap[grade.letter] || "#00E5FF";
-  ctx.beginPath(); ctx.arc(770, 160, 65, 0, Math.PI*2);
-  ctx.fillStyle = gc; ctx.globalAlpha = 0.16; ctx.fill(); ctx.globalAlpha = 1;
-  ctx.lineWidth = 4; ctx.strokeStyle = gc; ctx.shadowColor = gc; ctx.shadowBlur = 18; ctx.stroke(); ctx.shadowBlur = 0;
-  ctx.fillStyle = "#E2E8F0"; ctx.font = "bold 46px Arial"; ctx.textAlign = "center";
-  ctx.fillText(grade.letter, 770, 178); ctx.textAlign = "left";
-
-  ctx.fillStyle = "rgba(32,32,54,0.9)";
-  roundRect(ctx, 50, 255, 800, 130, 16); ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,0.06)"; ctx.lineWidth = 1;
-  roundRect(ctx, 50, 255, 800, 130, 16); ctx.stroke();
-
-  ctx.shadowColor = "#FFD700"; ctx.shadowBlur = 10;
-  ctx.fillStyle = "#FFD700"; ctx.font = "bold 60px Arial";
-  ctx.fillText(String(gState.score), 80, 335);
-  ctx.shadowBlur = 0; ctx.fillStyle = "#94A3B8"; ctx.font = "18px Arial";
-  ctx.fillText("poin", 80, 365);
-
-  ctx.fillStyle = "#E2E8F0"; ctx.font = "bold 26px Arial";
-  ctx.fillText(`${gState.correctCount} / ${total} benar`, 320, 315);
-  ctx.fillStyle = "#94A3B8"; ctx.font = "18px Arial";
-  ctx.fillText(`Akurasi ${acc}%`, 320, 350);
-
-  ctx.fillStyle = "#6B7A99"; ctx.font = "italic 14px Arial";
-  ctx.fillText("Dibuat otomatis oleh Nafis Sensei ゲームコーナー", 50, 430);
-
-  const link = document.createElement("a");
-  link.download = `hasil_${student.nis}_${student.nama.replace(/\s+/g,"_")}.png`;
-  link.href = cv.toDataURL("image/png");
-  link.click();
-}
-
-function roundRect(ctx,x,y,w,h,r){
-  ctx.beginPath();
-  ctx.moveTo(x+r,y);
-  ctx.arcTo(x+w,y,x+w,y+h,r);
-  ctx.arcTo(x+w,y+h,x,y+h,r);
-  ctx.arcTo(x,y+h,x,y,r);
-  ctx.arcTo(x,y,x+w,y,r);
-  ctx.closePath();
 }
 </script>
 </body>
