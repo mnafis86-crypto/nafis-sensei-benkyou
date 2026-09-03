@@ -577,5 +577,476 @@ A「いつか行けるといいですね。日本のすしはほんとうにお�
         evidence: "一日中、選択（せんたく）と決断をし、その結果を自分一人でひき受けねばならない。"
       }
     ]
+  },
+  {
+    level: "N4",
+    id: "dokkai-mezamashi-dokei",
+    title: "目覚まし時計",
+    passage:
+`さとう　「今月から仕事の時間が早くなったそうだね。」
+すずき　「ええ。でも、朝仕事の時間に間に合わなくて……。」
+さとう　「えっ、間に合わない？」
+すずき　「［　１　］。」
+さとう　「ふん、どんな時計？」
+すずき　「大きな音が出る時計です。ベッドのそばに四つおきました。」
+さとう　「へえ、四つも！いっしょに音が出たら、とても大きいね。」
+すずき　「ええ、妹に［　２　］とおこられました。わたしも音は聞こえるんですが、すぐ止めてまたねてしまうんです。」
+さとう　「そうか。」
+すずき　「妹におこられてもいいから、早く起きたいんです。どうしたらいいでしょうか。」
+さとう　「そうだね。まず、時計は［　３　］ようにするといいよ。たとえば、6時に起きたかったら5時50分に。」
+すずき　「10分前ですね。」
+さとう　「そう。それから、時計をいろいろな場所におくといいよ。四つの時計がぜんぶちがう場所にあったら、音を止めるために起きなければならないから。」
+すずき　「なるほど！そうですね。すぐにやってみます。」`,
+    questions: [
+      {
+        qText: "［　１　］には何を入れますか。",
+        options: [
+          "時計を買ったから、だいじょうぶです",
+          "時計を買ったのに、起きられないんです",
+          "お金がないから、時計が買えないんです",
+          "店に行ったのに、いい時計がなかったんです"
+        ],
+        correctAns: "時計を買ったのに、起きられないんです",
+        explanation: "Setelah kalimat ini, Suzuki tetap menjelaskan soal jamnya (jam besar, ditaruh 4 buah di dekat ranjang) — jadi dia SUDAH punya jam, tapi tetap tidak bisa bangun tepat waktu. Itu sebabnya さとう heran ('えっ、間に合わない？').",
+        evidence: "すずき「大きな音が出る時計です。ベッドのそばに四つおきました。」"
+      },
+      {
+        qText: "［　２　］には何を入れますか。",
+        options: [
+          "音がうるさくてこまる",
+          "音が小さくて聞こえない",
+          "なかなか起きられない",
+          "もっと時間を早くしてください"
+        ],
+        correctAns: "音がうるさくてこまる",
+        explanation: "Empat jam berbunyi bersamaan (さとう bilang 'とても大きいね' = pasti sangat berisik). Yang wajar membuat adik marah adalah BUNYINYA yang berisik/mengganggu, bukan soal jam kecil tak terdengar (itu kebalikannya) atau soal waktu.",
+        evidence: "さとう「へえ、四つも！いっしょに音が出たら、とても大きいね。」"
+      },
+      {
+        qText: "［　３　］には何を入れますか。",
+        options: [
+          "音が大きいものだけ使う",
+          "時間が見やすいものを使う",
+          "一つずつちがう時間に音が出る",
+          "起きたい時間の少し前に音が出る"
+        ],
+        correctAns: "起きたい時間の少し前に音が出る",
+        explanation: "Contoh yang diberikan さとう langsung menjelaskan ini: mau bangun jam 6, maka jam disetel 5:50 (10 menit sebelumnya). Jadi sarannya adalah menyetel alarm sedikit SEBELUM waktu bangun yang diinginkan.",
+        evidence: "たとえば、6時に起きたかったら5時50分に。"
+      },
+      {
+        qText: "これからすずきさんは時計をどこにおきますか。（Ilustrasi asli berupa 4 diagram kamar; di sini diringkas menjadi pilihan teks.）",
+        options: [
+          "4個の時計を全部、ベッドのそばの同じ机の上に並べておく",
+          "2個の時計だけをベッドの頭の近くにまとめておく",
+          "全部の時計をドアの近くの一か所に集めておく",
+          "4個の時計を部屋のあちこち、ちがう場所にバラバラにおく"
+        ],
+        correctAns: "4個の時計を部屋のあちこち、ちがう場所にバラバラにおく",
+        explanation: "さとう menyarankan menaruh jam di berbagai tempat yang BERBEDA-beda supaya Suzuki terpaksa bangun dan berjalan untuk mematikan tiap jam. Jadi ke depannya jam-jamnya akan disebar ke sudut-sudut kamar yang berlainan, bukan dikumpulkan jadi satu.",
+        evidence: "それから、時計をいろいろな場所におくといいよ。四つの時計がぜんぶちがう場所にあったら、音を止めるために起きなければならないから。"
+      }
+    ]
+  },
+  {
+    level: "N4",
+    id: "dokkai-pet-apartment",
+    title: "ペットと住めるアパート",
+    passage:
+`さいきん犬やねこなどのペットといっしょに住めるアパートがふえてきています。10年前、この町にはペットと住めるアパートがほとんどありませんでしたが、去年はぜんぶのアパートの半分以上になりました。そして、今もふえつづけているそうです。
+先月花田さんとおくさんがこの町のアパートにひっこしてきました。ひっこしてから、犬2ひきといっしょに住んでいます。花田さんは65さいで仕事をやめてから元気がありませんでしたが、犬といっしょにいて気持ちが明るくなったそうです。おくさんは体がじょうぶになりました。ひっこす前は足が悪くて、ほとんど家の中にいましたが、今は毎日犬といっしょにさんぽしています。二人は、いやなことがあっても、かわいい2ひきを見ると気持ちがやさしくなって、毎日楽しくせいかつできると言っています。
+わたしは今までペットがほしいと思ったことがありませんでした。ペットは毎日世話がたいへんです。食べ物やトイレの世話があるし、病気のときは病院につれて行かなければなりません。でも、花田さんの話を聞いて、わたしもペットと住んでみたいと思いました。`,
+    questions: [
+      {
+        qText: "この町のアパートの説明で正しいものはどれですか。",
+        options: [
+          "今はペットといっしょに住めるアパートのほうが多い。",
+          "今はペットといっしょに住めないアパートのほうが多い。",
+          "今はほとんどのアパートでペットといっしょに住めない。",
+          "今はどんなアパートでもペットといっしょに住める。"
+        ],
+        correctAns: "今はペットといっしょに住めるアパートのほうが多い。",
+        explanation: "Tahun lalu jumlahnya sudah 半分以上 (lebih dari setengah) dari seluruh apartemen, dan terus bertambah (今もふえつづけている). Jadi sekarang apartemen yang MEMPERBOLEHKAN hewan peliharaan sudah lebih banyak.",
+        evidence: "去年はぜんぶのアパートの半分以上になりました。そして、今もふえつづけているそうです。"
+      },
+      {
+        qText: "花田さんのおくさんの説明で正しいものはどれですか。",
+        options: [
+          "仕事をやめたので、せいかつが楽しくなりました。",
+          "足が悪くて、ほとんど家の中にいます。",
+          "10年前から犬2ひきといっしょに住んでいます。",
+          "この町にひっこしてから前より元気になりました。"
+        ],
+        correctAns: "この町にひっこしてから前より元気になりました。",
+        explanation: "Istri Hanada dulu jarang keluar rumah karena kakinya sakit (ひっこす前), tapi SETELAH pindah ke kota ini dan tinggal dengan anjing, dia jadi bisa jalan-jalan tiap hari — badannya jadi sehat/kuat (じょうぶになりました). Jadi memang jadi lebih sehat SETELAH pindah, bukan sebelumnya.",
+        evidence: "おくさんは体がじょうぶになりました。ひっこす前は足が悪くて、ほとんど家の中にいましたが、今は毎日犬といっしょにさんぽしています。"
+      },
+      {
+        qText: "「ペットと住んでみたい」と思ったのはどうしてですか。",
+        options: [
+          "ペットの世話が10年前よりかんたんになったから",
+          "ペットといっしょにせいかつするのは楽しそうだから",
+          "ペットと住めるアパートがさいきんふえてきたから",
+          "ペットは食べ物やトイレの世話があるから"
+        ],
+        correctAns: "ペットといっしょにせいかつするのは楽しそうだから",
+        explanation: "Penulis awalnya berpikir memelihara hewan itu repot (世話がたいへん), tapi setelah dengar cerita keluarga Hanada yang jadi bahagia dan sehat bersama anjingnya, dia jadi ingin ikut memelihara — karena kelihatannya HIDUP BERSAMA HEWAN itu MENYENANGKAN, bukan karena alasan praktis lainnya.",
+        evidence: "でも、花田さんの話を聞いて、わたしもペットと住んでみたいと思いました。"
+      }
+    ]
+  },
+  {
+    level: "N3",
+    id: "dokkai-tabeawase",
+    title: "食べ合わせと飲み合わせ",
+    passage:
+`日本には「食べ合わせ」と言う言葉がある。食べ合わせとは食事のときに一緒に食べると体にいいとか、体に悪いという組み合わせのことである。少し前の時代なら子供でも一つや二つは必ず言えるような常識だった。うっかり食べ合わせの悪いものを食べてしまって、ものすごく悪いことをしたかのように親に怒られたという人もいる。
+最も有名な例として、うなぎと梅干を一緒に食べるとよくないと言われている。天ぷらとスイカを一緒に食べるのは本当にお腹を壊す原因になるし、きゅうりとトマトはお互いの栄養を弱くしてしまうのだそうだ。（中略）
+でも、医者の友人は食べ合わせよりもっと気をつけなければならないのは薬の飲み合わせだと言っていた。ちゃんと医者の説明を聞かずにいろんな薬を一緒に飲むと、予想しない効果が現れてしまうこともあるという。実際に、それが原因で別の病気になってしまった人もいるという。最近では、もらった薬の成分表や、飲み合わせの悪いものなどを書いたものが医者からもらえるし、ネットには専門のサイトもある。`,
+    questions: [
+      {
+        qText: "食べ合わせの悪い例として、正しいのはどれか。",
+        options: ["うなぎとてんぷら", "天ぷらと梅干", "トマトと天ぷら", "きゅうりとトマト"],
+        correctAns: "きゅうりとトマト",
+        explanation: "Teks menyebutkan 3 pasangan buruk secara eksplisit: うなぎ×梅干, 天ぷら×スイカ, dan きゅうり×トマト. Dari pilihan yang ada, hanya きゅうりとトマト yang persis disebutkan di teks.",
+        evidence: "きゅうりとトマトはお互いの栄養を弱くしてしまうのだそうだ。"
+      },
+      {
+        qText: "食べ合わせよりもっと気をつけなければならないのは薬の飲み合わせだとあるが、どうしてか。",
+        options: [
+          "常識として薬の飲み合わせは子どもの頃からよく知られているから。",
+          "薬の飲み合わせが悪くておなかを壊してしまうことになるから。",
+          "薬の飲み合わせが悪いと、別の病気になってしまう可能性があるから。",
+          "薬の飲み合わせの悪いものは医者しか分からないから。"
+        ],
+        correctAns: "薬の飲み合わせが悪いと、別の病気になってしまう可能性があるから。",
+        explanation: "Teman dokter bilang minum obat sembarangan bisa menimbulkan 予想しない効果 (efek tak terduga), dan disebutkan langsung ada orang yang jadi sakit lain (別の病気) gara-gara itu — itulah alasan kenapa飲み合わせ lebih perlu diwaspadai.",
+        evidence: "実際に、それが原因で別の病気になってしまった人もいるという。"
+      },
+      {
+        qText: "この文章を書いた人が一番伝えたいことは何か。",
+        options: [
+          "食べ合わせが悪いと、お腹を壊す原因になるので気をつけたほうがいい。",
+          "薬の飲み合わせが悪いと、予想しない効果が現れてしまうこともある。",
+          "薬の飲み合わせの悪いものを書いたものは医者からもらわなければならない。",
+          "最近は、ネットには薬の飲み合わせについての専門のサイトも出てきた。"
+        ],
+        correctAns: "薬の飲み合わせが悪いと、予想しない効果が現れてしまうこともある。",
+        explanation: "Seluruh paragraf terakhir (bagian paling penting, ditandai dengan 'でも' yang membalik topik dari makanan ke obat) berpusat pada peringatan soal 飲み合わせ obat yang bisa menimbulkan efek tak terduga — ini inti pesan penulis, bukan sekadar detail soal makanan atau website.",
+        evidence: "薬の飲み合わせよりもっと気をつけなければならないのは薬の飲み合わせだと言っていた。"
+      }
+    ]
+  },
+  {
+    level: "N3",
+    id: "dokkai-tanoshinde-benkyou",
+    title: "楽しんで勉強する人",
+    passage:
+`学校では、難しい顔をしていると一生懸命に勉強していると見てくれる。険しい表情をして、額に汗を流して勉強していると「偉いね」と言われる。
+しかし、これは、本当によい勉強法ではない。難しくて面白くないと感じることは、身につかないことが目に見えている。勉強は、楽しいと感じる人ほど、身につき、成績もよくなるのだ。
+中学生のころ、西岡君という友人がいった。彼は数学や理科は誰にも負けないくらい、いつも成績がよかった。そんな西岡君は、いつも楽しそうな表情をして勉強をしているのだ。難しい顔をして勉強することがよいことだと思っていた私は、いつも不思議だった。数学や理科の話をすると、笑いながら教えてくれる。
+ある日、西岡君に「なぜそんなに成績がいいの」と聞いてみたことがある。すると「楽しいからだよ」というあっさりした返事が返ってきた。
+学生のころに聞いた言葉は、そのとき軽く聞き流していた。しかし、実際に社会に出て、仕事のできる人や頭の切れる人は、決まって「楽しんでいる人」だ。難しく険しい表情をしている人は、仕事が遅くて、質が悪い。嫌いだという感情があると、スピードが落ちて、熱心さ、集中力、根気が欠けてしまう。
+私は昔、難しい顔をしている人が頑張っている人だと思っていたが、大きな間違いだったのだ。本当に頑張って成果を発揮できる人は、楽しんでいる人なのだ。`,
+    questions: [
+      {
+        qText: "険しい表情とあるが、どのような表情か。",
+        options: ["悲しい顔", "難しい顔", "怒った顔", "迷った顔"],
+        correctAns: "難しい顔",
+        explanation: "Kalimat pertama teks membandingkan '難しい顔をしている' dengan '険しい表情をして' sebagai dua penyebutan untuk hal yang sama (murid yang terlihat sedang belajar keras), jadi 険しい表情 = 難しい顔.",
+        evidence: "学校では、難しい顔をしていると一生懸命に勉強していると見てくれる。険しい表情をして、額に汗を流して勉強していると「偉いね」と言われる。"
+      },
+      {
+        qText: "いつも不思議だったとあるが、何を指しているか。",
+        options: [
+          "西岡君がクラスの中で成績が一番よかったこと",
+          "西岡君が笑いながら勉強を教えてくれたこと",
+          "成績のいい西岡君がいつも楽しそうに勉強していたこと",
+          "成績のいい西岡君が険しい表情をして勉強していたこと"
+        ],
+        correctAns: "成績のいい西岡君がいつも楽しそうに勉強していたこと",
+        explanation: "Penulis percaya belajar itu harus dengan wajah serius/susah (難しい顔), tapi Nishioka yang nilainya bagus justru SELALU terlihat senang saat belajar — kontradiksi inilah yang bikin penulis heran (いつも不思議だった).",
+        evidence: "そんな西岡君は、いつも楽しそうな表情をして勉強をしているのだ。難しい顔をして勉強することがよいことだと思っていた私は、いつも不思議だった。"
+      }
+    ]
+  },
+  {
+    level: "N3",
+    id: "dokkai-wagasa-shokunin",
+    title: "和傘職人",
+    passage:
+`先日、友人を訪ねて岐阜に行きました。待ち合わせの時間まで少し時間があったので古い和傘の店があったので入ってみると、「いらっしゃいませ」と元気な声で店の主人が迎えてくれました。
+和傘作りは江戸時代から続く技術で、明治時代まではどこの町にも必ず1人や2人職人（注）がいたそうです。しかし、日本に西洋文化が入ってくると、今私たちが日頃使っているような、作るのも簡単で値段も安い洋傘がいっきに全国に広まりました。
+今年79歳になる主人の加藤さんはいま、各県に1人か2人いるかいないかという和傘職人（注）の1人です。和傘づくりをやめようと思ったことがあります。そんなある日、たまたま店の前を通りかかった外国のお客さんが「和傘は日本人の性格をとてもよくあらわしているね」と言ったのを聞いて、「ああ、やめちゃだめだ」と、考え直したそうです。
+加藤さんは、「まだまだ元気だから、あと10年は大丈夫。」と笑顔を見せてくれましたが、わたしはとてもさびしい気持ちになりました。
+（注）職人：身につけた技術によって物を作り出したりする職業の人。`,
+    questions: [
+      {
+        qText: "どうして明治時代以降、洋傘は全国に広まりましたか。",
+        options: [
+          "和傘より質がよいし、もっと丈夫だし",
+          "和傘より値段が安いし、作り方も簡単だし",
+          "和傘より材料が高級だし、作り方も簡単だし",
+          "和傘よりデザインがいいし、美しく見えるし"
+        ],
+        correctAns: "和傘より値段が安いし、作り方も簡単だし",
+        explanation: "Teks secara langsung menyebut ciri payung Barat yang menyebar itu: '作るのも簡単で値段も安い' (mudah dibuat dan murah harganya). Bukan soal kualitas, bahan mewah, atau desain.",
+        evidence: "作るのも簡単で値段も安い洋傘がいっきに全国に広まりました。"
+      },
+      {
+        qText: "「ああ、やめちゃだめだ」と、考え直したとあるが、その理由は何か。",
+        options: [
+          "日本では和傘職人は1人か2人しか残らないから",
+          "和傘の好きな外国人がどんどん増えてきたから",
+          "和傘作りの必要な技術はあまり高くないから",
+          "和傘作りの伝統を守り続けたいと思うから"
+        ],
+        correctAns: "和傘作りの伝統を守り続けたいと思うから",
+        explanation: "Ucapan turis asing bahwa payung tradisional 'とてもよく表わしている' karakter orang Jepang membuat Kato menyadari nilai budaya/tradisi kerajinannya, sehingga ia berubah pikiran untuk terus melestarikan tradisi itu, bukan karena alasan lain.",
+        evidence: "外国のお客さんが「和傘は日本人の性格をとてもよくあらわしているね」と言ったのを聞いて、「ああ、やめちゃだめだ」と、考え直したそうです。"
+      },
+      {
+        qText: "本文と合っているものはどれか。",
+        options: [
+          "和傘作りの伝統を守るのは大切だが、難しいことだ。",
+          "和傘作りの職人はたくさんいるが、一人前のは少ない。",
+          "職人の加藤さんが和傘作りを続けるのは幸い。",
+          "職人の加藤さんは和傘作りの伝統を守るのに自信がある。"
+        ],
+        correctAns: "和傘作りの伝統を守るのは大切だが、難しいことだ。",
+        explanation: "Sekarang di tiap prefektur cuma ada 1-2 pengrajin (和傘職人), dan penulis merasa さびしい気持ち (sedih) saat mendengar Kato bilang cuma bisa bertahan 10 tahun lagi — menunjukkan bahwa melestarikan tradisi ini penting tapi terancam punah/sulit dipertahankan.",
+        evidence: "今年79歳になる主人の加藤さんはいま、各県に1人か2人いるかいないかという和傘職人の1人です。"
+      }
+    ]
+  },
+  {
+    level: "N3",
+    id: "dokkai-paris-inu-fun",
+    title: "犬のフンとマナー",
+    passage:
+`フランスのパリでは犬を飼っている人が多いが、散歩につれていく犬がアパートの玄関を出たところでフンをしても、それをかたづける人はだれもいないと、パリに長く住んでいる日本人が書いています。東京の住宅地を歩いていると、私がよく見る犬の散歩には、わりばし（注１）と紙袋を持っている人が多いので、フンで道路を汚すことを悪いと考えている人は日本のほうが多いのではないかと思います。フランスでは犬を散歩させる人がフンをかたづけるのは、掃除をする人の仕事をとってしまうのだというのがふつうの考えのように思えるからです。
+しかし、その考えはおかしいと思います。町の中で犬をつれて歩くには、町の美しさを守るという気持ちが必要なのではないでしょうか。なぜかそう思ったかというと、「パリの歩道には犬のフンがとても多く、それをかたづけるためには年間7000万フラン（注２）（約12億円）かかる」という新聞記事を読んだからです。そのお金はだれが出しているのでしょうか。
+（注１）わりばし：使うときに二つに割るはし。
+（注２）フラン：フランス・ベルギーなどの旧通貨単位。`,
+    questions: [
+      {
+        qText: "何が日本のほうが多いのか。",
+        options: [
+          "犬を散歩につれていく人",
+          "犬のフンをかたづけようとしない人",
+          "わりばしと紙袋を持っている人",
+          "フンで道を汚すことを悪いと考えている人"
+        ],
+        correctAns: "フンで道を汚すことを悪いと考えている人",
+        explanation: "Kalimat ini muncul persis setelah penulis menjelaskan banyak orang Jepang bawa sumpit+kantong kertas untuk membersihkan kotoran anjing — kesimpulannya adalah orang yang MENGANGGAP mengotori jalan itu buruk (bukan sekadar yang bawa alat) lebih banyak di Jepang.",
+        evidence: "フンで道路を汚すことを悪いと考えている人は日本のほうが多いのではないかと思います。"
+      },
+      {
+        qText: "ふつうの考えとは、ここではどんな考えか。",
+        options: [
+          "フンで道路を汚すことを悪いと考える必要はない",
+          "犬を散歩させる人が犬のフンをかたづける必要はない",
+          "掃除をする人が町の美しさを守る必要はない",
+          "フンをかたづけるのはお金がかかると考える必要はない"
+        ],
+        correctAns: "犬を散歩させる人が犬のフンをかたづける必要はない",
+        explanation: "Kalimat menjelaskan bahwa di Paris, membersihkan kotoran anjing dianggap 'mengambil alih pekerjaan petugas kebersihan' — artinya pandangan umum di sana adalah PEMILIK ANJING TIDAK PERLU membersihkan sendiri kotoran anjingnya.",
+        evidence: "フランスでは犬を散歩させる人がフンをかたづけるのは、掃除をする人の仕事をとってしまうのだというのがふつうの考えのように思えるからです。"
+      }
+    ]
+  },
+  {
+    level: "N2",
+    id: "dokkai-bunshou-tanoshisa",
+    title: "文章を書く楽しさ",
+    passage:
+`これはビジネス文書に限ったことではないのだが、何であれ文書を書いていると、少しばかり緊張感を覚えるものだ。書きながら、頭の中でこんなことを考えている。
+この書き方でいいのかな。
+これ、ひどく下手な書き方じゃないだろうか。
+これでわかるかな。
+そういう気がしきりに（注１）して、ちょっとしたプレッシャーになっている。だからこそ、文章を書くのは苦手だ、と思っている人もいるのじゃないだろうか。
+しかし、その逆もまた真である。文章を書く面白さとは、そういうプレッシャーを感じながら、なんとか諸問題をクリアして、一応のものを書き上げることにあるのだ。
+テレビゲームが楽しいのと同じ理屈（りくつ）（注２）である。あれは、攻略（こうりゃく）する（注３）のが簡単ではない様々な障害をかわしながら（注４）、次々に問題を解決していって、なんとかクリアしていくところが面白いのである。むずかしいからこそ、うまくやったときに楽しいのだ。
+文章を書くのも、そういうことである。これでいいのかな、と一抹の（注５）不安を抱えながら、なんとか書いていくってことを楽しまなければならない。
+別の言い方にすると、文章というものは、書く人に対して、うまく書いてくれ、と要求してくるのである。なぜなら、文章とは人と人とのコミュニケーションの道具だからだ。この例外は、自分だけにわかればいいメモと、絶対に他人に見せない日記だけである。
+それ以外の文章は、必ず、書く人間のほかに、読む人間がいて完成されるのだ。そして、書いた人の伝えたかったことが、読んだ人にちゃんとわかってこそ、文章は役をはたしたことになる。
+（清水義範『スラスラ書ける！ビジネス文書』による）
+（注１） しきりに：何度も
+（注２） 理屈：ここでは、考え方
+（注３） 攻略する：うまく解決する
+（注４） かわしながら：避けながら
+（注５） 一抹の：ほんの少しの`,
+    questions: [
+      {
+        qText: "筆者は、文章を書くときに何がプレッシャーになっていると述べているか。",
+        options: [
+          "このまま最後まで書き上げられるか不安だという気持ち",
+          "読む人が期待する書き方をしているかという気持ち",
+          "自分は字を書くのが下手だから嫌だという気持ち",
+          "書きたいことがうまく書けているかという気持ち"
+        ],
+        correctAns: "読む人が期待する書き方をしているかという気持ち",
+        explanation: "Tekanan yang disebut penulis adalah pikiran berulang 'apa cara menulis ini sudah benar/dimengerti' (この書き方でいいのかな、これでわかるかな) — itu semua soal apakah tulisannya sudah sesuai harapan PEMBACA, bukan soal selesai/tidaknya atau bakat menulis.",
+        evidence: "この書き方でいいのかな。これ、ひどく下手な書き方じゃないだろうか。これでわかるかな。そういう気がしきりにして、ちょっとしたプレッシャーになっている。"
+      },
+      {
+        qText: "そういうことであるとはどういうことか。",
+        options: [
+          "様々な障害をクリアしていくことがむずかしい。",
+          "プレッシャーを忘れ、いろいろ考えるのが楽しい。",
+          "苦労して問題を片付け、課題を仕上げるのが楽しい。",
+          "不安を抱えたままでは問題を解決するのがむずかしい。"
+        ],
+        correctAns: "苦労して問題を片付け、課題を仕上げるのが楽しい。",
+        explanation: "Kalimat ini merujuk pada perbandingan dengan game: keseruan justru muncul dari menyelesaikan rintangan yang sulit satu per satu sampai berhasil (クリアしていくところが面白い) — menulis juga begitu, susahnya justru bagian yang bikin seru saat berhasil diselesaikan.",
+        evidence: "むずかしいからこそ、うまくやったときに楽しいのだ。文章を書くのも、そういうことである。"
+      },
+      {
+        qText: "読む人間がいて完成されるとはどういうことか。",
+        options: [
+          "文章の価値を決めるのは読み手の存在だ。",
+          "文章が成立するには読み手の存在が必要だ。",
+          "文章は人に読まれることでよりよいものになる。",
+          "文章は読み手の要求にこたえることでできあがる"
+        ],
+        correctAns: "文章は読み手の要求にこたえることでできあがる",
+        explanation: "Paragraf sebelumnya bilang tulisan itu 'menuntut' penulisnya menulis dengan baik karena fungsinya adalah komunikasi ANTAR-orang — jadi tulisan baru benar-benar 'selesai/berfungsi' (役をはたした) kalau pesan penulis berhasil dipahami pembaca, yaitu memenuhi tuntutan si pembaca.",
+        evidence: "文章というものは、書く人に対して、うまく書いてくれ、と要求してくるのである……書いた人の伝えたかったことが、読んだ人にちゃんとわかってこそ、文章は役をはたしたことになる。"
+      }
+    ]
+  },
+  {
+    level: "N2",
+    id: "dokkai-hamburger-henkin",
+    title: "返金キャンペーン",
+    passage:
+`大手ハンバーガー店が今月16日から30日まで、新商品がまずかったら全額返金するというキャンペーン（注）を実施する。通信販売などでは、注文した商品が気に入らなければその代金を客に返金するという保証制度は一般的だが、ハンバーガー店のような外食産業では非常に珍しい試みだ。味への自信を示すことが目的で、全国で一斉に行われる。返金は当日限りで、期間中1人1回のみ、それから商品を半分以上食べていないことが条件だ。
+（注）キャンペーン：ここでは、販売方法`,
+    questions: [
+      {
+        qText: "大手ハンバーガー店が今月16日から実施するのは次のどれか。",
+        options: [
+          "新商品がまずければいつでも全額返金する。",
+          "どの商品でもまずければ条件つきで全額返金する。",
+          "新商品の味が気に入らなければ条件つきで全額返金する。",
+          "どの商品でも味が気に入らなければ1回だけ全額返金する。"
+        ],
+        correctAns: "新商品の味が気に入らなければ条件つきで全額返金する。",
+        explanation: "Yang diberi jaminan uang kembali hanyalah 新商品 (produk BARU) saja — bukan semua produk — dan ada syarat tambahan (当日限り, 1人1回のみ, belum dimakan setengahnya), jadi ini pengembalian dana BERSYARAT khusus produk baru.",
+        evidence: "新商品がまずかったら全額返金するというキャンペーン……返金は当日限りで、期間中1人1回のみ、それから商品を半分以上食べていないことが条件だ。"
+      }
+    ]
+  },
+  {
+    level: "N2",
+    id: "dokkai-mori-no-kaori",
+    title: "森の香りの物質",
+    passage:
+`森はいつも独特な香りに包まれ、さわやかに感じられるが、それはある物質の効果によるものだ。その物質は、木々が動けない体を守るために自ら作り出すもので、木につく虫や細菌（注）の増加を防いだり、落ち葉や枯れ木が腐ったときなどに生じる嫌なにおいを消したりする働きを持っている。さらにその物質には、人間の神経を安定させる効果もあるという。私たちが森林に入るとリラックスした気分になるのは、このためだ。
+（注）細菌：非常に小さくて目に見えない生物`,
+    questions: [
+      {
+        qText: "ある物質の働きについて、この文章からわかることは何か。",
+        options: [
+          "人間の持つ嫌なにおいを防ぐ。",
+          "人々の気持ちを落ち着かせる。",
+          "落ち葉や枯れ木を腐りにくくする。",
+          "木々がもともと持っているにおいを消す。"
+        ],
+        correctAns: "人々の気持ちを落ち着かせる。",
+        explanation: "Teks menyebut zat itu punya '人間の神経を安定させる効果' (efek menenangkan saraf manusia), yang menjelaskan kenapa orang merasa rileks di hutan — itulah efek terhadap MANUSIA yang ditanyakan, bukan efek pada daun/kayu yang membusuk (itu efek ke lingkungan, bukan ke perasaan orang).",
+        evidence: "その物質には、人間の神経を安定させる効果もあるという。私たちが森林に入るとリラックスした気分になるのは、このためだ。"
+      }
+    ]
+  },
+  {
+    level: "N2",
+    id: "dokkai-inu-aisatsu",
+    title: "イヌの挨拶行動",
+    passage:
+`イヌの散歩をしていると、最近ではイヌも挨拶の仕方を忘れてしまったのではないかと思ってしまいます。集団行動を経験したことがあるイヌ、もしくは（注１）、飼い主からイヌらしい教育を受けて順位制（注２）を感じることができるようになったイヌは、道でほかのイヌにすれ違い近づいたときには挨拶らしいことをします。ところが、集団行動の経験もなく、家でも甘やかされて育ったイヌは、現代のヒト社会のように挨拶をしないように見えます。挨拶をするイヌが、ほかの挨拶なしのイヌに対して威嚇する（注３）ことが観察されます。ところが、この挨拶犬が子イヌと遭遇したときには、子イヌが挨拶をできなくても威嚇をしないことが多いのです。挨拶犬にとって子イヌであるというシグナルがなんなのかわかりませんが、とにかく子イヌと成犬とを区別したうえで挨拶のあるなしを判断しているようです。
+イヌの挨拶行動は、生得的（注４）あるいは習得的（学習的）のどちらでしょうか？順位制にしたがった行動ができるようになったイヌでは、イヌ社会での経験がなくてもある程度の挨拶行動ができることから、生得的であるといえます。また、より儀式的な挨拶行動が円滑に（注５）実行されるためには、ほかのイヌとの集団生活があったほうがよいことから、習得的な部分もあるといえるでしょう。
+（注1）もしくは：または
+（注2）順位制：上下関係にもとづいてできた順序の決まり
+（注3）威嚇する：ここでは、ほえて相手を怖がらせる
+（注4）生得的：生まれたときから持っている
+（注5）円滑に：スムーズに、滑らかに`,
+    questions: [
+      {
+        qText: "この文章によると、挨拶をしない、またはできないイヌはどれか。",
+        options: [
+          "子イヌと成犬を区別できないイヌ",
+          "挨拶をしない親イヌに育てられた子イヌ",
+          "他のイヌと一緒に生活をしたことがあるイヌ",
+          "イヌ社会の経験も飼い主による教育もないイヌ"
+        ],
+        correctAns: "イヌ社会の経験も飼い主による教育もないイヌ",
+        explanation: "Teks menyebut anjing yang挨拶をしない adalah yang tidak punya 集団行動の経験 DAN tidak dapat pendidikan dari pemilik (家でも甘やかされて育った) — jadi persis kombinasi 'tanpa pengalaman sosial + tanpa pendidikan pemilik'.",
+        evidence: "集団行動の経験もなく、家でも甘やかされて育ったイヌは、現代のヒト社会のように挨拶をしないように見えます。"
+      },
+      {
+        qText: "この文章によると、どんなイヌがどんなイヌにほえて、怖がらせるか。",
+        options: [
+          "挨拶できるイヌが挨拶しない成犬に",
+          "挨拶できるイヌが挨拶しない子イヌに",
+          "挨拶できないイヌが挨拶する成犬に",
+          "挨拶できないイヌ挨拶する子イヌに"
+        ],
+        correctAns: "挨拶できるイヌが挨拶しない成犬に",
+        explanation: "Teks bilang anjing yang bisa menyapa (挨拶をするイヌ) akan mengancam anjing lain yang TIDAK menyapa (威嚇する), TAPI pengecualiannya adalah kalau lawannya anak anjing (子イヌ) — jadi yang diancam itu anjing DEWASA yang tidak menyapa, bukan anak anjing.",
+        evidence: "挨拶をするイヌが、ほかの挨拶なしのイヌに対して威嚇することが観察されます。ところが、この挨拶犬が子イヌと遭遇したときには……威嚇をしないことが多いのです。"
+      },
+      {
+        qText: "筆者は、イヌの挨拶行動についてどのように述べているか。",
+        options: [
+          "イヌ社会での経験より飼い主の教育があったほうが、スムーズにできる。",
+          "イヌ社会での経験は必ずしも必要ではないが、あればスムーズにできる。",
+          "イヌ社会での集団生活と飼い主の教育によって初めて習得できるものだ。",
+          "イヌ社会での集団生活を経験することによって始めて習得できるものだ。"
+        ],
+        correctAns: "イヌ社会での経験は必ずしも必要ではないが、あればスムーズにできる。",
+        explanation: "Paragraf terakhir menyimpulkan perilaku ini SEBAGIAN bawaan lahir (生得的 — bisa muncul tanpa pengalaman sosial, asal paham 順位制), dan SEBAGIAN lagi terlatih (習得的 — akan lebih lancar/円滑 kalau pernah hidup berkelompok). Jadi pengalaman sosial bukan syarat MUTLAK, tapi membantu kelancarannya.",
+        evidence: "順位制にしたがった行動ができるようになったイヌでは、イヌ社会での経験がなくてもある程度の挨拶行動ができることから、生得的であるといえます。また、より儀式的な挨拶行動が円滑に実行されるためには、ほかのイヌとの集団生活があったほうがよいことから、習得的な部分もあるといえるでしょう。"
+      }
+    ]
+  },
+  {
+    level: "N2",
+    id: "dokkai-shinshakaijin-advice",
+    title: "新社会人へのアドバイス（A・B）",
+    passage:
+`A
+関係の複雑さに驚いているのではないでしょうか。こんなはずではなかったと、抱いていた理想が崩れそうになることがあるかもしれません。特に、自分とは異なる価値観を持った上司や先輩から無理な仕事を頼まれたときなど、強くそう感じることでしょう。時には先輩の言葉につい反発（注１）したくなることもあるでしょう。しかし、そんなときにはまず相手の考え方を受け入れてみてください。信頼関係を築くにはある程度の時間が必要であり、その後で自分の考えを述べればよいのです。それまでは自分を抑えることも大切で、それが社会人としての訓練でもあります。
+
+B
+人間にとって心身ともに健康であることが理想的だが、新しく社会に出た若者たちは、時にはうまくいかないことに出会い、自信を失うこともあるだろう。経験から言うと、同僚や先輩の温かい言葉が耳に入らなくなってしまうのは、そういう、自分に自信がなくなったときであることが多い。その結果、今まで築いてきた人間関係まで壊してしまうことさえある。自分の周りの人たちを大切にして、助言（注２）を生かしていく気持ちを持つためには、まず自分のこれまでの努力を肯定的にとらえてみよう。結果が完璧でなくても、「よくやった」と自分自身に言えると、他の人の言葉も素直に聞くことができるようになる。
+（注１）反発する：言い返す
+（注２）助言：アドバイス`,
+    questions: [
+      {
+        qText: "AとBに共通して述べられていることは何か。",
+        options: [
+          "職場での人間関係を大事にするにはどうすればいいか。",
+          "職場で自分の努力を認めてもらうにはどうすればいいか。",
+          "社会人になって職場で自信をなくした時、どうすればいいか。",
+          "社会に出て周囲の人と自分の考えが違った時、どうすればいいか。"
+        ],
+        correctAns: "職場での人間関係を大事にするにはどうすればいいか。",
+        explanation: "A membahas cara menghadapi atasan/senior yang beda nilai (menerima dulu sebelum bicara pendapat sendiri) dan B membahas cara menjaga hubungan dengan rekan kerja saat kehilangan percaya diri (menghargai diri sendiri dulu supaya bisa menerima nasihat orang). Keduanya sama-sama soal MENJAGA HUBUNGAN di tempat kerja, dari sudut berbeda.",
+        evidence: "A: 信頼関係を築くにはある程度の時間が必要であり…… / B: 自分の周りの人たちを大切にして、助言を生かしていく気持ちを持つためには……"
+      },
+      {
+        qText: "AとBでは新社会人にどのようにアドバイスをしているか。",
+        options: [
+          "Aでは自分の価値観を重視することが大切だと述べ、Bでは自分の努力してきた姿を振り返ることが大切だと述べている。",
+          "Aでは周りの人に自分の考えを伝えることが大切だと述べ、Bでは相手に認めてもらうことが大切だと述べている。",
+          "Aでは相手の考えを尊重することが大切だと述べ、Bでは自分の努力を認めることが大切だと述べている。",
+          "Aでは相手の意見を認めることが大切だと述べ、Bでは周りの人の言葉を聞くことが大切だと述べている。"
+        ],
+        correctAns: "Aでは相手の意見を認めることが大切だと述べ、Bでは周りの人の言葉を聞くことが大切だと述べている。",
+        explanation: "A menyarankan menerima dulu cara berpikir lawan bicara (まず相手の考え方を受け入れてみてください) sebelum menyampaikan pendapat sendiri. B menyarankan mengakui usaha diri sendiri dulu supaya bisa mendengarkan kata-kata orang lain dengan tulus (他の人の言葉も素直に聞くことができるようになる) — jadi B berujung pada MENDENGARKAN kata-kata sekitar, bukan hanya soal mengakui diri sendiri saja.",
+        evidence: "A: まず相手の考え方を受け入れてみてください。 / B: 他の人の言葉も素直に聞くことができるようになる。"
+      }
+    ]
   }
 ];
