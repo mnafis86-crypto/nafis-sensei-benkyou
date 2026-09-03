@@ -291,6 +291,43 @@
   .susun-result.correct { color: var(--mint); }
   .susun-result.wrong { color: var(--red); }
 
+  /* ============================================================
+     DOKKAI (bacaan) — panel bacaan + progress + penjelasan
+     ============================================================ */
+  .dokkai-passage {
+    background: rgba(0,0,0,0.35); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 16px 14px; margin-bottom: 14px; position: relative;
+  }
+  .dokkai-passage::before {
+    content: "📖"; position: absolute; top: -12px; left: 14px; font-size: 18px;
+    background: var(--bg); padding: 0 6px;
+  }
+  .dokkai-title { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 13px;
+    color: var(--gold); letter-spacing: 0.5px; margin-bottom: 8px; }
+  .dokkai-text { font-family: "Noto Sans JP", sans-serif; font-size: 15.5px; line-height: 1.9;
+    color: #fff; white-space: pre-line; }
+  .dokkai-text mark { background: rgba(255, 215, 0, 0.35); color: #fff; border-radius: 3px;
+    padding: 0 2px; box-shadow: 0 0 0 1px rgba(255,215,0,0.4) inset; }
+  .dokkai-progress { font-size: 11px; color: var(--cyan); font-weight: 700; font-family: monospace;
+    letter-spacing: 0.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .dokkai-progress .dots { display: flex; gap: 4px; }
+  .dokkai-progress .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+  .dokkai-progress .dot.done { background: var(--mint); }
+  .dokkai-progress .dot.now { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+
+  .dokkai-explain {
+    margin-top: 14px; padding: 14px; border-radius: 12px; font-size: 13.5px; line-height: 1.6;
+    background: rgba(0,229,255,0.08); border: 1px solid var(--line); animation: fadeIn 0.3s ease;
+  }
+  .dokkai-explain.wrong { background: rgba(255,51,102,0.08); border-color: rgba(255,51,102,0.4); }
+  .dokkai-explain .tag { font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 6px; color: var(--mint); }
+  .dokkai-explain.wrong .tag { color: var(--red); }
+  .dokkai-explain .body { color: var(--ink); }
+  .continue-btn { width: 100%; margin-top: 12px; padding: 14px; border-radius: 12px; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--cyan), #0099FF); color: #000; font-weight: 900; font-size: 14px;
+    text-transform: uppercase; letter-spacing: 1px; min-height: 48px; }
+
   /* RESULT */
   .result { text-align: center; padding: 4px; }
   .grade-badge { display: inline-block; width: 85px; height: 85px; border-radius: 50%; line-height: 81px; font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 36px; margin-bottom: 14px; }
@@ -522,6 +559,7 @@ function playSFX(type) {
      Urutan load WAJIB seperti ini (vocab.js dulu, baru terjemahannya). -->
 <script src="patterns.js"></script>
 <script src="vocab.js"></script>
+<script src="dokkai.js"></script>
 <script src="kanji-terjemahan.js"></script>
 <script src="kotoba-terjemahan.js"></script>
 
@@ -613,8 +651,8 @@ window.addEventListener("load", ()=>{
     student = JSON.parse(saved);
     initApp();
   }
-  const patN = PATTERNS.length, vocN = VOCAB.length;
-  $("dataStats").textContent = `${patN} pola kalimat • ${vocN} kanji/kosakata (N5-N2)`;
+  const patN = PATTERNS.length, vocN = VOCAB.length, dokN = (typeof DOKKAI !== 'undefined' ? DOKKAI.length : 0);
+  $("dataStats").textContent = `${patN} pola kalimat • ${vocN} kanji/kosakata • ${dokN} bacaan dokkai (N5-N2)`;
 });
 
 function initApp(){
@@ -734,14 +772,14 @@ let setupMode = "latihan"; // "latihan" (acak bebas) | "ujian" (paket soal tetap
 let setupPacketIndex = 0;
 
 function poolFor(scope, typeMode){
-  const src = typeMode === 'bunpo' ? PATTERNS : VOCAB;
+  const src = typeMode === 'bunpo' ? PATTERNS : (typeMode === 'dokkai' ? DOKKAI : VOCAB);
   return src.filter(p=>matchesBook(p, scope));
 }
 
 function updateCountHint(){
   const pool = poolFor(setupScope, setupType);
   const el = document.getElementById('countHint');
-  if(el) el.textContent = `(tersedia ${pool.length} item)`;
+  if(el) el.textContent = setupType === 'dokkai' ? `(tersedia ${pool.length} bacaan)` : `(tersedia ${pool.length} item)`;
 }
 
 /* Ambil n distraktor unik berdasar field, hindari duplikat nilai jawaban benar.
@@ -838,12 +876,41 @@ function makeQuestionForVocab(correct, pool, wide, rng){
   return { type:'word_to_meaning', correct, qText:`Apa arti dari ${label} <b>${correct.jp}</b>?`, correctAns: dispMeaning(correct), options: optionsV.map(dispMeaning) };
 }
 
+/* Bangun soal-soal Dokkai dari 1 "correct" (= 1 bacaan/passage).
+   Berbeda dari pola/kosakata, 1 bacaan bisa menghasilkan BEBERAPA soal
+   beruntun (mis. bacaan cloze punya soal ア/イ/ウ). Semua soal itu tetap
+   menampilkan panel bacaan yang sama di atas, dengan indikator progres
+   "Soal 2/3 dari bacaan ini" supaya siswa tahu masih dalam 1 bacaan. */
+function makeQuestionsForDokkai(passage, rng){
+  rng = rng || Math.random;
+  const total = passage.questions.length;
+  return passage.questions.map((sub, idx) => {
+    // urutan pilihan diacak per-siswa/per-sesi supaya jawaban benar tidak selalu di posisi sama
+    const options = shuffle(sub.options.slice(), rng);
+    return {
+      type: 'dokkai_mc',
+      correct: passage, // dipakai renderQuestion utk ambil .level (badge warna level)
+      passage,
+      subIndex: idx,
+      subTotal: total,
+      qText: sub.qText,
+      correctAns: sub.correctAns,
+      options,
+      explanation: sub.explanation || null,
+      evidence: sub.evidence || null
+    };
+  });
+}
+
 function buildQuestions(scope, count, typeMode){
   const pool = poolFor(scope, typeMode);
   if(!pool.length) return [];
   const wide = typeMode === 'bunpo' ? PATTERNS : VOCAB;
   const n = count==="semua" ? pool.length : Math.min(parseInt(count), pool.length);
   const chosen = shuffle(pool).slice(0, n);
+  if(typeMode === 'dokkai'){
+    return chosen.flatMap(passage => makeQuestionsForDokkai(passage));
+  }
   return chosen.map(correct => typeMode === 'bunpo'
     ? makeQuestionForPattern(correct, pool, wide)
     : makeQuestionForVocab(correct, pool, wide));
@@ -931,6 +998,9 @@ function buildQuestionsForPacket(scope, count, typeMode, packetIndex){
   const pool = poolFor(scope, typeMode);
   const wide = typeMode === 'bunpo' ? PATTERNS : VOCAB;
   const rng = mulberry32(hashSeed(`${scope}|${typeMode}|${count}|variant|${packetIndex}`));
+  if(typeMode === 'dokkai'){
+    return items.flatMap(passage => makeQuestionsForDokkai(passage, rng));
+  }
   return items.map(correct => typeMode === 'bunpo'
     ? makeQuestionForPattern(correct, pool, wide, rng)
     : makeQuestionForVocab(correct, pool, wide, rng));
@@ -951,9 +1021,10 @@ function renderStart(){
         </div>
         <div class="setup-box">
           <div class="lbl">JENIS KUIS</div>
-          <div class="opt-row" id="typeRow">
+          <div class="opt-row" id="typeRow" style="grid-template-columns: repeat(3, 1fr);">
             <button data-v="bunpo">Pola Kalimat</button>
             <button data-v="kotoba" class="active">Kosakata &amp; Kanji</button>
+            <button data-v="dokkai">📖 Dokkai (Bacaan)</button>
           </div>
         </div>
         <div class="setup-box">
@@ -967,7 +1038,7 @@ function renderStart(){
           </div>
         </div>
         <div class="setup-box">
-          <div class="lbl">JUMLAH SOAL</div>
+          <div class="lbl" id="countLbl">JUMLAH SOAL</div>
           <div class="opt-row" id="countRow" style="grid-template-columns: repeat(4, 1fr);">
             <button data-v="25">25</button>
             <button data-v="50" class="active">50</button>
@@ -994,7 +1065,8 @@ function renderStart(){
   document.querySelectorAll("#typeRow button").forEach(b=>{
     b.addEventListener("click", ()=>{
       document.querySelectorAll("#typeRow button").forEach(x=>x.classList.remove("active"));
-      b.classList.add("active"); setupType = b.dataset.v; updateCountHint(); renderPacketRow();
+      b.classList.add("active"); setupType = b.dataset.v;
+      renderCountRow(); updateCountHint(); renderPacketRow();
     });
   });
   document.querySelectorAll("#scopeRow button").forEach(b=>{
@@ -1011,8 +1083,44 @@ function renderStart(){
   });
 
   $("startBtn").addEventListener("click", startGame);
+  renderCountRow();
   updateCountHint();
   renderPacketRow();
+}
+
+/* Untuk Dokkai, "jumlah" berarti JUMLAH BACAAN (bukan jumlah soal individual),
+   karena satu bacaan berisi beberapa soal beruntun yang harus ditampilkan
+   bersama panel bacaannya. Jadi pilihannya dibuat lebih kecil & label
+   berubah otomatis supaya tidak membingungkan siswa. */
+function renderCountRow(){
+  const lbl = $("countLbl");
+  const row = $("countRow");
+  if(!lbl || !row) return;
+  if(setupType === "dokkai"){
+    lbl.textContent = "JUMLAH BACAAN";
+    row.innerHTML = `
+      <button data-v="2">2</button>
+      <button data-v="3" class="active">3</button>
+      <button data-v="5">5</button>
+      <button data-v="semua">Semua</button>
+    `;
+    setupCount = "3";
+  } else {
+    lbl.textContent = "JUMLAH SOAL";
+    row.innerHTML = `
+      <button data-v="25">25</button>
+      <button data-v="50" class="active">50</button>
+      <button data-v="100">100</button>
+      <button data-v="semua">Semua</button>
+    `;
+    setupCount = "50";
+  }
+  document.querySelectorAll("#countRow button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      document.querySelectorAll("#countRow button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active"); setupCount = b.dataset.v; renderPacketRow();
+    });
+  });
 }
 
 /* Tampilkan kotak pilihan "Level 1 / Level 2 / ..." kalau Mode Ujian aktif.
@@ -1027,7 +1135,8 @@ function renderPacketRow(){
   box.style.display = "";
   const plan = buildPacketPlan(setupScope, setupCount, setupType);
   const unlockedCount = Math.min(getUnlockedLevelCount(), plan.numPackets);
-  $("packetHint").textContent = `(${plan.numPackets} level &middot; ${plan.L} item terbagi rata &middot; min. 80% utk buka level berikutnya)`;
+  const unitWord = setupType === 'dokkai' ? 'bacaan' : 'item';
+  $("packetHint").textContent = `(${plan.numPackets} level &middot; ${plan.L} ${unitWord} terbagi rata &middot; min. 80% utk buka level berikutnya)`;
   const row = $("packetRow");
   if(setupPacketIndex >= plan.numPackets) setupPacketIndex = 0;
   if(setupPacketIndex >= unlockedCount) setupPacketIndex = unlockedCount - 1;
@@ -1067,11 +1176,13 @@ function startGame(){
 function renderQuestion(){
   clearInterval(gState.timer);
   const q = gState.questions[gState.qi];
-  const qTime = 20;
+  // Dokkai butuh waktu baca lebih lama; makin banyak sub-soal di bacaan yg
+  // sama, waktu sedikit lebih longgar lagi di soal pertama (baca awal).
+  const qTime = q.type === 'dokkai_mc' ? (q.subIndex === 0 ? 55 : 35) : 20;
   gState.timeLeft = qTime; gState.timeTotal = qTime;
   gState.locked = false;
 
-  let typeLabel = setupType === "bunpo" ? "Pola Kalimat" : "Kosakata & Kanji";
+  let typeLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : "Kosakata & Kanji");
   let paketTag = gState.paketLabel ? ` &middot; ${gState.paketLabel}` : "";
 
   const bodyHtml = q.type === 'susun_kalimat' ? `
@@ -1086,18 +1197,31 @@ function renderQuestion(){
     </div>
   `;
 
+  const passageHtml = q.type === 'dokkai_mc' ? `
+    <div class="dokkai-passage">
+      <div class="dokkai-title">${q.passage.title}</div>
+      <div class="dokkai-text">${q.passage.passage}</div>
+    </div>
+    <div class="dokkai-progress">
+      <span>Pertanyaan ${q.subIndex+1}/${q.subTotal} dari bacaan ini</span>
+      <span class="dots">${Array.from({length:q.subTotal},(_,i)=>`<span class="dot ${i<q.subIndex?'done':(i===q.subIndex?'now':'')}"></span>`).join("")}</span>
+    </div>
+  ` : "";
+
   $("gameArea").innerHTML = `
     <div class="hud">
       <span class="streak">${gState.streak>1 ? "🔥 Streak x"+gState.streak : ""}</span>
       <span class="score">⭐ ${gState.score}</span>
     </div>
     <div class="timerbar-track"><div class="timerbar-fill" id="timerFill"></div></div>
+    ${passageHtml}
     <div class="qcard">
       <div class="qtype">[ ${typeLabel}${paketTag}${q.type==='susun_kalimat' ? ' · Susun Kalimat' : ''} ]</div>
       <div class="qnum">Soal ${gState.qi+1}/${gState.questions.length} &middot; <span style="color:${levelColor(q.correct.level)}">${q.correct.level}</span></div>
       <div class="qtext">${q.qText}</div>
     </div>
     ${bodyHtml}
+    <div id="dokkaiExplainWrap"></div>
   `;
 
   if(q.type === 'susun_kalimat'){
@@ -1120,6 +1244,16 @@ function renderQuestion(){
       else selectMCAnswer(false, null);
     }
   }, 100);
+}
+
+/* Highlight bagian teks bacaan yg jadi bukti jawaban (dipakai di panel
+   penjelasan setelah siswa menjawab soal dokkai). Pencarian string biasa
+   (bukan regex) supaya aman dari karakter spesial pada teks Jepang. */
+function highlightEvidence(passageText, evidence){
+  if(!evidence) return passageText;
+  const idx = passageText.indexOf(evidence);
+  if(idx === -1) return passageText;
+  return passageText.slice(0,idx) + "<mark>" + evidence + "</mark>" + passageText.slice(idx+evidence.length);
 }
 
 /* ---------- MODE SOAL PILIHAN GANDA ---------- */
@@ -1201,17 +1335,48 @@ function handleAnswerResult(isCorrect){
   } else {
     playSFX('wrong');
     gState.streak = 0;
-    gState.misses.push(q.correct);
+    // Ringkasan yang dipakai ulang di panel "Perlu diulang" (renderResult).
+    // Dibuat seragam (selalu punya .jp & .meaning) meski sumbernya berbeda-beda
+    // (pola kalimat / kosakata-kanji / bacaan dokkai), supaya render tidak pecah.
+    if(q.type === 'dokkai_mc'){
+      gState.misses.push({ jp: q.passage.title, meaning: q.qText.replace(/<[^>]+>/g,'') + ' → ' + q.correctAns });
+    } else {
+      gState.misses.push({ jp: q.correct.jp, meaning: dispMeaning(q.correct) });
+    }
   }
 
-  setTimeout(()=>{
+  const goNext = ()=>{
     if(gState.qi < gState.questions.length-1){
       gState.qi++;
       renderQuestion();
     } else {
       renderResult();
     }
-  }, 650);
+  };
+
+  // Soal Dokkai: tampilkan penjelasan + highlight bukti di teks bacaan,
+  // siswa lanjut manual (bukan auto-advance) supaya sempat baca penjelasan.
+  if(q.type === 'dokkai_mc'){
+    const passageEl = document.querySelector('.dokkai-text');
+    if(passageEl && q.evidence) passageEl.innerHTML = highlightEvidence(q.passage.passage, q.evidence);
+    const wrap = $("dokkaiExplainWrap");
+    if(wrap){
+      wrap.innerHTML = `
+        <div class="dokkai-explain ${isCorrect ? '' : 'wrong'}">
+          <div class="tag">${isCorrect ? '✅ Benar!' : '❌ Kurang tepat'}</div>
+          <div class="body">${q.explanation ? q.explanation : (isCorrect ? 'Jawabanmu tepat.' : 'Jawaban yang benar: <b>'+q.correctAns+'</b>')}</div>
+        </div>
+        <button class="continue-btn" id="dokkaiContinueBtn">${gState.qi < gState.questions.length-1 ? 'Lanjut ▶' : 'Lihat Hasil ▶'}</button>
+      `;
+      $("dokkaiContinueBtn").addEventListener("click", goNext);
+      wrap.scrollIntoView({behavior:'smooth', block:'nearest'});
+    } else {
+      setTimeout(goNext, 650);
+    }
+    return;
+  }
+
+  setTimeout(goNext, 650);
 }
 
 function gradeFor(pct){
@@ -1228,7 +1393,7 @@ function renderResult(){
   const grade = gradeFor(acc);
   const dateStr = gState.startedAt.toLocaleString("id-ID");
 
-  const materiLabel = setupType === 'bunpo' ? 'Pola Kalimat' : 'Kosakata & Kanji';
+  const materiLabel = setupType === 'bunpo' ? 'Pola Kalimat' : (setupType === 'dokkai' ? 'Dokkai (Bacaan)' : 'Kosakata & Kanji');
 
   let justUnlocked = false;
   if(setupMode === "ujian"){
@@ -1273,7 +1438,7 @@ function renderResult(){
   `;
 
   $("copyBtn").addEventListener("click", ()=>{
-    const text = `HASIL PENILAIAN ${setupType === 'bunpo' ? 'POLA KALIMAT' : 'KOSAKATA & KANJI'}${gState.paketLabel ? ' ('+gState.paketLabel+')' : ''}\nNama: ${student.nama}\nNIS: ${student.nis}\nKelas: ${student.kelas||"-"}\nSkor: ${gState.score} poin\nBenar: ${gState.correctCount}/${total} (${acc}%)\nNilai: ${grade.letter}`;
+    const text = `HASIL PENILAIAN ${materiLabel.toUpperCase()}${gState.paketLabel ? ' ('+gState.paketLabel+')' : ''}\nNama: ${student.nama}\nNIS: ${student.nis}\nKelas: ${student.kelas||"-"}\nSkor: ${gState.score} poin\nBenar: ${gState.correctCount}/${total} (${acc}%)\nNilai: ${grade.letter}`;
     navigator.clipboard.writeText(text).then(()=>{
       $("copyBtn").textContent = "✓ Tersalin";
       setTimeout(()=> $("copyBtn").textContent = "📋 Salin Hasil", 1500);
@@ -1327,7 +1492,7 @@ function downloadResultCard(grade, acc, total, dateStr){
   ctx.fillText("NAFIS SENSEI ゲームコーナー", pad+46, pad+30);
 
   // sub-judul: jenis materi + paket soal (jika ada)
-  const typeLabel = setupType === "bunpo" ? "POLA KALIMAT" : "KOSAKATA & KANJI";
+  const typeLabel = setupType === "bunpo" ? "POLA KALIMAT" : (setupType === "dokkai" ? "DOKKAI (BACAAN)" : "KOSAKATA & KANJI");
   const subLabel = "HASIL PENILAIAN — " + typeLabel + (gState.paketLabel ? "  ·  " + gState.paketLabel.toUpperCase() : "");
   ctx.fillStyle = "#9ca3af";
   ctx.font = "bold 15px sans-serif";
