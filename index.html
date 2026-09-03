@@ -119,26 +119,63 @@
     color: var(--cyan); text-shadow: 0 0 8px rgba(0,229,255,.8);
   }
 
-  /* the arcade cabinet */
-  .cabinet-wrap { position: relative; margin: 14px 0 6px; width: 210px; }
+  /* ============================================================
+     MESIN ARCADE — versi detail (marquee+logo, speaker, dual
+     joystick, panel samping bertulisan, neon tube kanan-kiri)
+     ============================================================ */
+  .arcade-scene { position: relative; display: flex; align-items: center; justify-content: center;
+    gap: 6px; margin: 14px 0 6px; }
+  .neon-tube { width: 4px; height: 210px; border-radius: 4px; flex-shrink: 0; }
+  .neon-tube.left  { background: var(--cyan); box-shadow: 0 0 8px var(--cyan), 0 0 20px var(--cyan), 0 0 36px rgba(0,229,255,.6); animation: tubeFlicker 3.2s infinite ease-in-out; }
+  .neon-tube.right { background: #ff2ad4;    box-shadow: 0 0 8px #ff2ad4, 0 0 20px #ff2ad4, 0 0 36px rgba(255,42,212,.6); animation: tubeFlicker 3.2s infinite ease-in-out .5s; }
+  @keyframes tubeFlicker { 0%,88%,100% { opacity:1; } 90% { opacity:.4; } 93% { opacity:1; } }
+
+  .cabinet-wrap { position: relative; width: 232px; flex-shrink: 0; }
+
+  /* bodi utama dgn "panel samping" trapesium memakai clip-path,
+     memberi kesan perspektif 3D tanpa gambar raster */
+  .cab-side { position: absolute; top: 34px; bottom: 0; width: 16px;
+    background: linear-gradient(180deg,#1f1d2c,#0a0913 85%);
+    border: 1px solid rgba(0,229,255,.15);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cab-side.l { left: -14px; clip-path: polygon(40% 0, 100% 0, 100% 100%, 0 100%); }
+  .cab-side.r { right: -14px; clip-path: polygon(0 0, 60% 0, 100% 100%, 0 100%); }
+  .cab-side span { writing-mode: vertical-rl; font-family:"Noto Sans JP",sans-serif; font-weight:900;
+    font-size: 8px; letter-spacing: 2px; color: rgba(0,229,255,.5); }
+
   .marquee {
-    height: 30px; border-radius: 10px 10px 4px 4px;
+    height: 46px; border-radius: 12px 12px 4px 4px;
     background: linear-gradient(135deg, #ff2ad4, #7b2aff);
     box-shadow: 0 0 18px rgba(255,42,212,.55), 0 0 34px rgba(123,42,255,.35);
-    display: flex; align-items: center; justify-content: center;
-    font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 11px; color: #fff;
-    letter-spacing: 2px; animation: pulseGlow 2.2s infinite ease-in-out;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 0 10px; animation: pulseGlow 2.2s infinite ease-in-out;
   }
-  @keyframes pulseGlow {
-    0%, 100% { filter: brightness(1); }
-    50% { filter: brightness(1.35); }
-  }
+  .marquee img { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    box-shadow: 0 0 6px rgba(255,255,255,.6); }
+  .marquee .mq-text { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 11px; color: #fff;
+    letter-spacing: 1.2px; line-height: 1.25; text-align: left; }
+  .marquee .mq-text small { display:block; font-size: 8px; font-weight: 700; opacity: .85; letter-spacing: 1.5px; }
+  @keyframes pulseGlow { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.35); } }
+
   .cabinet-body {
     background: linear-gradient(160deg, #1b1b28, #0c0c14 70%);
     border: 1px solid rgba(0,229,255,.25);
-    border-top: none; border-radius: 0 0 10px 10px;
-    padding: 10px 10px 14px; box-shadow: 0 0 26px rgba(0,0,0,.6);
+    border-top: none; border-radius: 0 0 12px 12px;
+    padding: 10px 10px 12px; box-shadow: 0 0 26px rgba(0,0,0,.6);
   }
+
+  /* sepasang speaker bulat bermotif mesh */
+  .speaker-row { display: flex; justify-content: center; gap: 18px; margin-bottom: 8px; }
+  .speaker {
+    width: 30px; height: 30px; border-radius: 50%;
+    background:
+      repeating-radial-gradient(circle at center, rgba(0,229,255,.35) 0px, rgba(0,229,255,.35) 1px, transparent 1px, transparent 4px),
+      radial-gradient(circle at 40% 35%, #23212f, #0a0913 75%);
+    border: 1px solid rgba(0,229,255,.3);
+    box-shadow: inset 0 0 8px rgba(0,0,0,.7), 0 0 6px rgba(0,229,255,.25);
+  }
+
   .cab-screen {
     background: radial-gradient(circle at 50% 40%, #101425, #05060c 78%);
     border: 2px solid rgba(0,229,255,.35);
@@ -152,25 +189,37 @@
   }
   .cab-screen .kanji {
     position: relative; text-align: center; font-family: "Noto Sans JP", sans-serif; font-weight: 900;
-    font-size: 34px; letter-spacing: 2px;
+    font-size: 32px; letter-spacing: 2px;
     background: linear-gradient(180deg, #7CFBFF 0%, #00E5FF 45%, #b06bff 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
     text-shadow: none; filter: drop-shadow(0 0 10px rgba(0,229,255,.85)) drop-shadow(0 0 22px rgba(157,0,255,.6));
     animation: screenFlicker 4.5s infinite ease-in-out;
   }
+  .cab-screen .tagline { position: relative; text-align: center; margin-top: 6px; font-size: 9.5px;
+    color: rgba(255,255,255,.55); font-weight: 600; letter-spacing: .3px; }
   @keyframes screenFlicker {
     0%, 92%, 100% { opacity: 1; } 93% { opacity: .55; } 95% { opacity: 1; } 96% { opacity: .7; }
   }
-  .cab-controls { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
-  .joystick { width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ff6b9c, var(--sakura-dk)); box-shadow: 0 0 8px rgba(255,42,122,.6); }
-  .arcade-btn-deco { width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #8CFFEA, var(--mint)); box-shadow: 0 0 6px rgba(0,240,181,.6); }
+
+  /* panel kontrol: dua cluster joystick+tombol (kiri cyan, kanan magenta) */
+  .control-panel { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding: 6px 4px 0; }
+  .stick-cluster { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .joystick-ball { width: 20px; height: 20px; border-radius: 50%; position: relative; }
+  .joystick-ball::before { content:""; position:absolute; left:50%; bottom:-9px; width:5px; height:12px;
+    background: linear-gradient(180deg,#4a4658,#221f2e); border-radius: 2px; transform: translateX(-50%); z-index: -1; }
+  .joystick-ball.cy { background: radial-gradient(circle at 35% 30%, #7CFBFF, var(--cyan)); box-shadow: 0 0 10px rgba(0,229,255,.7); }
+  .joystick-ball.mg { background: radial-gradient(circle at 35% 30%, #ff8ae0, #ff2ad4); box-shadow: 0 0 10px rgba(255,42,212,.7); }
+  .btn-arc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+  .btn-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .btn-dot.cy { background: radial-gradient(circle at 35% 30%, #8CFFEA, var(--mint)); box-shadow: 0 0 5px rgba(0,240,181,.6); }
+  .btn-dot.mg { background: radial-gradient(circle at 35% 30%, #ffd27a, var(--gold)); box-shadow: 0 0 5px rgba(255,193,7,.6); }
 
   /* reflection on the floor */
   .cab-reflection {
-    width: 210px; margin-top: 2px; transform: scaleY(-1); opacity: .22;
+    width: 232px; margin-top: 2px; transform: scaleY(-1); opacity: .18;
     -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.6), transparent 70%);
             mask-image: linear-gradient(180deg, rgba(0,0,0,.6), transparent 70%);
-    filter: blur(0.5px);
+    filter: blur(0.5px); flex-shrink: 0;
   }
 
   .arcade-copy { text-align: center; margin-top: 16px; }
@@ -375,19 +424,34 @@
       <div class="welcome">ようこそ‼</div>
     </div>
 
-    <div class="cabinet-wrap">
-      <div class="marquee">GAME CENTER</div>
-      <div class="cabinet-body">
-        <div class="cab-screen">
-          <div class="kanji">日本語</div>
+    <div class="arcade-scene">
+      <div class="neon-tube left"></div>
+      <div class="cabinet-wrap">
+        <div class="cab-side l"><span>ゲームコーナー</span></div>
+        <div class="cab-side r"><span>NAFIS SENSEI</span></div>
+        <div class="marquee">
+          <img src="" id="marqueeLogoImg" alt="logo">
+          <div class="mq-text">NAFIS SENSEI<small>ゲームコーナー</small></div>
         </div>
-        <div class="cab-controls">
-          <div class="joystick"></div>
-          <div class="arcade-btn-deco"></div>
-          <div class="arcade-btn-deco"></div>
-          <div class="arcade-btn-deco"></div>
+        <div class="cabinet-body">
+          <div class="speaker-row"><div class="speaker"></div><div class="speaker"></div></div>
+          <div class="cab-screen">
+            <div class="kanji">日本語</div>
+            <div class="tagline">belajar &amp; bermain bahasa Jepang</div>
+          </div>
+          <div class="control-panel">
+            <div class="stick-cluster">
+              <div class="joystick-ball cy"></div>
+              <div class="btn-arc"><div class="btn-dot cy"></div><div class="btn-dot cy"></div><div class="btn-dot cy"></div></div>
+            </div>
+            <div class="stick-cluster">
+              <div class="joystick-ball mg"></div>
+              <div class="btn-arc"><div class="btn-dot mg"></div><div class="btn-dot mg"></div><div class="btn-dot mg"></div></div>
+            </div>
+          </div>
         </div>
       </div>
+      <div class="neon-tube right"></div>
     </div>
     <div class="cab-reflection">
       <div class="cabinet-body">
@@ -569,6 +633,7 @@ const $ = id => document.getElementById(id);
 
 /* Pasang logo Nafis Sensei (base64, tanpa perlu file gambar terpisah) */
 $("landingLogoImg").src = NAFIS_LOGO_URI;
+$("marqueeLogoImg").src = NAFIS_LOGO_URI;
 $("brandLogoImg").src = NAFIS_LOGO_URI;
 
 /* Landing page (Ruang Arcade Kabinet Neon) -> tombol "Mulai Bermain"
@@ -1173,12 +1238,38 @@ function startGame(){
   renderQuestion();
 }
 
+/* Waktu pengerjaan bacaan dokkai mengikuti standar durasi resmi JLPT
+   per level (dalam detik), dihitung TOTAL untuk satu paket bacaan
+   (passage + semua sub-soalnya) — bukan per soal:
+     N5 = 90 detik, N4 = 150 detik, N3 = 210 detik, N2 = 270 detik.
+   Soal pertama (baca awal passage) diberi porsi lebih besar (40%)
+   karena di situlah siswa membaca teksnya; sisa soal berikutnya
+   membagi rata sisa waktu. Jumlahnya tetap pas dengan total resmi. */
+function dokkaiTotalTimeForLevel(level){
+  switch(level){
+    case "N5": return 90;
+    case "N4": return 150;
+    case "N3": return 210;
+    case "N2": return 270;
+    default: return 150;
+  }
+}
+function dokkaiQTime(q){
+  const total = dokkaiTotalTimeForLevel(q.passage.level);
+  const n = q.subTotal || 1;
+  if(n <= 1) return total;
+  const first = Math.round(total * 0.4);
+  const rest = Math.max(10, Math.round((total - first) / (n - 1)));
+  return q.subIndex === 0 ? first : rest;
+}
+
 function renderQuestion(){
   clearInterval(gState.timer);
   const q = gState.questions[gState.qi];
-  // Dokkai butuh waktu baca lebih lama; makin banyak sub-soal di bacaan yg
-  // sama, waktu sedikit lebih longgar lagi di soal pertama (baca awal).
-  const qTime = q.type === 'dokkai_mc' ? (q.subIndex === 0 ? 55 : 35) : 20;
+  // Dokkai butuh waktu baca lebih lama; total waktu per bacaan mengikuti
+  // standar resmi JLPT per level (lihat dokkaiQTime), soal pertama dapat
+  // porsi lebih besar untuk waktu membaca.
+  const qTime = q.type === 'dokkai_mc' ? dokkaiQTime(q) : 20;
   gState.timeLeft = qTime; gState.timeTotal = qTime;
   gState.locked = false;
 
