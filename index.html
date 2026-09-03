@@ -616,6 +616,84 @@ function playSFX(type) {
   }
 }
 
+/* ============================================================
+   MUSIK LATAR (BGM) — dibuat langsung dengan Web Audio API
+   (loop synth ringan bernuansa cyberpunk), tanpa perlu file audio
+   eksternal. Menyala di landing page & dashboard, berhenti begitu
+   kuis dimulai (startGame), lalu menyala lagi begitu kembali ke
+   layar setup/dashboard (renderStart / hasil kuis).
+   ============================================================ */
+let bgmPlaying = false;
+let bgmTimeoutId = null;
+let bgmGainNode = null;
+
+function bgmScheduleLoop(){
+  if(!bgmPlaying) return;
+  // progresi 4 chord minor sederhana, nuansa synthwave/cyberpunk
+  const chords = [
+    [174.61, 220.00, 261.63], // F3 A3 C4  (Fm-ish)
+    [155.56, 196.00, 233.08], // D#3 G3 A#3
+    [138.59, 174.61, 207.65], // C#3 F3 G#3
+    [164.81, 207.65, 246.94]  // E3 G#3 B3
+  ];
+  const now = audioCtx.currentTime;
+  const beat = 1.15; // durasi tiap chord (detik)
+  chords.forEach((chord, i) => {
+    const t0 = now + i * beat;
+    chord.forEach(freq => {
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      osc.connect(g); g.connect(bgmGainNode);
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(0.045, t0 + 0.25);
+      g.gain.linearRampToValueAtTime(0.03, t0 + beat - 0.2);
+      g.gain.linearRampToValueAtTime(0, t0 + beat);
+      osc.start(t0); osc.stop(t0 + beat + 0.05);
+    });
+    // lapisan melodi tipis di oktaf atas, sesekali (biar tidak monoton)
+    if(i % 2 === 0){
+      const mOsc = audioCtx.createOscillator();
+      const mG = audioCtx.createGain();
+      mOsc.type = 'sine';
+      mOsc.frequency.value = chord[2] * 2;
+      mOsc.connect(mG); mG.connect(bgmGainNode);
+      mG.gain.setValueAtTime(0, t0 + beat*0.3);
+      mG.gain.linearRampToValueAtTime(0.03, t0 + beat*0.4);
+      mG.gain.linearRampToValueAtTime(0, t0 + beat*0.9);
+      mOsc.start(t0 + beat*0.3); mOsc.stop(t0 + beat + 0.05);
+    }
+  });
+  bgmTimeoutId = setTimeout(bgmScheduleLoop, chords.length * beat * 1000);
+}
+
+function startBGM(){
+  if(bgmPlaying) return; // idempotent, tidak dobel kalau sudah main
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  if(!bgmGainNode){
+    bgmGainNode = audioCtx.createGain();
+    bgmGainNode.gain.value = 1;
+    bgmGainNode.connect(audioCtx.destination);
+  }
+  bgmPlaying = true;
+  bgmScheduleLoop();
+}
+
+function stopBGM(){
+  bgmPlaying = false;
+  if(bgmTimeoutId){ clearTimeout(bgmTimeoutId); bgmTimeoutId = null; }
+  // fade out halus biar tidak putus mendadak
+  if(bgmGainNode){
+    const now = audioCtx.currentTime;
+    bgmGainNode.gain.cancelScheduledValues(now);
+    bgmGainNode.gain.setValueAtTime(bgmGainNode.gain.value, now);
+    bgmGainNode.gain.linearRampToValueAtTime(0, now + 0.4);
+    // pulihkan gain node supaya siap dipakai lagi nanti
+    setTimeout(() => { if(bgmGainNode) bgmGainNode.gain.value = 1; }, 450);
+  }
+}
+
 </script>
 
 <!-- ====== DATA SOAL/KOSAKATA — dipisah jadi file JS terpisah ======
@@ -641,6 +719,7 @@ $("brandLogoImg").src = NAFIS_LOGO_URI;
    sudah aktif sejak awal jadi tidak perlu logika tambahan. */
 $("landingStartBtn").addEventListener("click", () => {
   $("landing").classList.add("hide");
+  startBGM();
 });
 let student = null;
 
@@ -682,6 +761,7 @@ $("tabStudyBtn").addEventListener("click", () => switchTab('study'));
 $("tabHistoryBtn").addEventListener("click", () => switchTab('history'));
 
 function switchTab(tab) {
+  startBGM(); // navigasi dashboard (bukan sedang mengerjakan kuis) -> musik menyala
   document.querySelectorAll(".nav-tabs .tab-btn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".dashboard-layout > .panel").forEach(p => p.classList.remove("active"));
   
@@ -1072,6 +1152,7 @@ function buildQuestionsForPacket(scope, count, typeMode, packetIndex){
 }
 
 function renderStart(){
+  startBGM(); // pastikan musik latar menyala lagi begitu kembali ke layar setup/dashboard
   $("gameArea").innerHTML = `
     <div class="start-screen">
       <h2>Siap uji ingatanmu?</h2>
@@ -1221,6 +1302,7 @@ function renderPacketRow(){
 
 let gState = null;
 function startGame(){
+  stopBGM(); // musik latar berhenti begitu kuis dimulai
   const qs = setupMode === "ujian"
     ? buildQuestionsForPacket(setupScope, setupCount, setupType, setupPacketIndex)
     : buildQuestions(setupScope, setupCount, setupType);
@@ -1479,6 +1561,7 @@ function gradeFor(pct){
 }
 
 function renderResult(){
+  startBGM(); // kuis sudah selesai -> musik latar menyala lagi
   const total = gState.questions.length;
   const acc = Math.round((gState.correctCount/total)*100);
   const grade = gradeFor(acc);
