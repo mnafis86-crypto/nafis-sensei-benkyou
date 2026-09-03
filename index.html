@@ -257,6 +257,7 @@
   .opt-row { display: flex; gap: 6px; flex-wrap: wrap; }
   .opt-row button { flex: 1; min-width: calc(20% - 6px); padding: 9px 4px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--sub); font-size: 12px; font-weight: 600; cursor: pointer; min-height: 38px; }
   .opt-row button.active { background: var(--sakura); border-color: var(--sakura); color: #fff; box-shadow: 0 0 8px rgba(255, 42, 122, 0.4); }
+  .opt-row button:disabled { opacity: .38; cursor: not-allowed; filter: grayscale(.6); }
   
   .play-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; cursor: pointer; background: linear-gradient(135deg, var(--cyan), #0099FF); color: #000; font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 1.2px; box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); min-height: 52px; }
 
@@ -880,11 +881,48 @@ function buildPacketPlan(scope, count, typeMode){
 }
 
 function packetLabel(i){
-  // 0 -> A, 1 -> B, ... 25 -> Z, 26 -> AA, dst.
+  // 0 -> A, 1 -> B, ... 25 -> Z, 26 -> AA, dst. (dipakai internal utk seed acak,
+  // tampilan ke siswa tetap "Level 1, Level 2, ..." — lihat levelDisplayLabel)
   let s = "";
   i++;
   while(i>0){ i--; s = String.fromCharCode(65 + (i%26)) + s; i = Math.floor(i/26); }
   return s;
+}
+function levelDisplayLabel(i){ return `Level ${i+1}`; }
+
+/* ---------- SISTEM LOCK/UNLOCK LEVEL ----------
+   Level berikutnya baru terbuka kalau level sebelumnya (di kombinasi
+   cakupan+jenis+jumlah-soal yang SAMA) sudah pernah diselesaikan dengan
+   akurasi >= 80%. Progres disimpan per siswa (kunci pakai NIS) di
+   localStorage supaya tetap tersimpan walau ganti perangkat/tab asal
+   NIS-nya sama. Level 1 selalu terbuka secara default. */
+function levelProgressKey(){
+  return `nafis_level_progress_${(student && student.nis) || "guest"}`;
+}
+function levelComboKey(){
+  return `${setupScope}|${setupType}|${setupCount}`;
+}
+function getUnlockedLevelCount(){
+  try{
+    const all = JSON.parse(localStorage.getItem(levelProgressKey()) || "{}");
+    return Math.max(1, all[levelComboKey()] || 1); // minimal 1 level selalu terbuka
+  }catch(e){ return 1; }
+}
+function unlockNextLevelIfPassed(packetIndexJustPlayed, accuracyPercent){
+  if(accuracyPercent < 80) return false;
+  try{
+    const key = levelProgressKey();
+    const all = JSON.parse(localStorage.getItem(key) || "{}");
+    const combo = levelComboKey();
+    const currentUnlocked = Math.max(1, all[combo] || 1);
+    // hanya maju kalau yang baru saja lulus adalah level paling depan (frontier)
+    if(packetIndexJustPlayed + 1 === currentUnlocked){
+      all[combo] = currentUnlocked + 1;
+      localStorage.setItem(key, JSON.stringify(all));
+      return true; // level baru saja terbuka
+    }
+  }catch(e){}
+  return false;
 }
 
 function buildQuestionsForPacket(scope, count, typeMode, packetIndex){
@@ -908,7 +946,7 @@ function renderStart(){
           <div class="lbl">MODE</div>
           <div class="opt-row" id="modeRow">
             <button data-v="latihan" class="active">🔀 Latihan Bebas (acak)</button>
-            <button data-v="ujian">📝 Mode Ujian (Paket Soal)</button>
+            <button data-v="ujian">📝 Mode Ujian (Level Berjenjang)</button>
           </div>
         </div>
         <div class="setup-box">
@@ -938,7 +976,7 @@ function renderStart(){
           </div>
         </div>
         <div class="setup-box" id="packetBox" style="display:none;">
-          <div class="lbl">PILIH PAKET SOAL <span class="cnt" id="packetHint"></span></div>
+          <div class="lbl">PILIH LEVEL <span class="cnt" id="packetHint"></span></div>
           <div class="opt-row" id="packetRow" style="grid-template-columns: repeat(6, 1fr);"></div>
         </div>
       </div>
@@ -977,22 +1015,29 @@ function renderStart(){
   renderPacketRow();
 }
 
-/* Tampilkan kotak pilihan "Paket A / Paket B / ..." kalau Mode Ujian aktif.
-   Jumlah paket dihitung otomatis dari total kosakata/pola di cakupan level
-   yang dipilih, dibagi jumlah soal per paket -> semua item pasti terpakai. */
+/* Tampilkan kotak pilihan "Level 1 / Level 2 / ..." kalau Mode Ujian aktif.
+   Jumlah level dihitung otomatis dari total kosakata/pola di cakupan level
+   yang dipilih, dibagi jumlah soal per level -> semua item pasti terpakai.
+   Level yang belum di-unlock ditampilkan terkunci (🔒) dan tidak bisa diklik;
+   syarat buka level berikutnya: akurasi >= 80% di level sebelumnya. */
 function renderPacketRow(){
   const box = $("packetBox");
   if(!box) return;
   if(setupMode !== "ujian"){ box.style.display = "none"; return; }
   box.style.display = "";
   const plan = buildPacketPlan(setupScope, setupCount, setupType);
-  $("packetHint").textContent = `(${plan.numPackets} paket &middot; ${plan.L} item terbagi rata, semua terpakai)`;
+  const unlockedCount = Math.min(getUnlockedLevelCount(), plan.numPackets);
+  $("packetHint").textContent = `(${plan.numPackets} level &middot; ${plan.L} item terbagi rata &middot; min. 80% utk buka level berikutnya)`;
   const row = $("packetRow");
   if(setupPacketIndex >= plan.numPackets) setupPacketIndex = 0;
-  row.innerHTML = Array.from({length: plan.numPackets}, (_,i)=>
-    `<button data-v="${i}" class="${i===setupPacketIndex?'active':''}">Paket ${packetLabel(i)}</button>`
-  ).join("");
+  if(setupPacketIndex >= unlockedCount) setupPacketIndex = unlockedCount - 1;
+  row.innerHTML = Array.from({length: plan.numPackets}, (_,i)=>{
+    const locked = i >= unlockedCount;
+    const activeCls = (i===setupPacketIndex && !locked) ? 'active' : '';
+    return `<button data-v="${i}" class="${activeCls}" ${locked ? 'disabled' : ''} title="${locked ? 'Selesaikan level sebelumnya dgn nilai min. 80% dulu' : ''}">${locked ? '🔒' : '✅'} ${levelDisplayLabel(i)}</button>`;
+  }).join("");
   document.querySelectorAll("#packetRow button").forEach(b=>{
+    if(b.disabled) return;
     b.addEventListener("click", ()=>{
       document.querySelectorAll("#packetRow button").forEach(x=>x.classList.remove("active"));
       b.classList.add("active"); setupPacketIndex = parseInt(b.dataset.v);
@@ -1014,7 +1059,7 @@ function startGame(){
     qi: 0, score: 0, streak: 0, correctCount: 0, misses: [],
     timer: null, timeLeft: 20, timeTotal: 20, locked: false,
     startedAt: new Date(),
-    paketLabel: setupMode === "ujian" ? ("Paket " + packetLabel(setupPacketIndex)) : null
+    paketLabel: setupMode === "ujian" ? levelDisplayLabel(setupPacketIndex) : null
   };
   renderQuestion();
 }
@@ -1185,6 +1230,11 @@ function renderResult(){
 
   const materiLabel = setupType === 'bunpo' ? 'Pola Kalimat' : 'Kosakata & Kanji';
 
+  let justUnlocked = false;
+  if(setupMode === "ujian"){
+    justUnlocked = unlockNextLevelIfPassed(setupPacketIndex, acc);
+  }
+
   saveHistoryToLocal({
     tanggal: dateStr,
     jenis: materiLabel,
@@ -1205,6 +1255,9 @@ function renderResult(){
       ${gState.paketLabel ? `<div class="id-line" style="opacity:.8;">${gState.paketLabel}</div>` : ""}
       <div class="big-score">${gState.score}</div>
       <div class="sub">poin &middot; ${gState.correctCount}/${total} benar (${acc}%)</div>
+      ${justUnlocked
+        ? `<div style="margin-top:10px;padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,rgba(0,229,255,.18),rgba(157,0,255,.18));border:1px solid var(--cyan);font-weight:800;">🔓 Level berikutnya terbuka! Lanjut ke ${levelDisplayLabel(setupPacketIndex+1)}</div>`
+        : (setupMode === "ujian" && acc < 80 ? `<div style="margin-top:10px;padding:10px 14px;border-radius:12px;background:rgba(255,42,122,.12);border:1px solid var(--sakura);font-weight:700;font-size:13px;">🔒 Minimal 80% untuk buka level berikutnya. Coba lagi ya!</div>` : "")}
       <div class="export-row">
         <button id="copyBtn">📋 Salin Hasil</button>
         <button id="downloadBtn">🖼️ Unduh Kartu Hasil</button>
@@ -1405,7 +1458,7 @@ function downloadHistoryCSV(){
   const saved = localStorage.getItem("nafis_history");
   const list = saved ? JSON.parse(saved) : [];
   if(!list.length){ alert("Belum ada riwayat untuk diunduh."); return; }
-  const header = ["Tanggal","Nama","NIS","Kelas","Jenis","Paket","Skor","Benar","Total","Akurasi(%)","Nilai"];
+  const header = ["Tanggal","Nama","NIS","Kelas","Jenis","Level","Skor","Benar","Total","Akurasi(%)","Nilai"];
   const rows = list.map(h => [
     h.tanggal, student ? student.nama : "", student ? student.nis : "", student ? (student.kelas||"") : "",
     h.jenis, h.paket || "-", h.skor, h.benar, h.total, h.akurasi, h.nilai
