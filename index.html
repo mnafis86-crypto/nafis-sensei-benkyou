@@ -315,6 +315,33 @@
   .opt-row button { flex: 1; min-width: calc(20% - 6px); padding: 9px 4px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--sub); font-size: 12px; font-weight: 600; cursor: pointer; min-height: 38px; }
   .opt-row button.active { background: var(--sakura); border-color: var(--sakura); color: #fff; box-shadow: 0 0 8px rgba(255, 42, 122, 0.4); }
   .opt-row button:disabled { opacity: .38; cursor: not-allowed; filter: grayscale(.6); }
+
+  /* ============================================================
+     PETA LEVEL — jalur bergelombang ala game (Level Berjenjang)
+     menggantikan grid tombol polos.
+     ============================================================ */
+  .level-map { display: flex; flex-direction: column; align-items: center; padding: 14px 0 4px; max-height: 360px; overflow-y: auto; }
+  .level-node-row { display: flex; align-items: center; width: 100%; position: relative; min-height: 62px; }
+  .level-node-row.pos-l { justify-content: flex-start; padding-left: 16%; }
+  .level-node-row.pos-r { justify-content: flex-end; padding-right: 16%; }
+  .level-node-row.pos-c { justify-content: center; }
+  .level-connector { position: absolute; left: 50%; top: -18px; width: 3px; height: 18px; background: var(--line); transform: translateX(-50%); z-index: 1; }
+  .level-connector.done { background: var(--mint); box-shadow: 0 0 6px rgba(0,240,181,.5); }
+  .level-node {
+    width: 50px; height: 50px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 15px; cursor: pointer; position: relative; z-index: 2; border: 3px solid var(--line);
+    background: rgba(255,255,255,.03); color: var(--sub); flex-shrink: 0; transition: transform .15s ease;
+  }
+  .level-node:active:not(.locked) { transform: scale(0.9); }
+  .level-node.unlocked { background: linear-gradient(135deg, var(--cyan), #7b2aff); border-color: rgba(255,255,255,.35); color: #fff; box-shadow: 0 0 12px rgba(0,229,255,.45); cursor: pointer; }
+  .level-node.cleared { background: linear-gradient(135deg, var(--mint), #049a77); border-color: rgba(255,255,255,.35); color: #fff; }
+  .level-node.active-pick { border-color: var(--gold); box-shadow: 0 0 18px rgba(255,215,0,.75); animation: nodePulse 1.5s infinite ease-in-out; }
+  .level-node.locked { cursor: not-allowed; }
+  .level-node .ln-sub { font-size: 8px; font-weight: 700; margin-top: -2px; letter-spacing: .3px; }
+  .level-node .ln-star { position: absolute; top: -9px; font-size: 13px; filter: drop-shadow(0 0 3px rgba(0,0,0,.6)); }
+  @keyframes nodePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.09); } }
+  .level-node.boss-node { width: 58px; height: 58px; border-color: var(--sakura); }
+  .level-node.boss-node.unlocked, .level-node.boss-node.active-pick { background: linear-gradient(135deg, var(--sakura), #7b2aff); }
   
   .play-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; cursor: pointer; background: linear-gradient(135deg, var(--cyan), #0099FF); color: #000; font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 1.2px; box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); min-height: 52px; }
 
@@ -553,7 +580,146 @@
   }
   .hud .score { font-weight: 700; color: var(--cyan); font-size: 15px; }
   .hud .streak { color: var(--sakura); font-weight: 700; font-size: 13px; text-shadow: 0 0 6px rgba(255, 42, 122, 0.5); }
-  
+
+  /* avatar hidup di HUD saat main — bereaksi tiap jawaban */
+  .quiz-avatar {
+    position: absolute; top: -6px; right: 6px; width: 42px; height: 42px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), #7b2aff); display: flex; align-items: center; justify-content: center;
+    font-size: 22px; border: 2px solid rgba(255,255,255,.25); box-shadow: 0 0 10px rgba(0,229,255,.4); z-index: 5;
+  }
+  .quiz-avatar.reaction-happy { animation: avatarHappy 0.6s ease; }
+  @keyframes avatarHappy { 0%,100% { transform: translateY(0) scale(1); } 30% { transform: translateY(-10px) scale(1.15); } 60% { transform: translateY(2px) scale(0.95); } }
+  .quiz-avatar.reaction-sad { animation: avatarSad 0.5s ease; filter: grayscale(.5); }
+  @keyframes avatarSad { 0%,100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-5px) rotate(-8deg); } 75% { transform: translateX(5px) rotate(8deg); } }
+
+  /* badge streak login harian pada avatar dashboard */
+  .pb-streakbadge {
+    position: absolute; top: -5px; left: -5px; background: linear-gradient(135deg,#ff6b1a,#ff2a7a); color: #fff;
+    font-size: 9px; font-weight: 900; border-radius: 9px; padding: 1px 4px; display: flex; align-items: center; gap: 1px;
+    border: 2px solid var(--bg);
+  }
+
+  /* ============================================================
+     KOTODAMA CARD — sistem koleksi kartu. Tiap kata/pola/soal yang
+     dijawab benar jadi kartu koleksi dengan rarity berdasar level
+     (N5=Umum, N4=Jarang, N3=Langka, N2=Epik, Boss=Legendaris).
+     Ini yang bikin belajar terasa seperti "membuka booster pack".
+     ============================================================ */
+  .rarity-N5 { --r1:#9aa5b1; --r2:#e2e8f0; --rname:"UMUM"; }
+  .rarity-N4 { --r1:#00c07a; --r2:#7CFFDB; --rname:"JARANG"; }
+  .rarity-N3 { --r1:#2f7bff; --r2:#8fc2ff; --rname:"LANGKA"; }
+  .rarity-N2 { --r1:#a020f0; --r2:#e6a8ff; --rname:"EPIK"; }
+  .rarity-legend { --r1:#ffb300; --r2:#fff3b0; --rname:"LEGENDARIS"; }
+
+  .card-reveal-overlay { position: fixed; inset: 0; z-index: 10001; display: flex; align-items: center; justify-content: center;
+    background: rgba(5,5,10,.85); animation: fadeIn .25s ease; }
+  .kotodama-card {
+    width: 190px; height: 260px; border-radius: 16px; position: relative; padding: 14px 12px;
+    background: linear-gradient(160deg, #17151f, #0a0913);
+    border: 3px solid var(--r1, var(--cyan)); box-shadow: 0 0 30px var(--r1, var(--cyan)), 0 10px 30px rgba(0,0,0,.6);
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    animation: cardFlipIn .55s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes cardFlipIn { 0% { transform: rotateY(90deg) scale(0.7); opacity:0; } 100% { transform: rotateY(0) scale(1); opacity:1; } }
+  .kotodama-card .kc-rarity { font-size: 9px; font-weight: 900; letter-spacing: 1.5px; color: var(--r1); text-shadow: 0 0 6px var(--r1); }
+  .kotodama-card .kc-level { position: absolute; top: 10px; right: 10px; font-size: 9px; font-weight: 900; color: #fff;
+    background: var(--r1); border-radius: 6px; padding: 2px 6px; }
+  .kotodama-card .kc-jp { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 26px; text-align: center;
+    background: linear-gradient(180deg, var(--r2), var(--r1)); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 8px var(--r1)); line-height: 1.25; max-height: 100px; overflow: hidden; }
+  .kotodama-card .kc-meaning { font-size: 11px; color: #dfe6ee; text-align: center; padding: 0 4px; }
+  .kotodama-card .kc-badge { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--r1);
+    display: flex; align-items: center; justify-content: center; font-size: 20px; background: rgba(255,255,255,.04); }
+  .kotodama-card .kc-new { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--sakura);
+    color: #fff; font-size: 9px; font-weight: 900; padding: 3px 10px; border-radius: 10px; box-shadow: 0 0 10px rgba(255,42,122,.6); }
+  .card-reveal-caption { text-align: center; margin-top: 16px; color: #fff; font-weight: 800; font-size: 13px; }
+  .card-reveal-close { display: block; margin: 14px auto 0; padding: 8px 22px; border-radius: 10px; border: none;
+    background: linear-gradient(135deg, var(--cyan), #7b2aff); color: #fff; font-weight: 800; cursor: pointer; }
+
+  /* mini toast kartu duplikat (lebih ringan drpd overlay penuh) */
+  .card-dupe-toast {
+    position: fixed; right: 10px; bottom: 90px; z-index: 9999; display: flex; align-items: center; gap: 6px;
+    background: rgba(20,20,32,.95); border: 1px solid var(--r1, var(--line)); border-radius: 12px; padding: 7px 11px;
+    font-size: 11px; font-weight: 700; color: #fff; animation: toastPop 2s ease forwards;
+  }
+
+  /* album koleksi */
+  .album-overlay { position: fixed; inset: 0; z-index: 10000; background: rgba(5,5,10,.85); display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .album-card { width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto; background: var(--panel2); border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
+  .album-card h3 { margin: 0 0 4px; font-size: 16px; }
+  .album-progress { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+  .album-track { height: 6px; border-radius: 4px; background: rgba(255,255,255,.08); overflow: hidden; margin-bottom: 12px; }
+  .album-track-fill { height: 100%; background: linear-gradient(90deg, var(--mint), var(--cyan)); }
+  .album-tabs { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
+  .album-tab { padding: 6px 11px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--sub); font-size: 11px; font-weight: 800; cursor: pointer; }
+  .album-tab.active { background: rgba(0,229,255,.15); color: var(--cyan); border-color: var(--cyan); }
+  .album-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .mini-card { aspect-ratio: 3/4; border-radius: 10px; border: 2px solid var(--r1, var(--line)); background: linear-gradient(160deg, #17151f, #0a0913);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 3px; position: relative; }
+  .mini-card .mc-jp { font-family:"Noto Sans JP",sans-serif; font-weight: 900; font-size: 15px; text-align: center;
+    background: linear-gradient(180deg, var(--r2), var(--r1)); -webkit-background-clip: text; background-clip: text; color: transparent; line-height:1.15; }
+  .mini-card .mc-count { position: absolute; bottom: 3px; right: 4px; font-size: 8px; font-weight: 900; color: var(--sub); }
+  .empty-slot { aspect-ratio: 3/4; border-radius: 10px; border: 2px dashed var(--line); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--line); opacity: .5; }
+
+  /* speech bubble sensei */
+  .sensei-bubble {
+    position: absolute; top: 34px; right: 4px; max-width: 160px; z-index: 6;
+    background: #fff; color: #1a1a1a; font-size: 10.5px; font-weight: 700; padding: 7px 10px; border-radius: 12px 12px 12px 2px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.35); animation: bubblePop 0.35s cubic-bezier(.34,1.56,.64,1), bubbleFade .35s ease 1.9s forwards;
+  }
+  @keyframes bubblePop { 0% { transform: scale(0.4) translateY(6px); opacity:0; } 100% { transform: scale(1) translateY(0); opacity:1; } }
+  @keyframes bubbleFade { to { opacity: 0; transform: translateY(-6px); } }
+
+  /* ============================================================
+     OMIKUJI — undian keberuntungan harian ala kuil Jepang sungguhan.
+     ============================================================ */
+  .omikuji-card { margin: 10px 14px 0; padding: 12px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .omikuji-card .om-icon { font-size: 26px; flex-shrink: 0; }
+  .omikuji-card .om-mid { flex: 1; }
+  .omikuji-card .om-title { font-weight: 800; font-size: 12.5px; }
+  .omikuji-card .om-sub { font-size: 10.5px; color: var(--sub); margin-top: 1px; }
+  .omikuji-card .om-cta { flex-shrink: 0; font-size: 10.5px; font-weight: 900; color: var(--gold); padding: 5px 10px;
+    border: 1px solid var(--gold); border-radius: 8px; background: rgba(255,215,0,.08); }
+  .omikuji-card.done { opacity: .55; cursor: default; }
+  .omikuji-card.done .om-cta { color: var(--sub); border-color: var(--line); background: transparent; }
+
+  .omikuji-overlay { position: fixed; inset: 0; z-index: 10001; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at center, rgba(255,42,122,.2), rgba(5,5,10,.92)); animation: fadeIn .3s ease; }
+  .omikuji-box {
+    width: 70px; height: 90px; margin: 0 auto 14px; background: linear-gradient(160deg, #3a1f0a, #1a0e04);
+    border: 3px solid var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 34px; cursor: pointer; box-shadow: 0 0 24px rgba(255,215,0,.5); animation: omikujiShake 1.8s infinite ease-in-out;
+  }
+  @keyframes omikujiShake { 0%,100% { transform: rotate(0); } 10% { transform: rotate(-4deg); } 20% { transform: rotate(4deg); } 30% { transform: rotate(0); } }
+  .omikuji-slip {
+    width: 220px; text-align: center; padding: 26px 18px; border-radius: 14px;
+    background: linear-gradient(160deg, #fff8e6, #ffe9b0); color: #3a2400;
+    box-shadow: 0 10px 40px rgba(0,0,0,.5); animation: slipDrop 0.6s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes slipDrop { 0% { transform: translateY(-40px) rotate(-6deg); opacity: 0; } 100% { transform: translateY(0) rotate(0); opacity: 1; } }
+  .omikuji-slip .os-fortune { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 32px; margin-bottom: 6px; }
+  .omikuji-slip .os-sub { font-size: 12px; font-weight: 700; opacity: .8; margin-bottom: 14px; }
+  .omikuji-slip .os-reward { font-size: 13px; font-weight: 800; background: rgba(255,193,7,.25); border-radius: 10px; padding: 8px 12px; margin-bottom: 4px; }
+  .omikuji-slip .os-msg { font-size: 11px; font-style: italic; opacity: .75; margin-top: 8px; line-height: 1.5; }
+  .omikuji-close { display: block; margin: 16px auto 0; padding: 9px 24px; border-radius: 10px; border: none;
+    background: linear-gradient(135deg, var(--cyan), #7b2aff); color: #fff; font-weight: 800; cursor: pointer; }
+
+  /* fusi kartu (Kirakira / evolved) */
+  .mini-card.evolved { border-width: 3px; box-shadow: 0 0 14px var(--r1, var(--gold)); animation: evolvedShine 2s infinite ease-in-out; }
+  @keyframes evolvedShine { 0%,100% { box-shadow: 0 0 8px var(--r1,var(--gold)); } 50% { box-shadow: 0 0 18px var(--r1,var(--gold)); } }
+  .mini-card .mc-fuse-btn {
+    position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); font-size: 8px; font-weight: 900;
+    background: var(--sakura); color: #fff; border: none; border-radius: 8px; padding: 2px 6px; cursor: pointer; white-space: nowrap;
+  }
+  .mini-card .mc-sparkle { position: absolute; top: 2px; left: 2px; font-size: 10px; }
+  .fusion-overlay { position: fixed; inset: 0; z-index: 10002; display: flex; align-items: center; justify-content: center;
+    background: rgba(5,5,10,.9); animation: fadeIn .3s ease; }
+  .fusion-result-card { text-align: center; }
+  .fusion-result-card .fr-jp { font-family:"Noto Sans JP",sans-serif; font-weight:900; font-size:30px; color: var(--gold);
+    text-shadow: 0 0 20px rgba(255,215,0,.8); animation: badgePop .5s cubic-bezier(.34,1.56,.64,1); }
+  .fusion-result-card .fr-label { font-size: 13px; font-weight: 800; color: #fff; margin-top: 8px; }
+
   .timerbar-track { height: 5px; border-radius: 5px; background: rgba(0,0,0,0.5); overflow: hidden; margin-bottom: 18px; }
   .timerbar-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--mint)); width: 100%; transition: width .2s linear; }
   .timerbar-fill.danger { background: linear-gradient(90deg, var(--red), var(--sakura)); }
@@ -749,6 +915,7 @@
 
     <div class="player-bar" id="playerBar"></div>
     <div class="missions-card" id="missionsCard"></div>
+    <div id="omikujiSlot"></div>
 
     <!-- NAVIGATION TABS -->
     <div class="nav-tabs" id="navTabs">
@@ -1102,6 +1269,32 @@ function showLevelUpBanner(level){
 /* Render bar profil (level, XP, koin) di dashboard, dan pasang tema
    yang sedang dipakai. Dipanggil tiap kali masuk aplikasi / kembali
    ke dashboard. */
+/* Streak login harian: cek tiap kali initApp() dipanggil (siswa buka app).
+   Kalau tanggal terakhir main = kemarin -> streak lanjut +1.
+   Kalau = hari ini juga -> tidak berubah (sudah dihitung hari ini).
+   Kalau lebih dari 1 hari lalu -> streak reset ke 1.
+   Reward bonus koin di kelipatan 3 hari. */
+function checkDailyLoginStreak(){
+  const profile = getPlayerProfile();
+  const today = todayKey();
+  if(profile.lastPlayDate === today) return; // sudah dicek hari ini
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+  if(profile.lastPlayDate === yesterday){
+    profile.streakDays = (profile.streakDays || 0) + 1;
+  } else {
+    profile.streakDays = 1;
+  }
+  profile.lastPlayDate = today;
+  savePlayerProfile(profile);
+  if(profile.streakDays > 1){
+    setTimeout(()=> showGameToast(`🔥 Login ${profile.streakDays} hari berturut-turut!`), 500);
+  }
+  if(profile.streakDays % 3 === 0){
+    const bonus = profile.streakDays * 5;
+    setTimeout(()=> awardXPCoins(bonus, bonus), 1400);
+  }
+}
+
 function renderPlayerBar(){
   const bar = $("playerBar");
   if(!bar) return;
@@ -1112,15 +1305,18 @@ function renderPlayerBar(){
     <div class="pb-avatar-wrap" id="pbAvatarWrap" title="Buka Toko">
       <div class="pb-avatar">${currentAvatarEmoji()}</div>
       <div class="pb-lvbadge">${info.level}</div>
+      ${profile.streakDays > 1 ? `<div class="pb-streakbadge">🔥${profile.streakDays}</div>` : ""}
     </div>
     <div class="pb-mid">
       <div class="pb-title">${playerTitle(info.level)} &middot; Lv.${info.level}</div>
       <div class="pb-xptrack"><div class="pb-xpfill" style="width:${Math.round(info.xpIntoLevel/info.xpNeeded*100)}%"></div></div>
     </div>
     <div class="pb-coins">🪙 ${profile.coins}</div>
-    <button class="pb-shopbtn" id="openShopBtn">🏪 Toko</button>
+    <button class="pb-shopbtn" id="openAlbumBtn" style="border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.08);">🃏</button>
+    <button class="pb-shopbtn" id="openShopBtn">🏪</button>
   `;
   $("openShopBtn").addEventListener("click", ()=>openShop("theme"));
+  $("openAlbumBtn").addEventListener("click", openAlbum);
   $("pbAvatarWrap").addEventListener("click", ()=>openShop("avatar"));
 }
 
@@ -1229,6 +1425,292 @@ function openShop(initialTab){
   });
 
   el.querySelector("#shopCloseBtn").addEventListener("click", ()=> el.remove());
+}
+
+/* ============================================================
+   KOTODAMA CARD — kartu koleksi. Tiap jawaban benar mengubah kata
+   /pola/soal itu jadi kartu koleksi permanen (disimpan per NIS).
+   Rarity mengikuti level (N5 Umum -> N2 Epik), soal Boss selalu
+   Legendaris. Kartu baru -> layar reveal dramatis; kartu duplikat
+   -> toast ringan + bonus koin kecil (dupe protection).
+   ============================================================ */
+function cardCollectionKey(){ return `nafis_cards_${(student && student.nis) || "guest"}`; }
+function getCardCollection(){
+  try{ return JSON.parse(localStorage.getItem(cardCollectionKey())) || {}; }catch(e){ return {}; }
+}
+function saveCardCollection(c){ localStorage.setItem(cardCollectionKey(), JSON.stringify(c)); }
+
+function cardRarityInfo(level, isBoss){
+  if(isBoss) return { cls: "rarity-legend", name: "LEGENDARIS", icon: "🌟" };
+  switch(level){
+    case "N4": return { cls: "rarity-N4", name: "JARANG", icon: "🍀" };
+    case "N3": return { cls: "rarity-N3", name: "LANGKA", icon: "💎" };
+    case "N2": return { cls: "rarity-N2", name: "EPIK", icon: "👑" };
+    default:   return { cls: "rarity-N5", name: "UMUM", icon: "⚪" };
+  }
+}
+
+function awardCard(correct, isBoss){
+  if(!correct || !correct.jp) return;
+  const coll = getCardCollection();
+  const key = correct.jp;
+  const rarity = cardRarityInfo(correct.level, isBoss);
+  const meaning = dispMeaning(correct);
+  if(coll[key]){
+    coll[key].count++;
+    saveCardCollection(coll);
+    showCardDupeToast(correct.jp, rarity);
+    const p = getPlayerProfile();
+    p.coins += 1; // dupe protection: kartu ganda tetap dpt sedikit koin
+    savePlayerProfile(p);
+  } else {
+    coll[key] = { jp: correct.jp, meaning, level: correct.level || "N5", rarityCls: rarity.cls, rarityName: rarity.name, count: 1, dateFirst: new Date().toISOString() };
+    saveCardCollection(coll);
+    showCardReveal(coll[key], rarity, true);
+  }
+}
+
+function showCardReveal(card, rarity, isNew){
+  const el = document.createElement("div");
+  el.className = "card-reveal-overlay";
+  el.innerHTML = `
+    <div>
+      <div class="kotodama-card ${rarity.cls}">
+        ${isNew ? '<div class="kc-new">✨ KARTU BARU</div>' : ''}
+        <div class="kc-level">${card.level}</div>
+        <div class="kc-rarity">${rarity.icon} ${rarity.name}</div>
+        <div class="kc-jp">${card.jp}</div>
+        <div class="kc-badge">${rarity.icon}</div>
+        <div class="kc-meaning">${card.meaning}</div>
+      </div>
+      <div class="card-reveal-caption">Kartu "${card.jp}" ditambahkan ke Album!</div>
+      <button class="card-reveal-close" id="cardRevealCloseBtn">Lanjut ▶</button>
+    </div>
+  `;
+  document.body.appendChild(el);
+  playSFX('correct');
+  spawnConfetti(window.innerWidth/2, window.innerHeight/2, rarity.cls==='rarity-legend' ? 60 : 30);
+  el.querySelector("#cardRevealCloseBtn").addEventListener("click", ()=> el.remove());
+}
+
+function showCardDupeToast(jp, rarity){
+  const el = document.createElement("div");
+  el.className = "card-dupe-toast";
+  el.style.setProperty("--r1", getComputedStyle(document.documentElement).getPropertyValue('--cyan'));
+  el.innerHTML = `${rarity.icon} <span>Dapat lagi "${jp}" (+1 koin)</span>`;
+  document.body.appendChild(el);
+  setTimeout(()=> el.remove(), 2100);
+}
+
+/* Album koleksi: tampilkan semua kartu terkumpul, dikelompokkan per
+   level, dgn progress keseluruhan dibanding total kosakata/pola yang
+   tersedia di database (biar ada tujuan jangka panjang "koleksi semua"). */
+function totalCollectibleCount(){
+  try{
+    const uniq = new Set();
+    (PATTERNS||[]).forEach(p=>uniq.add(p.jp));
+    (VOCAB||[]).forEach(v=>uniq.add(v.jp));
+    (typeof DOKKAI !== 'undefined' ? DOKKAI : []).forEach(d=>uniq.add(d.title));
+    return uniq.size;
+  }catch(e){ return 0; }
+}
+function openAlbum(initialLevel){
+  const coll = getCardCollection();
+  const cards = Object.values(coll);
+  const total = totalCollectibleCount();
+  const el = document.createElement("div");
+  el.className = "album-overlay";
+  const levels = ["all","N5","N4","N3","N2"];
+  const renderGrid = (lvl)=>{
+    const filtered = lvl==="all" ? cards : cards.filter(c=>c.level===lvl);
+    filtered.sort((a,b)=> new Date(b.dateFirst) - new Date(a.dateFirst));
+    if(!filtered.length) return `<div style="grid-column:1/-1;text-align:center;color:var(--sub);font-size:12px;padding:20px 0;">Belum ada kartu di sini. Yuk jawab soal!</div>`;
+    return filtered.map(c=>{
+      const canFuse = c.count >= 3 && !c.evolved;
+      return `
+      <div class="mini-card ${c.rarityCls} ${c.evolved?'evolved':''}">
+        ${c.evolved ? '<span class="mc-sparkle">✨</span>' : ''}
+        <div class="mc-jp">${c.jp}</div>
+        ${c.count>1 ? `<div class="mc-count">x${c.count}</div>` : ""}
+        ${canFuse ? `<button class="mc-fuse-btn" data-fuse="${c.jp}">✨ Fusi</button>` : ""}
+      </div>
+    `;}).join("");
+  };
+  el.innerHTML = `
+    <div class="album-card">
+      <h3>🃏 Album Kotodama</h3>
+      <div class="album-progress">${cards.length} / ${total} kata terkumpul (${Math.min(100,Math.round(cards.length/Math.max(1,total)*100))}%)</div>
+      <div class="album-track"><div class="album-track-fill" style="width:${Math.min(100,Math.round(cards.length/Math.max(1,total)*100))}%"></div></div>
+      <div style="font-size:10px;color:var(--sub);margin-bottom:8px;">💡 Kumpulkan 3 kartu yang sama untuk fusi jadi versi ✨Kirakira</div>
+      <div class="album-tabs">
+        ${levels.map(l=>`<button class="album-tab ${l===(initialLevel||'all')?'active':''}" data-lvl="${l}">${l==='all'?'Semua':l}</button>`).join("")}
+      </div>
+      <div class="album-grid" id="albumGrid">${renderGrid(initialLevel||"all")}</div>
+      <button class="shop-close" id="albumCloseBtn">Tutup</button>
+    </div>
+  `;
+  document.body.appendChild(el);
+  const currentTab = ()=> el.querySelector(".album-tab.active")?.dataset.lvl || "all";
+  const rebindFuseButtons = ()=>{
+    el.querySelectorAll("[data-fuse]").forEach(btn=>{
+      btn.addEventListener("click", (ev)=>{
+        ev.stopPropagation();
+        fuseCard(btn.dataset.fuse);
+        el.querySelector("#albumGrid").innerHTML = renderGrid(currentTab());
+        rebindFuseButtons();
+      });
+    });
+  };
+  rebindFuseButtons();
+  el.querySelectorAll(".album-tab").forEach(tab=>{
+    tab.addEventListener("click", ()=>{
+      el.querySelectorAll(".album-tab").forEach(t=>t.classList.remove("active"));
+      tab.classList.add("active");
+      el.querySelector("#albumGrid").innerHTML = renderGrid(tab.dataset.lvl);
+      rebindFuseButtons();
+    });
+  });
+  el.querySelector("#albumCloseBtn").addEventListener("click", ()=> el.remove());
+}
+
+/* ============================================================
+   SENSEI BUBBLE — komentar singkat dari maskot selama kuis,
+   bikin sesi kuis kerasa lebih hidup & ada "kepribadian".
+   ============================================================ */
+const SENSEI_LINES = {
+  correct: ["やった！(Yatta!)", "Sugoi! 👍", "Pintar sekali!", "完璧！Kanpeki!", "Betul banget!", "Nice one!"],
+  wrong:   ["ドンマイ！Don't mind!", "Coba lagi ya~", "Sedikit lagi!", "がんばれ！Ganbatte!", "Tetap semangat!"],
+  streak5: ["🔥 On fire nih!", "Combo mantap!", "Terus lanjutkan!"],
+  streak10:["⚡ LUAR BIASA!", "Kamu jagoan!", "Tak terhentikan!"],
+  bossWin: ["🎉 Boss kalah!", "Kamu menang!", "Hebat sekali!!"],
+  bossLose:["💥 Hampir saja...", "Coba lagi lain kali!"]
+};
+function showSenseiBubble(kind){
+  const anchor = $("quizAvatar");
+  if(!anchor) return;
+  const lines = SENSEI_LINES[kind] || SENSEI_LINES.correct;
+  const text = lines[Math.floor(Math.random()*lines.length)];
+  const bubble = document.createElement("div");
+  bubble.className = "sensei-bubble";
+  bubble.textContent = text;
+  const gameArea = $("gameArea");
+  if(gameArea && gameArea.appendChild){ gameArea.appendChild(bubble); } else { document.body.appendChild(bubble); }
+  setTimeout(()=> bubble.remove(), 2300);
+}
+
+/* ============================================================
+   OMIKUJI — undian keberuntungan harian, terinspirasi tradisi
+   kuil Jepang sungguhan (menarik satu papan nasib per hari).
+   Tingkatan asli: 大吉(Sangat Baik) > 吉(Baik) > 中吉 > 小吉 >
+   末吉(Baik Nanti) > 凶(Kurang Baik, tetap dpt hiburan kecil).
+   ============================================================ */
+const OMIKUJI_TIERS = [
+  { kanji: "大吉", name: "Daikichi — Sangat Beruntung!", weight: 5,  coins: 60, xp: 40, guaranteedCard: true,
+    msg: "Hari ini segalanya akan berjalan lancar. Manfaatkan momentum ini!" },
+  { kanji: "吉",   name: "Kichi — Beruntung", weight: 20, coins: 35, xp: 25, guaranteedCard: false,
+    msg: "Keberuntungan menyertaimu. Waktu yang baik untuk belajar hal baru." },
+  { kanji: "中吉", name: "Chūkichi — Cukup Beruntung", weight: 25, coins: 25, xp: 18, guaranteedCard: false,
+    msg: "Usaha kecil hari ini akan membuahkan hasil besar nanti." },
+  { kanji: "小吉", name: "Shōkichi — Sedikit Beruntung", weight: 25, coins: 18, xp: 12, guaranteedCard: false,
+    msg: "Hal-hal baik datang perlahan. Tetap konsisten, ya!" },
+  { kanji: "末吉", name: "Suekichi — Beruntung Nanti", weight: 15, coins: 12, xp: 10, guaranteedCard: false,
+    msg: "Keberuntungan besar sedang menuju arahmu, bersabarlah." },
+  { kanji: "凶",   name: "Kyō — Kurang Beruntung", weight: 10, coins: 8,  xp: 8, guaranteedCard: false,
+    msg: "Hari yang menantang, tapi justru di situ kamu bisa belajar paling banyak." }
+];
+function omikujiKey(){ return `nafis_omikuji_${(student && student.nis) || "guest"}`; }
+function hasDrawnOmikujiToday(){ return localStorage.getItem(omikujiKey()) === todayKey(); }
+function drawOmikujiTier(){
+  const totalW = OMIKUJI_TIERS.reduce((s,t)=>s+t.weight, 0);
+  let r = Math.random() * totalW;
+  for(const t of OMIKUJI_TIERS){ if(r < t.weight) return t; r -= t.weight; }
+  return OMIKUJI_TIERS[OMIKUJI_TIERS.length-1];
+}
+function renderOmikujiSlot(){
+  const slot = $("omikujiSlot");
+  if(!slot) return;
+  const done = hasDrawnOmikujiToday();
+  slot.innerHTML = `
+    <div class="omikuji-card ${done?'done':''}" id="omikujiCardBtn">
+      <div class="om-icon">⛩️</div>
+      <div class="om-mid">
+        <div class="om-title">Omikuji Hari Ini</div>
+        <div class="om-sub">${done ? 'Sudah ditarik — balik lagi besok!' : 'Tarik nasib keberuntunganmu, gratis!'}</div>
+      </div>
+      <div class="om-cta">${done ? '✓ Selesai' : 'Tarik ▶'}</div>
+    </div>
+  `;
+  if(!done){
+    $("omikujiCardBtn").addEventListener("click", openOmikuji);
+  }
+}
+function openOmikuji(){
+  if(hasDrawnOmikujiToday()) return;
+  const el = document.createElement("div");
+  el.className = "omikuji-overlay";
+  el.innerHTML = `<div><div class="omikuji-box" id="omikujiBox">⛩️</div><div style="text-align:center;color:#fff;font-size:12px;font-weight:700;">Ketuk kotak untuk menarik nasib...</div></div>`;
+  document.body.appendChild(el);
+  el.querySelector("#omikujiBox").addEventListener("click", ()=>{
+    localStorage.setItem(omikujiKey(), todayKey());
+    const tier = drawOmikujiTier();
+    playSFX('correct');
+    awardXPCoins(tier.xp, tier.coins);
+    let cardHtml = "";
+    if(tier.guaranteedCard){
+      // 大吉 menjamin kartu langka acak dari pool yang tersedia
+      const pool = (VOCAB && VOCAB.length) ? VOCAB : PATTERNS;
+      if(pool && pool.length){
+        const pick = pool[Math.floor(Math.random()*pool.length)];
+        setTimeout(()=> awardCard(pick, false), 900);
+        cardHtml = `<div class="os-reward">🃏 + Kartu spesial "${pick.jp}"!</div>`;
+      }
+    }
+    el.innerHTML = `
+      <div class="omikuji-slip">
+        <div class="os-fortune">${tier.kanji}</div>
+        <div class="os-sub">${tier.name}</div>
+        <div class="os-reward">✨ +${tier.xp} XP &nbsp; 🪙 +${tier.coins} koin</div>
+        ${cardHtml}
+        <div class="os-msg">"${tier.msg}"</div>
+        <button class="omikuji-close" id="omikujiCloseBtn">Tutup</button>
+      </div>
+    `;
+    spawnConfetti(window.innerWidth/2, window.innerHeight/2, tier.kanji==='大吉' ? 55 : 25);
+    el.querySelector("#omikujiCloseBtn").addEventListener("click", ()=>{ el.remove(); renderOmikujiSlot(); });
+  });
+}
+
+/* ============================================================
+   FUSI KARTU — gabungkan 3 kartu duplikat jadi satu versi
+   berkilau (Kirakira), dgn bonus koin. Dibuka dari Album.
+   ============================================================ */
+function fuseCard(jp){
+  const coll = getCardCollection();
+  const card = coll[jp];
+  if(!card || card.count < 3 || card.evolved) return false;
+  card.count -= 2; // 2 duplikat "dilebur", sisa 1 jadi versi kirakira
+  card.evolved = true;
+  saveCardCollection(coll);
+  const p = getPlayerProfile();
+  p.coins += 25;
+  savePlayerProfile(p);
+  showFusionResult(card);
+  return true;
+}
+function showFusionResult(card){
+  const el = document.createElement("div");
+  el.className = "fusion-overlay";
+  el.innerHTML = `
+    <div class="fusion-result-card">
+      <div class="fr-jp">✨ ${card.jp} ✨</div>
+      <div class="fr-label">Berevolusi jadi versi Kirakira!<br>🪙 +25 koin bonus fusi</div>
+      <button class="omikuji-close" id="fusionCloseBtn">Keren! ▶</button>
+    </div>
+  `;
+  document.body.appendChild(el);
+  playSFX('correct');
+  spawnConfetti(window.innerWidth/2, window.innerHeight/2, 45);
+  el.querySelector("#fusionCloseBtn").addEventListener("click", ()=> el.remove());
 }
 
 /* ============================================================
@@ -1439,8 +1921,10 @@ function initApp(){
   const w = $("whoami");
   w.style.display = "block";
   w.innerHTML = `👤 <b>${student.nama}</b> &middot; NIS ${student.nis}${student.kelas ? " &middot; "+student.kelas : ""}`;
+  checkDailyLoginStreak();
   renderPlayerBar();
   renderMissionsCard();
+  renderOmikujiSlot();
   applyStudyFilter();
   renderStart();
 }
@@ -1850,7 +2334,7 @@ function renderStart(){
         </div>
         <div class="setup-box" id="packetBox" style="display:none;">
           <div class="lbl">PILIH LEVEL <span class="cnt" id="packetHint"></span></div>
-          <div class="opt-row" id="packetRow" style="grid-template-columns: repeat(6, 1fr);"></div>
+          <div class="level-map" id="packetRow"></div>
         </div>
       </div>
       <button class="play-btn" id="startBtn">▶ Mulai Kuis</button>
@@ -1942,16 +2426,41 @@ function renderPacketRow(){
   const row = $("packetRow");
   if(setupPacketIndex >= plan.numPackets) setupPacketIndex = 0;
   if(setupPacketIndex >= unlockedCount) setupPacketIndex = unlockedCount - 1;
+
+  // jalur zig-zag: posisi kiri/tengah/kanan bergantian tiap node, biar
+  // terasa seperti peta stage di game (Candy Crush/Duolingo-style)
+  const posCycle = ["pos-c","pos-r","pos-c","pos-l"];
   row.innerHTML = Array.from({length: plan.numPackets}, (_,i)=>{
     const locked = i >= unlockedCount;
-    const activeCls = (i===setupPacketIndex && !locked) ? 'active' : '';
-    return `<button data-v="${i}" class="${activeCls}" ${locked ? 'disabled' : ''} title="${locked ? 'Selesaikan level sebelumnya dgn nilai min. 80% dulu' : ''}">${locked ? '🔒' : '✅'} ${levelDisplayLabel(i)}</button>`;
+    const cleared = i < unlockedCount - 1; // sudah pernah dilewati (bukan garis depan)
+    const isPicked = (i === setupPacketIndex && !locked);
+    const isBossLevel = (i+1) % 5 === 0; // tiap level ke-5 jadi "milestone" lebih besar
+    const pos = posCycle[i % posCycle.length];
+    const nodeCls = ["level-node"];
+    if(isBossLevel) nodeCls.push("boss-node");
+    if(locked) nodeCls.push("locked");
+    else if(cleared) nodeCls.push("cleared");
+    else nodeCls.push("unlocked");
+    if(isPicked) nodeCls.push("active-pick");
+    const connector = i > 0 ? `<div class="level-connector ${i <= unlockedCount-1 ? 'done' : ''}"></div>` : "";
+    return `
+      <div class="level-node-row ${pos}">
+        ${connector}
+        <div class="${nodeCls.join(' ')}" data-v="${i}" title="${locked ? 'Selesaikan level sebelumnya dgn nilai min. 80% dulu' : levelDisplayLabel(i)}">
+          ${cleared ? '<span class="ln-star">⭐</span>' : ""}
+          ${locked ? '🔒' : (i+1)}
+          <span class="ln-sub">${locked ? '' : (isBossLevel ? 'BOSS' : 'LV')}</span>
+        </div>
+      </div>`;
   }).join("");
-  document.querySelectorAll("#packetRow button").forEach(b=>{
-    if(b.disabled) return;
-    b.addEventListener("click", ()=>{
-      document.querySelectorAll("#packetRow button").forEach(x=>x.classList.remove("active"));
-      b.classList.add("active"); setupPacketIndex = parseInt(b.dataset.v);
+
+  document.querySelectorAll(".level-node").forEach(node=>{
+    if(node.classList.contains("locked")) return;
+    node.addEventListener("click", ()=>{
+      document.querySelectorAll(".level-node").forEach(n=>n.classList.remove("active-pick"));
+      node.classList.add("active-pick");
+      setupPacketIndex = parseInt(node.dataset.v);
+      playSFX('correct');
     });
   });
 }
@@ -2053,6 +2562,7 @@ function renderQuestionActual(){
   ` : "";
 
   $("gameArea").innerHTML = `
+    <div class="quiz-avatar" id="quizAvatar">${currentAvatarEmoji()}</div>
     <div class="hud">
       <span class="streak" id="streakHud">${gState.streak>1 ? "🔥 Streak x"+gState.streak : ""}</span>
       <span class="score" id="scoreHud">⭐ ${gState.score}</span>
@@ -2220,6 +2730,15 @@ function handleAnswerResult(isCorrect, anchorEl){
   const q = gState.questions[gState.qi];
   const isBoss = gState.qi === gState.bossIndex;
   progressMission('answer', 1);
+
+  // --- avatar bereaksi ---
+  const avatarEl = $("quizAvatar");
+  if(avatarEl){
+    avatarEl.classList.remove("reaction-happy", "reaction-sad");
+    void avatarEl.offsetWidth;
+    avatarEl.classList.add(isCorrect ? "reaction-happy" : "reaction-sad");
+  }
+
   if(isCorrect){
     playSFX('correct');
     gState.streak++;
@@ -2239,6 +2758,15 @@ function handleAnswerResult(isCorrect, anchorEl){
     if(streakHud) streakHud.textContent = gState.streak>1 ? "🔥 Streak x"+gState.streak : "";
     if(isBoss) showGameToast("⚔️ Boss dikalahkan! Poin ganda +"+gained);
 
+    // --- kartu Kotodama untuk kata/soal yang baru saja dijawab benar ---
+    const cardSubject = q.type === 'dokkai_mc'
+      ? { jp: q.passage.title, meaning_id: 'Bacaan Dokkai', level: q.passage.level }
+      : q.correct;
+    setTimeout(()=> awardCard(cardSubject, isBoss), isBoss ? 900 : 500);
+
+    // --- komentar sensei ---
+    showSenseiBubble(isBoss ? 'bossWin' : (gState.streak>=10 ? 'streak10' : (gState.streak>=5 ? 'streak5' : 'correct')));
+
     // --- combo popup + hadiah power-up tiap kelipatan 5 streak ---
     if(gState.streak > 0 && gState.streak % 5 === 0){
       showComboPopup(gState.streak);
@@ -2252,6 +2780,7 @@ function handleAnswerResult(isCorrect, anchorEl){
     gState.streak = 0;
     shakeScreen();
     if(isBoss) showGameToast("💥 Boss lolos... coba lagi lain kali!");
+    showSenseiBubble(isBoss ? 'bossLose' : 'wrong');
     // Ringkasan yang dipakai ulang di panel "Perlu diulang" (renderResult).
     // Dibuat seragam (selalu punya .jp & .meaning) meski sumbernya berbeda-beda
     // (pola kalimat / kosakata-kanji / bacaan dokkai), supaya render tidak pecah.
