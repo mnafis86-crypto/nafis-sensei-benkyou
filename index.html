@@ -247,6 +247,16 @@
     0%, 100% { box-shadow: 0 0 10px rgba(0,229,255,.25); }
     50% { box-shadow: 0 0 26px rgba(0,229,255,.65); }
   }
+  .music-picker { margin-top: 16px; text-align: center; }
+  .music-picker .mp-label { font-size: 10px; font-weight: 800; color: var(--sub); letter-spacing: 1px; margin-bottom: 7px; }
+  .music-picker .mp-row { display: flex; gap: 8px; justify-content: center; }
+  .music-picker .mp-btn {
+    width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--line); background: rgba(255,255,255,.04);
+    font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform .15s;
+  }
+  .music-picker .mp-btn:active { transform: scale(0.88); }
+  .music-picker .mp-btn.active { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0,229,255,.6); background: rgba(0,229,255,.12); }
+  .music-picker .mp-name { font-size: 9.5px; color: var(--sub); font-weight: 700; margin-top: 6px; min-height: 12px; }
   .floor-glow {
     position: absolute; bottom: 0; left: 0; right: 0; height: 90px;
     background: radial-gradient(ellipse 70% 100% at 50% 100%, rgba(0,229,255,.18), transparent 70%);
@@ -755,6 +765,38 @@
   .mem-card.wrong-flash .mem-face.front { animation: memWrongFlash 0.4s ease; }
   @keyframes memWrongFlash { 0%,100% { border-color: var(--cyan); } 50% { border-color: var(--red); background: rgba(255,51,102,.2); } }
 
+  /* ============================================================
+     MODE DENGAR & TEBAK — pakai Web Speech API (TTS bawaan browser,
+     gratis, tanpa file audio). Kata disembunyikan, siswa dengar lalu
+     tebak artinya; teks & bacaan baru terungkap setelah menjawab.
+     ============================================================ */
+  .listen-box { text-align: center; padding: 22px 14px; margin-bottom: 16px; border-radius: 16px;
+    background: linear-gradient(160deg, rgba(0,229,255,.08), rgba(157,0,255,.08)); border: 1px solid var(--line); }
+  .listen-speaker-btn {
+    width: 78px; height: 78px; border-radius: 50%; border: 3px solid var(--cyan); background: rgba(0,229,255,.1);
+    color: var(--cyan); font-size: 32px; cursor: pointer; box-shadow: 0 0 20px rgba(0,229,255,.35);
+  }
+  .listen-speaker-btn.playing { animation: speakerPulse 0.6s infinite ease-in-out; }
+  @keyframes speakerPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); box-shadow: 0 0 32px rgba(0,229,255,.7); } }
+  .listen-speaker-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .listen-hint { font-size: 11px; color: var(--sub); margin-top: 10px; font-weight: 700; }
+  .listen-reveal { margin-top: 10px; font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 22px; color: #fff; }
+  .listen-reveal .lr-romaji { font-family: sans-serif; font-size: 12px; color: var(--sub); font-weight: 700; margin-top: 2px; }
+  .voice-picker-link { display: block; text-align: center; font-size: 11px; font-weight: 800; color: var(--cyan);
+    margin-top: -6px; margin-bottom: 12px; cursor: pointer; text-decoration: underline; }
+  .voice-item { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 12px;
+    background: rgba(255,255,255,.03); border: 1px solid var(--line); margin-bottom: 8px; }
+  .voice-item.selected { border-color: var(--mint); background: rgba(0,240,181,.08); }
+  .voice-item .vi-mid { flex: 1; min-width: 0; }
+  .voice-item .vi-name { font-weight: 800; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .voice-item .vi-lang { font-size: 10px; color: var(--sub); }
+  .voice-item .vi-test-btn { flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--cyan);
+    background: rgba(0,229,255,.1); color: var(--cyan); cursor: pointer; font-size: 15px; }
+  .voice-item .vi-use-btn { flex-shrink: 0; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--mint);
+    background: rgba(0,240,181,.1); color: var(--mint); font-weight: 800; font-size: 11px; cursor: pointer; }
+  .voice-item .vi-use-btn.is-selected { background: var(--mint); color: #06251d; }
+  .voice-empty-note { text-align: center; font-size: 12px; color: var(--sub); padding: 16px 10px; line-height: 1.6; }
+
   .timerbar-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--mint)); width: 100%; transition: width .2s linear; }
   .timerbar-fill.danger { background: linear-gradient(90deg, var(--red), var(--sakura)); }
 
@@ -907,6 +949,12 @@
       <div class="jp-line">ゲームをしながら勉強しましょう！</div>
     </div>
 
+    <div class="music-picker">
+      <div class="mp-label">🎵 PILIH MUSIK</div>
+      <div class="mp-row" id="musicPickerRow"></div>
+      <div class="mp-name" id="musicPickerName"></div>
+    </div>
+
     <button class="insert-coin" id="landingStartBtn">▶ Mulai Bermain</button>
   </div>
 </div>
@@ -1040,6 +1088,121 @@ function sendToGoogleSheet(materi, dateStr){
 }
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+/* Mode Dengar & Tebak memakai Text-to-Speech BAWAAN BROWSER (Web Speech
+   API) — gratis, tanpa perlu file audio apapun. PENTING: kualitas &
+   kealamian suaranya BUKAN buatan kita — sepenuhnya tergantung suara
+   Jepang (ja-JP) yang tersedia di browser/perangkat siswa. Chrome/Edge
+   & Safari umumnya punya suara Jepang bawaan yang cukup natural; kalau
+   tidak ada sama sekali, kita beri tahu jujur lewat toast (bukan diam
+   saja memaksakan suara bahasa lain yang salah lafal). */
+let cachedJaVoice = null;
+let voicesLoaded = false;
+function pickJapaneseVoice(){
+  if(!('speechSynthesis' in window)) return null;
+  const voices = window.speechSynthesis.getVoices();
+  if(!voices || !voices.length) return null;
+  voicesLoaded = true;
+  // prioritaskan suara "ja-JP" persis, lalu fallback ke apa saja berawalan "ja"
+  return voices.find(v => v.lang === 'ja-JP') || voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja')) || null;
+}
+// daftar suara kadang baru siap async setelah event 'voiceschanged' (terutama Chrome)
+if('speechSynthesis' in window){
+  window.speechSynthesis.onvoiceschanged = () => { cachedJaVoice = pickJapaneseVoice(); };
+  cachedJaVoice = pickJapaneseVoice();
+}
+function speakJapanese(text){
+  if(!('speechSynthesis' in window)){
+    showGameToast("🔇 Browser ini tidak mendukung suara sama sekali");
+    return;
+  }
+  if(!cachedJaVoice) cachedJaVoice = pickJapaneseVoice();
+  window.speechSynthesis.cancel(); // hentikan ucapan sebelumnya kalau masih jalan
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ja-JP';
+  utter.rate = 0.85;
+  // Kalau siswa sudah memilih suara sendiri (lewat "🔊 Pilih Suara"), pakai
+  // itu dulu; kalau belum pernah pilih, jatuh ke suara Jepang otomatis.
+  const chosenVoice = getChosenVoice();
+  if(chosenVoice){
+    utter.voice = chosenVoice;
+  } else if(cachedJaVoice){
+    utter.voice = cachedJaVoice;
+  } else if(voicesLoaded){
+    // daftar suara sudah termuat tapi memang tidak ada satupun yg Jepang
+    showGameToast("⚠️ Perangkat ini belum punya suara Jepang, coba pakai Chrome");
+  }
+  window.speechSynthesis.speak(utter);
+}
+
+/* ============================================================
+   PEMILIH SUARA JEPANG — siswa bisa lihat & COBA semua suara yang
+   tersedia di perangkatnya sendiri, lalu pilih mana yang paling
+   natural kedengarannya. Preferensi disimpan per siswa (NIS).
+   ============================================================ */
+function getChosenVoice(){
+  if(!('speechSynthesis' in window)) return null;
+  const profile = getPlayerProfile();
+  if(!profile.voiceURI) return null;
+  const voices = window.speechSynthesis.getVoices();
+  return voices.find(v => v.voiceURI === profile.voiceURI) || null;
+}
+function getJapaneseVoiceList(){
+  if(!('speechSynthesis' in window)) return [];
+  const voices = window.speechSynthesis.getVoices();
+  return voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('ja'));
+}
+function openVoicePicker(){
+  const jaVoices = getJapaneseVoiceList();
+  const allVoices = ('speechSynthesis' in window) ? window.speechSynthesis.getVoices() : [];
+  const profile = getPlayerProfile();
+  const el = document.createElement("div");
+  el.className = "shop-overlay";
+  const listVoices = jaVoices.length ? jaVoices : allVoices;
+  const bodyHtml = listVoices.length ? listVoices.map(v => {
+    const selected = profile.voiceURI === v.voiceURI;
+    return `<div class="voice-item ${selected?'selected':''}" data-uri="${v.voiceURI}">
+      <button class="vi-test-btn" data-test="${v.voiceURI}">🔊</button>
+      <div class="vi-mid"><div class="vi-name">${v.name}</div><div class="vi-lang">${v.lang}</div></div>
+      <button class="vi-use-btn ${selected?'is-selected':''}" data-use="${v.voiceURI}">${selected ? '✓ Dipakai' : 'Pakai'}</button>
+    </div>`;
+  }).join("") : `<div class="voice-empty-note">😔 Perangkat ini belum punya suara Jepang sama sekali.<br>Coba buka di Google Chrome, atau gunakan HP/laptop lain untuk hasil terbaik.</div>`;
+  el.innerHTML = `
+    <div class="shop-card">
+      <h3>🔊 Pilih Suara Jepang</h3>
+      <div style="font-size:11px;color:var(--sub);margin-bottom:12px;">
+        ${jaVoices.length ? `Ditemukan ${jaVoices.length} suara Jepang di perangkatmu. Coba tiap suara, lalu pilih yang paling natural!` : (allVoices.length ? 'Tidak ada suara Jepang khusus, tapi ini semua suara yang tersedia (mungkin kurang natural):' : 'Memuat daftar suara...')}
+      </div>
+      ${bodyHtml}
+      <button class="shop-close" id="voicePickerCloseBtn">Tutup</button>
+    </div>
+  `;
+  document.body.appendChild(el);
+  el.querySelectorAll("[data-test]").forEach(btn=>{
+    btn.addEventListener("click", (ev)=>{
+      ev.stopPropagation();
+      const v = listVoices.find(x=>x.voiceURI===btn.dataset.test);
+      if(v && 'speechSynthesis' in window){
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance("こんにちは、元気ですか？");
+        u.voice = v; u.lang = v.lang || 'ja-JP'; u.rate = 0.85;
+        window.speechSynthesis.speak(u);
+      }
+    });
+  });
+  el.querySelectorAll("[data-use]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const p = getPlayerProfile();
+      p.voiceURI = btn.dataset.use;
+      savePlayerProfile(p);
+      el.remove();
+      showGameToast("🔊 Suara pilihanmu disimpan!");
+      openVoicePicker(); // buka ulang biar tanda "✓ Dipakai" ter-refresh
+    });
+  });
+  el.querySelector("#voicePickerCloseBtn").addEventListener("click", ()=> el.remove());
+}
+
 function playSFX(type) {
   if (audioCtx.state === 'suspended') audioCtx.resume();
   const osc = audioCtx.createOscillator();
@@ -1060,42 +1223,82 @@ function playSFX(type) {
     gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
     osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+  } else if (type === 'click') {
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.05);
+    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.09);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.09);
+  } else if (type === 'start') {
+    // "power up" jingle singkat buat tombol Mulai — kesan mesin arcade nyala
+    osc.type = 'square';
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+      osc.frequency.setValueAtTime(f, audioCtx.currentTime + i*0.07);
+    });
+    gain.gain.setValueAtTime(0.16, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.32);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.32);
   }
 }
 
 /* ============================================================
-   MUSIK LATAR (BGM) — dibuat langsung dengan Web Audio API
-   (loop synth ringan bernuansa cyberpunk), tanpa perlu file audio
-   eksternal. Menyala di landing page & dashboard, berhenti begitu
-   kuis dimulai (startGame), lalu menyala lagi begitu kembali ke
-   layar setup/dashboard (renderStart / hasil kuis).
+   MUSIK LATAR (BGM) — 5 TEMA berbeda + sistem "duck" (volume
+   diredam, bukan dimatikan total) saat masuk mode permainan, jadi
+   tiap mode kerasa beda nuansanya tanpa bikin senyap total.
+   Semua dibuat dgn Web Audio API murni, tanpa file audio eksternal.
    ============================================================ */
+const BGM_THEMES = {
+  synthwave: { id:'synthwave', name:'Synthwave Neon', icon:'🌃', wave:'triangle', melodyWave:'sine', melodyVol:1,
+    chords: [[174.61,220.00,261.63],[155.56,196.00,233.08],[138.59,174.61,207.65],[164.81,207.65,246.94]], beat:1.15 },
+  chiptune: { id:'chiptune', name:'Chiptune Retro', icon:'🎮', wave:'square', melodyWave:'square', melodyVol:0.7,
+    chords: [[261.63,329.63,392.00],[293.66,369.99,440.00],[220.00,277.18,329.63],[246.94,311.13,369.99]], beat:0.55 },
+  lofi: { id:'lofi', name:'Lo-fi Santai', icon:'🌙', wave:'sine', melodyWave:'sine', melodyVol:0.6,
+    chords: [[130.81,164.81,196.00],[146.83,174.61,220.00],[110.00,138.59,164.81],[123.47,155.56,196.00]], beat:1.8 },
+  epic: { id:'epic', name:'Epic Battle', icon:'⚡', wave:'sawtooth', melodyWave:'triangle', melodyVol:1.2,
+    chords: [[196.00,246.94,293.66],[220.00,277.18,329.63],[174.61,220.00,261.63],[196.00,246.94,311.13]], beat:0.48 },
+  ambient: { id:'ambient', name:'Ambient Zen', icon:'🍃', wave:'sine', melodyWave:'sine', melodyVol:0.4,
+    chords: [[196.00,246.94],[220.00,277.18],[174.61,220.00],[164.81,207.65]], beat:2.6 }
+};
+let currentBgmTheme = BGM_THEMES.synthwave;
 let bgmPlaying = false;
 let bgmTimeoutId = null;
 let bgmGainNode = null;
 
+function setBgmTheme(themeId){
+  currentBgmTheme = BGM_THEMES[themeId] || BGM_THEMES.synthwave;
+  if(bgmPlaying){ // ganti instan kalau lagi main, bukan nunggu loop lama selesai
+    if(bgmTimeoutId){ clearTimeout(bgmTimeoutId); bgmTimeoutId = null; }
+    bgmScheduleLoop();
+  }
+}
+/* Mode permainan mana dapat tema musik apa — inilah yang bikin tiap
+   cara main kerasa beda suasananya, bukan cuma beda soal. */
+function gameModeBgmTheme(mode, type){
+  if(mode === 'timeattack') return 'epic';      // tegang, dikejar waktu
+  if(mode === 'memory') return 'chiptune';      // playful, ala teka-teki retro
+  if(type === 'listening') return 'ambient';    // tenang, biar fokus dengar
+  if(mode === 'ujian') return 'synthwave';      // serius/fokus, official
+  return getPlayerProfile().bgmTheme || 'synthwave'; // latihan bebas -> tema pilihan siswa
+}
+
 function bgmScheduleLoop(){
   if(!bgmPlaying) return;
-  // progresi 4 chord minor sederhana, nuansa synthwave/cyberpunk
-  const chords = [
-    [174.61, 220.00, 261.63], // F3 A3 C4  (Fm-ish)
-    [155.56, 196.00, 233.08], // D#3 G3 A#3
-    [138.59, 174.61, 207.65], // C#3 F3 G#3
-    [164.81, 207.65, 246.94]  // E3 G#3 B3
-  ];
+  const theme = currentBgmTheme;
+  const chords = theme.chords;
   const now = audioCtx.currentTime;
-  const beat = 1.15; // durasi tiap chord (detik)
+  const beat = theme.beat;
   chords.forEach((chord, i) => {
     const t0 = now + i * beat;
     chord.forEach(freq => {
       const osc = audioCtx.createOscillator();
       const g = audioCtx.createGain();
-      osc.type = 'triangle';
+      osc.type = theme.wave;
       osc.frequency.value = freq;
       osc.connect(g); g.connect(bgmGainNode);
       g.gain.setValueAtTime(0, t0);
-      g.gain.linearRampToValueAtTime(0.045, t0 + 0.25);
-      g.gain.linearRampToValueAtTime(0.03, t0 + beat - 0.2);
+      g.gain.linearRampToValueAtTime(0.045, t0 + Math.min(0.25, beat*0.2));
+      g.gain.linearRampToValueAtTime(0.03, Math.max(t0, t0 + beat - 0.2));
       g.gain.linearRampToValueAtTime(0, t0 + beat);
       osc.start(t0); osc.stop(t0 + beat + 0.05);
     });
@@ -1103,11 +1306,12 @@ function bgmScheduleLoop(){
     if(i % 2 === 0){
       const mOsc = audioCtx.createOscillator();
       const mG = audioCtx.createGain();
-      mOsc.type = 'sine';
-      mOsc.frequency.value = chord[2] * 2;
+      mOsc.type = theme.melodyWave;
+      mOsc.frequency.value = chord[chord.length-1] * 2;
       mOsc.connect(mG); mG.connect(bgmGainNode);
+      const mv = 0.03 * theme.melodyVol;
       mG.gain.setValueAtTime(0, t0 + beat*0.3);
-      mG.gain.linearRampToValueAtTime(0.03, t0 + beat*0.4);
+      mG.gain.linearRampToValueAtTime(mv, t0 + beat*0.4);
       mG.gain.linearRampToValueAtTime(0, t0 + beat*0.9);
       mOsc.start(t0 + beat*0.3); mOsc.stop(t0 + beat + 0.05);
     }
@@ -1140,6 +1344,18 @@ function stopBGM(){
     setTimeout(() => { if(bgmGainNode) bgmGainNode.gain.value = 1; }, 450);
   }
 }
+
+/* "Duck" = redam volume musik (bukan matikan total) — dipakai saat
+   sedang main (kuis/mini-game) supaya tetap ada nuansa suara sesuai
+   tema mode-nya tanpa mengganggu konsentrasi menjawab. */
+function duckBGM(volume){
+  if(!bgmGainNode) return;
+  const now = audioCtx.currentTime;
+  bgmGainNode.gain.cancelScheduledValues(now);
+  bgmGainNode.gain.setValueAtTime(bgmGainNode.gain.value, now);
+  bgmGainNode.gain.linearRampToValueAtTime(volume, now + 0.4);
+}
+function restoreBGMVolume(){ duckBGM(1); }
 
 /* ============================================================
    GAME JUICE — efek visual (confetti, shake, popup skor/combo,
@@ -1868,7 +2084,9 @@ $("brandLogoImg").src = NAFIS_LOGO_URI;
    sudah aktif sejak awal jadi tidak perlu logika tambahan. */
 $("landingStartBtn").addEventListener("click", () => {
   $("landing").classList.add("hide");
+  setBgmTheme(getPlayerProfile().bgmTheme || 'synthwave');
   startBGM();
+  playSFX('start');
 });
 let student = null;
 
@@ -1945,9 +2163,39 @@ window.addEventListener("load", ()=>{
     student = JSON.parse(saved);
     initApp();
   }
+  renderMusicPicker();
   const patN = PATTERNS.length, vocN = VOCAB.length, dokN = (typeof DOKKAI !== 'undefined' ? DOKKAI.length : 0);
   $("dataStats").textContent = `${patN} pola kalimat • ${vocN} kanji/kosakata • ${dokN} bacaan dokkai (N5-N2)`;
 });
+
+/* Pemilih tema musik di landing page — 5 tema, disimpan sebagai
+   preferensi siswa (dipakai lagi sbg musik dashboard & Latihan Bebas;
+   mode2 lain tetap pakai tema khasnya sendiri, lihat gameModeBgmTheme). */
+function renderMusicPicker(){
+  const row = $("musicPickerRow");
+  if(!row) return;
+  const profile = getPlayerProfile();
+  const current = profile.bgmTheme || 'synthwave';
+  const themes = Object.values(BGM_THEMES);
+  row.innerHTML = themes.map(t=>`<button class="mp-btn ${t.id===current?'active':''}" data-id="${t.id}" title="${t.name}">${t.icon}</button>`).join("");
+  const nameEl = $("musicPickerName");
+  if(nameEl) nameEl.textContent = (themes.find(t=>t.id===current)||themes[0]).name;
+  row.querySelectorAll(".mp-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      row.querySelectorAll(".mp-btn").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const id = btn.dataset.id;
+      setBgmTheme(id);
+      if(!bgmPlaying){ startBGM(); } // kasih preview langsung biar kedengeran
+      const p = getPlayerProfile();
+      p.bgmTheme = id;
+      savePlayerProfile(p);
+      const nm = BGM_THEMES[id];
+      if(nameEl) nameEl.textContent = nm.name;
+      playSFX('click');
+    });
+  });
+}
 
 function initApp(){
   $("panel-login").classList.remove("active");
@@ -2174,6 +2422,23 @@ function makeQuestionForVocab(correct, pool, wide, rng){
   return { type:'word_to_meaning', correct, qText:`Apa arti dari ${label} <b>${correct.jp}</b>?`, correctAns: dispMeaning(correct), options: optionsV.map(dispMeaning) };
 }
 
+/* Soal Mode Dengar & Tebak: kata TIDAK ditampilkan di teks soal —
+   siswa harus menebak artinya murni dari suara (Web Speech API).
+   Selalu bentuk word->meaning (bukan salah satu dari 4 varian acak
+   seperti kosakata biasa), supaya opsi jawaban tidak "membocorkan"
+   tulisan Jepangnya. */
+function makeQuestionForListening(correct, pool, wide, rng){
+  rng = rng || Math.random;
+  const distractors = pickDistractors(pool, wide, correct, 'meaning', 3, rng);
+  const options = shuffle([correct, ...distractors], rng);
+  return {
+    type: 'listening_mc', correct,
+    qText: `🎧 Dengarkan baik-baik, lalu pilih artinya`,
+    correctAns: dispMeaning(correct),
+    options: options.map(dispMeaning)
+  };
+}
+
 function makeQuestionForJLPT(item, rng){
   rng = rng || Math.random;
   const options = shuffle(item.options.slice(), rng);
@@ -2225,6 +2490,9 @@ function buildQuestions(scope, count, typeMode){
   }
   if(typeMode === 'jlpttest'){
     return chosen.map(item => makeQuestionForJLPT(item));
+  }
+  if(typeMode === 'listening'){
+    return chosen.map(correct => makeQuestionForListening(correct, pool, wide));
   }
   return chosen.map(correct => typeMode === 'bunpo'
     ? makeQuestionForPattern(correct, pool, wide)
@@ -2319,13 +2587,18 @@ function buildQuestionsForPacket(scope, count, typeMode, packetIndex){
   if(typeMode === 'jlpttest'){
     return items.map(item => makeQuestionForJLPT(item));
   }
+  if(typeMode === 'listening'){
+    return items.map(correct => makeQuestionForListening(correct, pool, wide, rng));
+  }
   return items.map(correct => typeMode === 'bunpo'
     ? makeQuestionForPattern(correct, pool, wide, rng)
     : makeQuestionForVocab(correct, pool, wide, rng));
 }
 
 function renderStart(){
+  setBgmTheme(getPlayerProfile().bgmTheme || 'synthwave'); // kembali ke tema pilihan siswa
   startBGM(); // pastikan musik latar menyala lagi begitu kembali ke layar setup/dashboard
+  restoreBGMVolume();
   $("gameArea").innerHTML = `
     <div class="start-screen">
       <h2>Siap uji ingatanmu?</h2>
@@ -2347,7 +2620,9 @@ function renderStart(){
             <button data-v="kotoba" class="active">Kosakata &amp; Kanji</button>
             <button data-v="dokkai">📖 Dokkai (Bacaan)</button>
             <button data-v="jlpttest">📝 Tes Kosakata (JLPT)</button>
+            <button data-v="listening">🎧 Dengar &amp; Tebak</button>
           </div>
+          <div class="voice-picker-link" id="voicePickerLink" style="display:none;">🔊 Pilih Suara Jepang (uji & pilih sendiri)</div>
         </div>
         <div class="setup-box">
           <div class="lbl">CAKUPAN LEVEL <span class="cnt" id="countHint"></span></div>
@@ -2389,6 +2664,8 @@ function renderStart(){
       document.querySelectorAll("#typeRow button").forEach(x=>x.classList.remove("active"));
       b.classList.add("active"); setupType = b.dataset.v;
       renderCountRow(); updateCountHint(); renderPacketRow();
+      const vpLink = $("voicePickerLink");
+      if(vpLink) vpLink.style.display = (setupType === 'listening') ? '' : 'none';
     });
   });
   document.querySelectorAll("#scopeRow button").forEach(b=>{
@@ -2412,6 +2689,11 @@ function renderStart(){
   updateCountHint();
   renderPacketRow();
   toggleSetupBoxesForMode();
+  const vpLink0 = $("voicePickerLink");
+  if(vpLink0){
+    vpLink0.style.display = (setupType === 'listening') ? '' : 'none';
+    vpLink0.addEventListener("click", openVoicePicker);
+  }
 }
 
 /* Mode Memory & Serbu Waktu tidak butuh semua kontrol setup yang sama
@@ -2522,7 +2804,13 @@ function renderPacketRow(){
 
 let gState = null;
 function startGame(){
-  stopBGM(); // musik latar berhenti begitu kuis dimulai
+  playSFX('start');
+  // Ganti tema musik sesuai mode yg dipilih, lalu redam volumenya
+  // (bukan dimatikan total) supaya tiap mode kerasa beda nuansa
+  // suaranya sambil tetap tidak mengganggu fokus menjawab.
+  setBgmTheme(gameModeBgmTheme(setupMode, setupType));
+  startBGM();
+  duckBGM(0.35);
   const isTimeAttack = setupMode === "timeattack";
   // Serbu Waktu: pakai SEMUA soal yang tersedia (biar 60 detik tidak
   // kehabisan soal di tengah jalan), tanpa sistem paket level.
@@ -2584,7 +2872,10 @@ let gMem = null;
 const MEM_PAIRS_TARGET = 6; // 6 pasang = 12 kartu, pas utk grid 3 kolom
 
 function startMemoryMatch(){
-  stopBGM();
+  playSFX('start');
+  setBgmTheme(gameModeBgmTheme('memory', setupType));
+  startBGM();
+  duckBGM(0.35);
   const rawPool = setupType === 'bunpo'
     ? PATTERNS.filter(p=>matchesBook(p, setupScope))
     : VOCAB.filter(v=>matchesBook(v, setupScope));
@@ -2683,6 +2974,8 @@ function flipMemoryCard(idx){
 
 function endMemoryMatch(won){
   clearInterval(gMem.timer);
+  setBgmTheme(getPlayerProfile().bgmTheme || 'synthwave');
+  restoreBGMVolume();
   const timeBonus = Math.max(0, Math.round(gMem.timeLeft));
   const movesPenalty = Math.max(0, (gMem.moves - gMem.totalPairs) * 2);
   const score = Math.max(0, gMem.matchedPairs * 30 + timeBonus - movesPenalty);
@@ -2717,7 +3010,7 @@ function endMemoryMatch(won){
       <button class="play-btn" id="memAgainBtn" style="margin-top:10px;">↻ Main Lagi</button>
     </div>
   `;
-  $("memAgainBtn").addEventListener("click", renderStart);
+  $("memAgainBtn").addEventListener("click", ()=>{ playSFX('click'); renderStart(); });
 }
 
 /* Waktu pengerjaan bacaan dokkai mengikuti standar durasi resmi JLPT
@@ -2766,7 +3059,7 @@ function renderQuestionActual(){
   gState.locked = false;
   const isBoss = gState.qi === gState.bossIndex;
 
-  let typeLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : (setupType === "jlpttest" ? "Tes Kosakata (JLPT)" : "Kosakata & Kanji"));
+  let typeLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : (setupType === "jlpttest" ? "Tes Kosakata (JLPT)" : (setupType === "listening" ? "🎧 Dengar & Tebak" : "Kosakata & Kanji")));
   let paketTag = gState.paketLabel ? ` &middot; ${gState.paketLabel}` : "";
 
   const bodyHtml = q.type === 'susun_kalimat' ? `
@@ -2789,6 +3082,14 @@ function renderQuestionActual(){
     <div class="dokkai-progress">
       <span>Pertanyaan ${q.subIndex+1}/${q.subTotal} dari bacaan ini</span>
       <span class="dots">${Array.from({length:q.subTotal},(_,i)=>`<span class="dot ${i<q.subIndex?'done':(i===q.subIndex?'now':'')}"></span>`).join("")}</span>
+    </div>
+  ` : "";
+
+  const listenBoxHtml = q.type === 'listening_mc' ? `
+    <div class="listen-box" id="listenBox">
+      <button class="listen-speaker-btn" id="listenPlayBtn">🔊</button>
+      <div class="listen-hint">Ketuk untuk dengar lagi (<span id="listenTries">1</span>/3x)</div>
+      <div class="listen-reveal" id="listenReveal" style="display:none;"></div>
     </div>
   ` : "";
 
@@ -2817,6 +3118,7 @@ function renderQuestionActual(){
     </div>
     <div class="timerbar-track"><div class="timerbar-fill" id="timerFill"></div></div>
     ${passageHtml}
+    ${listenBoxHtml}
     <div class="qcard ${isBoss ? 'boss-card' : ''}">
       <div class="qtype">[ ${typeLabel}${paketTag}${q.type==='susun_kalimat' ? ' · Susun Kalimat' : ''} ]</div>
       <div class="qnum">Soal ${gState.qi+1}/${gState.questions.length} &middot; <span style="color:${levelColor(q.correct.level)}">${q.correct.level}</span></div>
@@ -2829,6 +3131,24 @@ function renderQuestionActual(){
   $("puFifty").addEventListener("click", usePowerupFifty);
   $("puSkip").addEventListener("click", usePowerupSkip);
   $("puFreeze").addEventListener("click", usePowerupFreeze);
+
+  if(q.type === 'listening_mc'){
+    let tries = 0;
+    const maxTries = 3;
+    const playBtn = $("listenPlayBtn");
+    const playSound = ()=>{
+      if(tries >= maxTries) return;
+      tries++;
+      const triesEl = $("listenTries");
+      if(triesEl) triesEl.textContent = tries;
+      playBtn.classList.add("playing");
+      speakJapanese(q.correct.jp);
+      setTimeout(()=> playBtn.classList.remove("playing"), 900);
+      if(tries >= maxTries) playBtn.disabled = true;
+    };
+    playBtn.addEventListener("click", playSound);
+    playSound(); // otomatis putar sekali begitu soal muncul
+  }
 
   if(q.type === 'susun_kalimat'){
     setupSusunKalimat(q);
@@ -2968,6 +3288,15 @@ function handleAnswerResult(isCorrect, anchorEl){
   const isBoss = gState.qi === gState.bossIndex;
   progressMission('answer', 1);
 
+  // --- Mode Dengar & Tebak: ungkap tulisan & cara baca kata setelah dijawab ---
+  if(q.type === 'listening_mc'){
+    const reveal = $("listenReveal");
+    if(reveal){
+      reveal.style.display = "block";
+      reveal.innerHTML = `${q.correct.jp}${q.correct.romaji ? `<div class="lr-romaji">${q.correct.romaji}</div>` : ""}`;
+    }
+  }
+
   // --- avatar bereaksi ---
   const avatarEl = $("quizAvatar");
   if(avatarEl){
@@ -3084,7 +3413,9 @@ function gradeFor(pct){
 
 function renderResult(){
   if(gState.sessionTimer) clearInterval(gState.sessionTimer); // jaga2 kalau renderResult terpanggil lebih dari sekali
+  setBgmTheme(getPlayerProfile().bgmTheme || 'synthwave');
   startBGM(); // kuis sudah selesai -> musik latar menyala lagi
+  restoreBGMVolume();
   // Serbu Waktu: pool soal bisa "digandakan" via looping saat waktu blm habis,
   // jadi questions.length TIDAK mencerminkan jumlah soal yg benar2 dijawab.
   // Total sebenarnya = benar + salah (keduanya sudah pasti tercatat).
@@ -3093,7 +3424,7 @@ function renderResult(){
   const grade = gradeFor(acc);
   const dateStr = gState.startedAt.toLocaleString("id-ID");
 
-  const materiLabel = setupType === 'bunpo' ? 'Pola Kalimat' : (setupType === 'dokkai' ? 'Dokkai (Bacaan)' : (setupType === 'jlpttest' ? 'Tes Kosakata (JLPT)' : 'Kosakata & Kanji'));
+  const materiLabel = setupType === 'bunpo' ? 'Pola Kalimat' : (setupType === 'dokkai' ? 'Dokkai (Bacaan)' : (setupType === 'jlpttest' ? 'Tes Kosakata (JLPT)' : (setupType === 'listening' ? '🎧 Dengar & Tebak' : 'Kosakata & Kanji')));
 
   let justUnlocked = false;
   if(setupMode === "ujian"){
@@ -3196,7 +3527,7 @@ function renderResult(){
 
   $("downloadBtn").addEventListener("click", ()=> downloadResultCard(grade, acc, total, dateStr));
 
-  $("againBtn").addEventListener("click", renderStart);
+  $("againBtn").addEventListener("click", ()=>{ playSFX('click'); renderStart(); });
 }
 
 /* Menggambar kartu hasil sebagai PNG memakai <canvas> (murni JS, tanpa
