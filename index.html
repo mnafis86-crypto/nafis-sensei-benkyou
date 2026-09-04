@@ -721,6 +721,40 @@
   .fusion-result-card .fr-label { font-size: 13px; font-weight: 800; color: #fff; margin-top: 8px; }
 
   .timerbar-track { height: 5px; border-radius: 5px; background: rgba(0,0,0,0.5); overflow: hidden; margin-bottom: 18px; }
+  .session-timer-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding: 6px 10px;
+    background: rgba(255,42,122,.08); border: 1px solid var(--sakura); border-radius: 10px; }
+  .session-timer-wrap .st-label { font-size: 11px; font-weight: 900; color: var(--sakura); flex-shrink: 0; }
+  .session-timer-track { flex: 1; height: 8px; border-radius: 5px; background: rgba(0,0,0,.4); overflow: hidden; }
+  .session-timer-fill { height: 100%; background: linear-gradient(90deg, var(--sakura), var(--gold)); transition: width .1s linear; }
+
+  /* ============================================================
+     MODE COCOK KARTU (MEMORY MATCH) — mini-game terpisah total dari
+     alur kuis pilihan-ganda biasa: cari pasangan kata Jepang & arti
+     Indonesia dengan membalik kartu, dikejar waktu.
+     ============================================================ */
+  .mem-hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 12px; font-weight: 800; }
+  .mem-hud .mh-timer { color: var(--sakura); }
+  .mem-hud .mh-moves { color: var(--sub); }
+  .mem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+  .mem-card {
+    aspect-ratio: 3/4; border-radius: 12px; cursor: pointer; position: relative; perspective: 600px;
+  }
+  .mem-card-inner { position: relative; width: 100%; height: 100%; transition: transform .4s; transform-style: preserve-3d; }
+  .mem-card.flipped .mem-card-inner, .mem-card.matched .mem-card-inner { transform: rotateY(180deg); }
+  .mem-face { position: absolute; inset: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    backface-visibility: hidden; padding: 6px; text-align: center; }
+  .mem-face.back {
+    background: linear-gradient(160deg, #1b1b28, #0c0c14); border: 2px solid var(--line); font-size: 20px; color: var(--cyan);
+  }
+  .mem-face.front {
+    background: linear-gradient(160deg, rgba(0,229,255,.15), rgba(157,0,255,.15)); border: 2px solid var(--cyan);
+    transform: rotateY(180deg); font-weight: 800; font-size: 12px; color: #fff; word-break: break-word;
+  }
+  .mem-card.matched .mem-face.front { border-color: var(--mint); background: linear-gradient(160deg, rgba(0,240,181,.2), rgba(0,240,181,.08)); }
+  .mem-card.jp-card .mem-face.front { font-family: "Noto Sans JP", sans-serif; font-size: 17px; }
+  .mem-card.wrong-flash .mem-face.front { animation: memWrongFlash 0.4s ease; }
+  @keyframes memWrongFlash { 0%,100% { border-color: var(--cyan); } 50% { border-color: var(--red); background: rgba(255,51,102,.2); } }
+
   .timerbar-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--mint)); width: 100%; transition: width .2s linear; }
   .timerbar-fill.danger { background: linear-gradient(90deg, var(--red), var(--sakura)); }
 
@@ -2302,6 +2336,8 @@ function renderStart(){
           <div class="opt-row" id="modeRow">
             <button data-v="latihan" class="active">🔀 Latihan Bebas (acak)</button>
             <button data-v="ujian">📝 Mode Ujian (Level Berjenjang)</button>
+            <button data-v="timeattack">⏱️ Serbu Waktu (60 detik)</button>
+            <button data-v="memory">🎴 Cocok Kartu (Memory)</button>
           </div>
         </div>
         <div class="setup-box">
@@ -2323,7 +2359,7 @@ function renderStart(){
             <button data-v="n2">N2</button>
           </div>
         </div>
-        <div class="setup-box">
+        <div class="setup-box" id="countBox">
           <div class="lbl" id="countLbl">JUMLAH SOAL</div>
           <div class="opt-row" id="countRow" style="grid-template-columns: repeat(4, 1fr);">
             <button data-v="25">25</button>
@@ -2345,7 +2381,7 @@ function renderStart(){
     b.addEventListener("click", ()=>{
       document.querySelectorAll("#modeRow button").forEach(x=>x.classList.remove("active"));
       b.classList.add("active"); setupMode = b.dataset.v;
-      updateCountHint(); renderPacketRow();
+      updateCountHint(); renderPacketRow(); toggleSetupBoxesForMode();
     });
   });
   document.querySelectorAll("#typeRow button").forEach(b=>{
@@ -2368,10 +2404,29 @@ function renderStart(){
     });
   });
 
-  $("startBtn").addEventListener("click", startGame);
+  $("startBtn").addEventListener("click", ()=>{
+    if(setupMode === 'memory') startMemoryMatch();
+    else startGame();
+  });
   renderCountRow();
   updateCountHint();
   renderPacketRow();
+  toggleSetupBoxesForMode();
+}
+
+/* Mode Memory & Serbu Waktu tidak butuh semua kontrol setup yang sama
+   dgn kuis biasa (memory tidak butuh "jumlah soal"/level berjenjang,
+   serbu waktu tidak pakai sistem paket level). Sembunyikan yg tidak
+   relevan biar layar setup tidak membingungkan. */
+function toggleSetupBoxesForMode(){
+  const countBox = $("countBox");
+  if(!countBox) return;
+  if(setupMode === 'memory'){
+    countBox.style.display = "none";
+    $("packetBox") && ($("packetBox").style.display = "none");
+  } else {
+    countBox.style.display = "";
+  }
 }
 
 /* Untuk Dokkai, "jumlah" berarti JUMLAH BACAAN (bukan jumlah soal individual),
@@ -2468,9 +2523,12 @@ function renderPacketRow(){
 let gState = null;
 function startGame(){
   stopBGM(); // musik latar berhenti begitu kuis dimulai
+  const isTimeAttack = setupMode === "timeattack";
+  // Serbu Waktu: pakai SEMUA soal yang tersedia (biar 60 detik tidak
+  // kehabisan soal di tengah jalan), tanpa sistem paket level.
   const qs = setupMode === "ujian"
     ? buildQuestionsForPacket(setupScope, setupCount, setupType, setupPacketIndex)
-    : buildQuestions(setupScope, setupCount, setupType);
+    : buildQuestions(setupScope, isTimeAttack ? "semua" : setupCount, setupType);
   if(qs.length === 0) {
     alert("Maaf, belum ada soal untuk filter tersebut."); return;
   }
@@ -2480,13 +2538,186 @@ function startGame(){
     qi: 0, score: 0, streak: 0, correctCount: 0, misses: [],
     timer: null, timeLeft: 20, timeTotal: 20, locked: false,
     startedAt: new Date(),
-    paketLabel: setupMode === "ujian" ? levelDisplayLabel(setupPacketIndex) : null,
+    paketLabel: setupMode === "ujian" ? levelDisplayLabel(setupPacketIndex) : (isTimeAttack ? "Serbu Waktu" : null),
     powerups: { fifty: 1, skip: 1, freeze: 1 }, // modal awal power-up per sesi, nambah tiap combo 5x
     maxStreak: 0,
-    bossIndex: qs.length >= 3 ? qs.length - 1 : -1, // kuis min. 3 soal baru ada boss di soal terakhir
-    bossShown: false
+    bossIndex: (!isTimeAttack && qs.length >= 3) ? qs.length - 1 : -1, // Serbu Waktu tak pakai boss (durasi sudah jadi tantangan utamanya)
+    bossShown: false,
+    isTimeAttack,
+    sessionTimer: null, sessionTimeLeft: 60, sessionTimeTotal: 60
   };
+
+  if(isTimeAttack) startSessionCountdown();
   renderQuestion();
+}
+
+/* ---------- MODE SERBU WAKTU: hitung mundur sesi 60 detik ----------
+   Terpisah dari timer per-soal biasa; begitu habis, kuis otomatis
+   selesai dan lompat ke layar hasil — berapa pun soal yang sudah
+   dijawab. Kalau soal di pool habis duluan, pool diacak ulang &
+   dilanjutkan (looping) supaya tidak pernah kehabisan soal di
+   tengah 60 detik. */
+function startSessionCountdown(){
+  clearInterval(gState.sessionTimer);
+  gState.sessionTimer = setInterval(()=>{
+    if(!gState || !gState.isTimeAttack) { clearInterval(gState.sessionTimer); return; }
+    gState.sessionTimeLeft -= 0.1;
+    const fill = $("sessionTimerFill");
+    const label = $("sessionTimerLabel");
+    if(fill) fill.style.width = Math.max(0, gState.sessionTimeLeft/gState.sessionTimeTotal*100) + "%";
+    if(label) label.textContent = Math.max(0, Math.ceil(gState.sessionTimeLeft)) + "s";
+    if(gState.sessionTimeLeft <= 0){
+      clearInterval(gState.sessionTimer);
+      clearInterval(gState.timer);
+      renderResult();
+    }
+  }, 100);
+}
+
+/* ============================================================
+   MODE COCOK KARTU (MEMORY MATCH) — mini-game terpisah total dari
+   mesin kuis pilihan-ganda. State & alur sendiri (gMem), tapi tetap
+   pakai fungsi reward yang sama (XP/koin/kartu) biar konsisten dgn
+   sistem meta-game yang sudah ada.
+   ============================================================ */
+let gMem = null;
+const MEM_PAIRS_TARGET = 6; // 6 pasang = 12 kartu, pas utk grid 3 kolom
+
+function startMemoryMatch(){
+  stopBGM();
+  const rawPool = setupType === 'bunpo'
+    ? PATTERNS.filter(p=>matchesBook(p, setupScope))
+    : VOCAB.filter(v=>matchesBook(v, setupScope));
+  if(rawPool.length < 3){
+    alert("Maaf, kata untuk cakupan ini terlalu sedikit buat mode Cocok Kartu."); return;
+  }
+  const n = Math.min(MEM_PAIRS_TARGET, rawPool.length);
+  const chosen = shuffle(rawPool.slice()).slice(0, n);
+  const cards = [];
+  chosen.forEach((item, pairId)=>{
+    cards.push({ pairId, side: 'jp', text: item.jp, item, matched: false });
+    cards.push({ pairId, side: 'meaning', text: dispMeaning(item), item, matched: false });
+  });
+  gMem = {
+    cards: shuffle(cards),
+    flipped: [], matchedPairs: 0, totalPairs: n, moves: 0,
+    timeLeft: 90, timeTotal: 90, timer: null, locked: false,
+    startedAt: new Date()
+  };
+  gMem.timer = setInterval(()=>{
+    gMem.timeLeft -= 0.1;
+    const fill = $("memTimerFill"), label = $("memTimerLabel");
+    if(fill) fill.style.width = Math.max(0, gMem.timeLeft/gMem.timeTotal*100) + "%";
+    if(label) label.textContent = Math.max(0, Math.ceil(gMem.timeLeft)) + "s";
+    if(gMem.timeLeft <= 0){ clearInterval(gMem.timer); endMemoryMatch(false); }
+  }, 100);
+  renderMemoryMatch();
+}
+
+function renderMemoryMatch(){
+  $("gameArea").innerHTML = `
+    <div class="quiz-avatar" id="quizAvatar">${currentAvatarEmoji()}</div>
+    <div class="mem-hud">
+      <span class="mh-timer">⏱️ <span id="memTimerLabel">${Math.ceil(gMem.timeLeft)}s</span></span>
+      <span>🎯 ${gMem.matchedPairs}/${gMem.totalPairs} pasang</span>
+      <span class="mh-moves">👆 ${gMem.moves}x</span>
+    </div>
+    <div class="session-timer-track" style="margin-bottom:12px;"><div class="session-timer-fill" id="memTimerFill" style="width:${gMem.timeLeft/gMem.timeTotal*100}%"></div></div>
+    <div class="mem-grid" id="memGrid">
+      ${gMem.cards.map((c,i)=>`
+        <div class="mem-card ${c.side==='jp'?'jp-card':''} ${c.matched?'matched':''} ${gMem.flipped.includes(i)?'flipped':''}" data-i="${i}">
+          <div class="mem-card-inner">
+            <div class="mem-face back">?</div>
+            <div class="mem-face front">${c.text}</div>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+  document.querySelectorAll(".mem-card").forEach(el=>{
+    el.addEventListener("click", ()=> flipMemoryCard(parseInt(el.dataset.i)));
+  });
+}
+
+function flipMemoryCard(idx){
+  if(gMem.locked) return;
+  const card = gMem.cards[idx];
+  if(card.matched || gMem.flipped.includes(idx)) return;
+  gMem.flipped.push(idx);
+  const el = document.querySelector(`.mem-card[data-i="${idx}"]`);
+  if(el) el.classList.add("flipped");
+
+  if(gMem.flipped.length === 2){
+    gMem.locked = true;
+    gMem.moves++;
+    const [i1, i2] = gMem.flipped;
+    const c1 = gMem.cards[i1], c2 = gMem.cards[i2];
+    if(c1.pairId === c2.pairId){
+      // cocok!
+      playSFX('correct');
+      c1.matched = true; c2.matched = true;
+      gMem.matchedPairs++;
+      document.querySelectorAll(`.mem-card[data-i="${i1}"], .mem-card[data-i="${i2}"]`).forEach(e=>e.classList.add("matched"));
+      spawnConfetti(window.innerWidth/2, window.innerHeight/3, 18);
+      setTimeout(()=> awardCard(c1.item, false), 400);
+      gMem.flipped = [];
+      gMem.locked = false;
+      if(gMem.matchedPairs >= gMem.totalPairs){
+        clearInterval(gMem.timer);
+        setTimeout(()=> endMemoryMatch(true), 500);
+      }
+    } else {
+      // tidak cocok
+      playSFX('wrong');
+      document.querySelectorAll(`.mem-card[data-i="${i1}"], .mem-card[data-i="${i2}"]`).forEach(e=>e.classList.add("wrong-flash"));
+      setTimeout(()=>{
+        document.querySelectorAll(`.mem-card[data-i="${i1}"], .mem-card[data-i="${i2}"]`).forEach(e=>{
+          e.classList.remove("flipped","wrong-flash");
+        });
+        gMem.flipped = [];
+        gMem.locked = false;
+      }, 750);
+    }
+  }
+}
+
+function endMemoryMatch(won){
+  clearInterval(gMem.timer);
+  const timeBonus = Math.max(0, Math.round(gMem.timeLeft));
+  const movesPenalty = Math.max(0, (gMem.moves - gMem.totalPairs) * 2);
+  const score = Math.max(0, gMem.matchedPairs * 30 + timeBonus - movesPenalty);
+  const acc = gMem.moves > 0 ? Math.round(gMem.matchedPairs / gMem.moves * 100) : 0;
+  const earnedXP = gMem.matchedPairs * 4 + (won ? 15 : 0);
+  const earnedCoins = gMem.matchedPairs * 3 + (won ? 10 : 0);
+  awardXPCoins(earnedXP, earnedCoins);
+  progressMission('sessions', 1);
+
+  saveHistoryToLocal({
+    tanggal: new Date().toLocaleString("id-ID"),
+    jenis: "Cocok Kartu (Memory)",
+    paket: "-",
+    skor: score,
+    benar: gMem.matchedPairs,
+    total: gMem.totalPairs,
+    akurasi: acc,
+    nilai: gradeFor(acc).letter
+  });
+
+  const grade = gradeFor(acc);
+  startBGM();
+  $("gameArea").innerHTML = `
+    <div class="result">
+      <div class="grade-badge" style="background:${grade.color}22;color:${grade.color};border:2px solid ${grade.color};">${grade.letter}</div>
+      <div class="id-line" style="font-size:22px;">${currentAvatarEmoji()}</div>
+      <div class="id-line">${student.nama} &middot; NIS ${student.nis}</div>
+      <div class="id-line" style="opacity:.8;">🎴 Cocok Kartu (Memory)</div>
+      <div class="big-score">${score}</div>
+      <div class="sub">${won ? '🎉 Semua pasangan ditemukan!' : '⏰ Waktu habis'} &middot; ${gMem.matchedPairs}/${gMem.totalPairs} pasang &middot; ${gMem.moves}x klik</div>
+      <div class="sub" style="color:var(--gold);font-weight:700;">✨ +${earnedXP} XP &middot; 🪙 +${earnedCoins} koin</div>
+      <button class="play-btn" id="memAgainBtn" style="margin-top:10px;">↻ Main Lagi</button>
+    </div>
+  `;
+  $("memAgainBtn").addEventListener("click", renderStart);
 }
 
 /* Waktu pengerjaan bacaan dokkai mengikuti standar durasi resmi JLPT
@@ -2563,6 +2794,12 @@ function renderQuestionActual(){
 
   $("gameArea").innerHTML = `
     <div class="quiz-avatar" id="quizAvatar">${currentAvatarEmoji()}</div>
+    ${gState.isTimeAttack ? `
+      <div class="session-timer-wrap">
+        <span class="st-label">⏱️ <span id="sessionTimerLabel">${Math.ceil(gState.sessionTimeLeft)}s</span></span>
+        <div class="session-timer-track"><div class="session-timer-fill" id="sessionTimerFill" style="width:${gState.sessionTimeLeft/gState.sessionTimeTotal*100}%"></div></div>
+      </div>
+    ` : ""}
     <div class="hud">
       <span class="streak" id="streakHud">${gState.streak>1 ? "🔥 Streak x"+gState.streak : ""}</span>
       <span class="score" id="scoreHud">⭐ ${gState.score}</span>
@@ -2792,6 +3029,18 @@ function handleAnswerResult(isCorrect, anchorEl){
   }
 
   const goNext = ()=>{
+    if(gState.isTimeAttack){
+      // Serbu Waktu: sesi hanya berakhir kalau WAKTU habis (ditangani
+      // startSessionCountdown), bukan krn soal habis -> looping terus.
+      if(gState.sessionTimeLeft <= 0) return; // sudah/segera ditutup oleh countdown sesi
+      gState.qi++;
+      if(gState.qi >= gState.questions.length){
+        // pool habis duluan drpd waktu -> acak ulang & lanjutkan
+        gState.questions = gState.questions.concat(shuffle(gState.questions.slice()));
+      }
+      renderQuestion();
+      return;
+    }
     if(gState.qi < gState.questions.length-1){
       gState.qi++;
       renderQuestion();
@@ -2834,9 +3083,13 @@ function gradeFor(pct){
 }
 
 function renderResult(){
+  if(gState.sessionTimer) clearInterval(gState.sessionTimer); // jaga2 kalau renderResult terpanggil lebih dari sekali
   startBGM(); // kuis sudah selesai -> musik latar menyala lagi
-  const total = gState.questions.length;
-  const acc = Math.round((gState.correctCount/total)*100);
+  // Serbu Waktu: pool soal bisa "digandakan" via looping saat waktu blm habis,
+  // jadi questions.length TIDAK mencerminkan jumlah soal yg benar2 dijawab.
+  // Total sebenarnya = benar + salah (keduanya sudah pasti tercatat).
+  const total = gState.isTimeAttack ? (gState.correctCount + gState.misses.length) : gState.questions.length;
+  const acc = total > 0 ? Math.round((gState.correctCount/total)*100) : 0;
   const grade = gradeFor(acc);
   const dateStr = gState.startedAt.toLocaleString("id-ID");
 
