@@ -133,37 +133,41 @@
   .cabinet-wrap { position: relative; width: 232px; flex-shrink: 0; }
 
   /* bodi utama dgn "panel samping" trapesium memakai clip-path,
-     memberi kesan perspektif 3D tanpa gambar raster */
+     memberi kesan perspektif 3D tanpa gambar raster — polos elegan,
+     tanpa tulisan berulang, cukup aksen garis highlight tipis */
   .cab-side { position: absolute; top: 34px; bottom: 0; width: 16px;
     background: linear-gradient(180deg,#1f1d2c,#0a0913 85%);
     border: 1px solid rgba(0,229,255,.15);
-    display: flex; align-items: center; justify-content: center;
   }
   .cab-side.l { left: -14px; clip-path: polygon(40% 0, 100% 0, 100% 100%, 0 100%); }
   .cab-side.r { right: -14px; clip-path: polygon(0 0, 60% 0, 100% 100%, 0 100%); }
-  .cab-side span { writing-mode: vertical-rl; font-family:"Noto Sans JP",sans-serif; font-weight:900;
-    font-size: 8px; letter-spacing: 2px; color: rgba(0,229,255,.5); }
 
+  /* marquee polos bercahaya, cukup tulisan generik "ARCADE" —
+     identitas brand cukup sekali di judul atas, tidak diulang di sini */
   .marquee {
-    height: 46px; border-radius: 12px 12px 4px 4px;
+    height: 40px; border-radius: 12px 12px 4px 4px;
     background: linear-gradient(135deg, #ff2ad4, #7b2aff);
     box-shadow: 0 0 18px rgba(255,42,212,.55), 0 0 34px rgba(123,42,255,.35);
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 0 10px; animation: pulseGlow 2.2s infinite ease-in-out;
+    display: flex; align-items: center; justify-content: center;
+    animation: pulseGlow 2.2s infinite ease-in-out;
   }
-  .marquee img { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
-    box-shadow: 0 0 6px rgba(255,255,255,.6); }
-  .marquee .mq-text { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 11px; color: #fff;
-    letter-spacing: 1.2px; line-height: 1.25; text-align: left; }
-  .marquee .mq-text small { display:block; font-size: 8px; font-weight: 700; opacity: .85; letter-spacing: 1.5px; }
+  .marquee .mq-text { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 13px; color: #fff;
+    letter-spacing: 4px; }
   @keyframes pulseGlow { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.35); } }
 
   .cabinet-body {
+    position: relative;
     background: linear-gradient(160deg, #1b1b28, #0c0c14 70%);
     border: 1px solid rgba(0,229,255,.25);
     border-top: none; border-radius: 0 0 12px 12px;
-    padding: 10px 10px 12px; box-shadow: 0 0 26px rgba(0,0,0,.6);
+    padding: 10px 10px 12px; box-shadow: 0 0 26px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
   }
+  /* rivet/sekrup di sudut bodi, detail khas mesin dingdong asli */
+  .rivet { position: absolute; width: 5px; height: 5px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #5a5670, #201e2c);
+    box-shadow: 0 0 3px rgba(0,0,0,.6), inset 0 0 1px rgba(255,255,255,.4); }
+  .rivet.tl { top: 6px; left: 6px; } .rivet.tr { top: 6px; right: 6px; }
+  .rivet.bl { bottom: 6px; left: 6px; } .rivet.br { bottom: 6px; right: 6px; }
 
   /* sepasang speaker bulat bermotif mesh */
   .speaker-row { display: flex; justify-content: center; gap: 18px; margin-bottom: 8px; }
@@ -179,7 +183,7 @@
   .cab-screen {
     background: radial-gradient(circle at 50% 40%, #101425, #05060c 78%);
     border: 2px solid rgba(0,229,255,.35);
-    border-radius: 6px; padding: 16px 8px; position: relative; overflow: hidden;
+    border-radius: 6px; padding: 18px 8px; position: relative; overflow: hidden;
     box-shadow: inset 0 0 22px rgba(0,229,255,.15), 0 0 24px rgba(157,0,255,.25);
   }
   .cab-screen::before { /* CRT scanlines */
@@ -195,14 +199,18 @@
     text-shadow: none; filter: drop-shadow(0 0 10px rgba(0,229,255,.85)) drop-shadow(0 0 22px rgba(157,0,255,.6));
     animation: screenFlicker 4.5s infinite ease-in-out;
   }
-  .cab-screen .tagline { position: relative; text-align: center; margin-top: 6px; font-size: 9.5px;
-    color: rgba(255,255,255,.55); font-weight: 600; letter-spacing: .3px; }
   @keyframes screenFlicker {
     0%, 92%, 100% { opacity: 1; } 93% { opacity: .55; } 95% { opacity: 1; } 96% { opacity: .7; }
   }
 
-  /* panel kontrol: dua cluster joystick+tombol (kiri cyan, kanan magenta) */
-  .control-panel { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding: 6px 4px 0; }
+  /* panel kontrol: dua cluster joystick+tombol (kiri cyan, kanan magenta)
+     + slot koin di tengah, label P1/P2 kecil — detail khas mesin dingdong */
+  .control-panel { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 12px; padding: 6px 4px 0; }
+  .coin-slot { width: 14px; height: 4px; border-radius: 2px; margin-top: 8px;
+    background: #05060c; box-shadow: inset 0 1px 2px rgba(0,0,0,.8), 0 0 4px rgba(0,229,255,.3); }
+  .player-lbl { display: block; text-align: center; font-size: 7px; font-weight: 900; letter-spacing: 1px; margin-top: 5px; }
+  .player-lbl.cy { color: var(--cyan); text-shadow: 0 0 4px rgba(0,229,255,.6); }
+  .player-lbl.mg { color: #ff2ad4; text-shadow: 0 0 4px rgba(255,42,212,.6); }
   .stick-cluster { display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .joystick-ball { width: 20px; height: 20px; border-radius: 50%; position: relative; }
   .joystick-ball::before { content:""; position:absolute; left:50%; bottom:-9px; width:5px; height:12px;
@@ -427,28 +435,31 @@
     <div class="arcade-scene">
       <div class="neon-tube left"></div>
       <div class="cabinet-wrap">
-        <div class="cab-side l"><span>ゲームコーナー</span></div>
-        <div class="cab-side r"><span>NAFIS SENSEI</span></div>
+        <div class="cab-side l"></div>
+        <div class="cab-side r"></div>
         <div class="marquee">
-          <img src="" id="marqueeLogoImg" alt="logo">
-          <div class="mq-text">NAFIS SENSEI<small>ゲームコーナー</small></div>
+          <span class="mq-text">ARCADE</span>
         </div>
         <div class="cabinet-body">
+          <i class="rivet tl"></i><i class="rivet tr"></i>
           <div class="speaker-row"><div class="speaker"></div><div class="speaker"></div></div>
           <div class="cab-screen">
             <div class="kanji">日本語</div>
-            <div class="tagline">belajar &amp; bermain bahasa Jepang</div>
           </div>
           <div class="control-panel">
             <div class="stick-cluster">
               <div class="joystick-ball cy"></div>
               <div class="btn-arc"><div class="btn-dot cy"></div><div class="btn-dot cy"></div><div class="btn-dot cy"></div></div>
+              <span class="player-lbl cy">P1</span>
             </div>
+            <div class="coin-slot"></div>
             <div class="stick-cluster">
               <div class="joystick-ball mg"></div>
               <div class="btn-arc"><div class="btn-dot mg"></div><div class="btn-dot mg"></div><div class="btn-dot mg"></div></div>
+              <span class="player-lbl mg">P2</span>
             </div>
           </div>
+          <i class="rivet bl"></i><i class="rivet br"></i>
         </div>
       </div>
       <div class="neon-tube right"></div>
@@ -702,6 +713,7 @@ function stopBGM(){
 <script src="patterns.js"></script>
 <script src="vocab.js"></script>
 <script src="dokkai.js"></script>
+<script src="jlpt-test.js"></script>
 <script src="kanji-terjemahan.js"></script>
 <script src="kotoba-terjemahan.js"></script>
 
@@ -711,7 +723,6 @@ const $ = id => document.getElementById(id);
 
 /* Pasang logo Nafis Sensei (base64, tanpa perlu file gambar terpisah) */
 $("landingLogoImg").src = NAFIS_LOGO_URI;
-$("marqueeLogoImg").src = NAFIS_LOGO_URI;
 $("brandLogoImg").src = NAFIS_LOGO_URI;
 
 /* Landing page (Ruang Arcade Kabinet Neon) -> tombol "Mulai Bermain"
@@ -917,7 +928,7 @@ let setupMode = "latihan"; // "latihan" (acak bebas) | "ujian" (paket soal tetap
 let setupPacketIndex = 0;
 
 function poolFor(scope, typeMode){
-  const src = typeMode === 'bunpo' ? PATTERNS : (typeMode === 'dokkai' ? DOKKAI : VOCAB);
+  const src = typeMode === 'bunpo' ? PATTERNS : (typeMode === 'dokkai' ? DOKKAI : (typeMode === 'jlpttest' ? JLPT_TEST : VOCAB));
   return src.filter(p=>matchesBook(p, scope));
 }
 
@@ -1021,6 +1032,20 @@ function makeQuestionForVocab(correct, pool, wide, rng){
   return { type:'word_to_meaning', correct, qText:`Apa arti dari ${label} <b>${correct.jp}</b>?`, correctAns: dispMeaning(correct), options: optionsV.map(dispMeaning) };
 }
 
+function makeQuestionForJLPT(item, rng){
+  rng = rng || Math.random;
+  const options = shuffle(item.options.slice(), rng);
+  const plainText = item.qText.replace(/<[^>]+>/g,'');
+  const correct = { jp: plainText, meaning_id: `Jawaban: ${item.correctAns}`, level: item.level };
+  return {
+    type: 'jlpt_mc',
+    correct,
+    qText: `<span style="font-size:11px;color:var(--sub);font-weight:700;letter-spacing:.5px;">[${item.section}]</span><br>${item.qText}`,
+    correctAns: item.correctAns,
+    options
+  };
+}
+
 /* Bangun soal-soal Dokkai dari 1 "correct" (= 1 bacaan/passage).
    Berbeda dari pola/kosakata, 1 bacaan bisa menghasilkan BEBERAPA soal
    beruntun (mis. bacaan cloze punya soal ア/イ/ウ). Semua soal itu tetap
@@ -1055,6 +1080,9 @@ function buildQuestions(scope, count, typeMode){
   const chosen = shuffle(pool).slice(0, n);
   if(typeMode === 'dokkai'){
     return chosen.flatMap(passage => makeQuestionsForDokkai(passage));
+  }
+  if(typeMode === 'jlpttest'){
+    return chosen.map(item => makeQuestionForJLPT(item));
   }
   return chosen.map(correct => typeMode === 'bunpo'
     ? makeQuestionForPattern(correct, pool, wide)
@@ -1146,6 +1174,9 @@ function buildQuestionsForPacket(scope, count, typeMode, packetIndex){
   if(typeMode === 'dokkai'){
     return items.flatMap(passage => makeQuestionsForDokkai(passage, rng));
   }
+  if(typeMode === 'jlpttest'){
+    return items.map(item => makeQuestionForJLPT(item));
+  }
   return items.map(correct => typeMode === 'bunpo'
     ? makeQuestionForPattern(correct, pool, wide, rng)
     : makeQuestionForVocab(correct, pool, wide, rng));
@@ -1171,6 +1202,7 @@ function renderStart(){
             <button data-v="bunpo">Pola Kalimat</button>
             <button data-v="kotoba" class="active">Kosakata &amp; Kanji</button>
             <button data-v="dokkai">📖 Dokkai (Bacaan)</button>
+            <button data-v="jlpttest">📝 Tes Kosakata (JLPT)</button>
           </div>
         </div>
         <div class="setup-box">
@@ -1355,7 +1387,7 @@ function renderQuestion(){
   gState.timeLeft = qTime; gState.timeTotal = qTime;
   gState.locked = false;
 
-  let typeLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : "Kosakata & Kanji");
+  let typeLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : (setupType === "jlpttest" ? "Tes Kosakata (JLPT)" : "Kosakata & Kanji"));
   let paketTag = gState.paketLabel ? ` &middot; ${gState.paketLabel}` : "";
 
   const bodyHtml = q.type === 'susun_kalimat' ? `
@@ -1567,7 +1599,7 @@ function renderResult(){
   const grade = gradeFor(acc);
   const dateStr = gState.startedAt.toLocaleString("id-ID");
 
-  const materiLabel = setupType === 'bunpo' ? 'Pola Kalimat' : (setupType === 'dokkai' ? 'Dokkai (Bacaan)' : 'Kosakata & Kanji');
+  const materiLabel = setupType === 'bunpo' ? 'Pola Kalimat' : (setupType === 'dokkai' ? 'Dokkai (Bacaan)' : (setupType === 'jlpttest' ? 'Tes Kosakata (JLPT)' : 'Kosakata & Kanji'));
 
   let justUnlocked = false;
   if(setupMode === "ujian"){
@@ -1666,7 +1698,7 @@ function downloadResultCard(grade, acc, total, dateStr){
   ctx.fillText("NAFIS SENSEI ゲームコーナー", pad+46, pad+30);
 
   // sub-judul: jenis materi + paket soal (jika ada)
-  const typeLabel = setupType === "bunpo" ? "POLA KALIMAT" : (setupType === "dokkai" ? "DOKKAI (BACAAN)" : "KOSAKATA & KANJI");
+  const typeLabel = setupType === "bunpo" ? "POLA KALIMAT" : (setupType === "dokkai" ? "DOKKAI (BACAAN)" : (setupType === "jlpttest" ? "TES KOSAKATA (JLPT)" : "KOSAKATA & KANJI"));
   const subLabel = "HASIL PENILAIAN — " + typeLabel + (gState.paketLabel ? "  ·  " + gState.paketLabel.toUpperCase() : "");
   ctx.fillStyle = "#9ca3af";
   ctx.font = "bold 15px sans-serif";
