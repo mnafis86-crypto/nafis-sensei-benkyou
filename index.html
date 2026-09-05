@@ -1105,7 +1105,19 @@ if('speechSynthesis' in window){
   window.speechSynthesis.onvoiceschanged = () => { cachedJaVoice = pickJapaneseVoice(); };
   cachedJaVoice = pickJapaneseVoice();
 }
-function speakJapanese(text){
+/* Kecepatan bicara disesuaikan level — makin dasar levelnya, makin
+   pelan diucapkan (biar pemula jelas dengarnya), makin tinggi level
+   makin mendekati kecepatan bicara natural orang Jepang. */
+function speedForLevel(level){
+  switch(level){
+    case "N5": return 0.62;
+    case "N4": return 0.7;
+    case "N3": return 0.78;
+    case "N2": return 0.85;
+    default:   return 0.7;
+  }
+}
+function speakJapanese(text, level){
   if(!('speechSynthesis' in window)){
     showGameToast("🔇 Browser ini tidak mendukung suara sama sekali");
     return;
@@ -1114,7 +1126,7 @@ function speakJapanese(text){
   window.speechSynthesis.cancel(); // hentikan ucapan sebelumnya kalau masih jalan
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = 'ja-JP';
-  utter.rate = 0.85;
+  utter.rate = speedForLevel(level);
   // Kalau siswa sudah memilih suara sendiri (lewat "🔊 Pilih Suara"), pakai
   // itu dulu; kalau belum pernah pilih, jatuh ke suara Jepang otomatis.
   const chosenVoice = getChosenVoice();
@@ -3109,7 +3121,7 @@ function renderQuestionActual(){
       const triesEl = $("listenTries");
       if(triesEl) triesEl.textContent = tries;
       playBtn.classList.add("playing");
-      speakJapanese(q.correct.jp);
+      speakJapanese(q.correct.jp, q.correct.level);
       setTimeout(()=> playBtn.classList.remove("playing"), 900);
       if(tries >= maxTries) playBtn.disabled = true;
     };
@@ -3189,7 +3201,10 @@ function selectMCAnswer(isCorrect, btnEl){
 
   const q = gState.questions[gState.qi];
   document.querySelectorAll(".opt").forEach(btn=>{
-    if(btn.dataset.v === q.correctAns) btn.classList.add("correct", isCorrect ? "correct-pop" : "");
+    if(btn.dataset.v === q.correctAns){
+      btn.classList.add("correct");
+      if(isCorrect) btn.classList.add("correct-pop"); // class kedua HANYA ditambah kalau memang perlu (string kosong bikin classList.add() error di browser sungguhan!)
+    }
     else if(btn===btnEl) btn.classList.add("wrong", "wrong-pop");
   });
 
