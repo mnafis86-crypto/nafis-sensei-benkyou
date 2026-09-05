@@ -931,6 +931,7 @@
 <!-- ============================================================
      LANDING PAGE — Ruang Arcade Kabinet Neon
      ============================================================ -->
+<audio id="bgmAudio" src="gyutto.mp3" loop preload="auto"></audio>
 <div id="landing">
   <div class="floor-glow"></div>
   <div class="arcade-stage">
@@ -1179,6 +1180,27 @@ function speedForLevel(level){
     default:   return 0.7;
   }
 }
+
+/* Untuk KANJI SATU HURUF, membaca on'yomi sendirian (tanpa kata lain
+   di sekitarnya) itu tidak natural & sulit ditebak — on'yomi biasanya
+   cuma "kedengaran benar" kalau muncul dalam kata majemuk (jukugo).
+   Kun'yomi jauh lebih gampang dikenali sebagai kata berdiri sendiri,
+   jadi kita utamakan kun'yomi utk kasus ini; kalau kanjinya memang
+   tidak punya kun'yomi (cuma ada di kata majemuk), baru pakai on'yomi.
+   Kotoba/kata majemuk (2+ huruf) tidak terpengaruh, tetap dibaca apa
+   adanya karena bacaan gabungannya memang sudah natural. */
+function preferredReadingFor(item){
+  if(item && item.type === 'kanji' && item.jp && item.jp.length === 1){
+    if(item.kunyomi && item.kunyomi !== '-'){
+      return item.kunyomi.split('・')[0].replace(/\./g, ''); // ambil bacaan pertama, buang titik pemisah okurigana
+    }
+    if(item.onyomi && item.onyomi !== '-'){
+      return item.onyomi.split('・')[0];
+    }
+  }
+  return item ? item.jp : '';
+}
+
 function speakJapanese(text, level){
   if(!('speechSynthesis' in window)){
     showGameToast("🔇 Browser ini tidak mendukung suara sama sekali");
@@ -1311,119 +1333,66 @@ function playSFX(type) {
 }
 
 /* ============================================================
-   MUSIK LATAR (BGM) — aransemen ala Jepang, memakai tangga nada
-   pentatonik (bukan chord Barat yang ramai/berisik). Nadanya
-   dimainkan SATU-SATU seperti petikan koto (serangan cepat lalu
-   meluruh), jadi terasa lebih halus & tidak mengganggu. Tiap mode
-   permainan otomatis dapat pola melodi & tempo berbeda — TANPA
-   perlu siswa memilih apapun. Mode Dengar & Tebak sengaja TANPA
-   musik sama sekali (biar tidak mengganggu konsentrasi mendengar).
+   MUSIK LATAR (BGM) — pakai file audio asli (gyutto.mp3), bukan
+   lagi sintesis Web Audio. SATU lagu yang sama diputar di semua
+   layar & mode permainan, KECUALI Mode Dengar & Tebak yang sengaja
+   TANPA musik sama sekali (biar tidak mengganggu konsentrasi
+   mendengar soal TTS).
    ============================================================ */
-const JP_SCALE = [220.00, 246.94, 261.63, 329.63, 349.23, 440.00, 493.88]; // A yonanuki (pentatonik Jepang): A B C E F A B
-const BGM_MODES = {
-  latihan:    { wave:'sine',     beat:0.85, vol:0.05, motif:[0,2,4,3,2,0] },       // tenang, santai
-  ujian:      { wave:'triangle', beat:0.6,  vol:0.05, motif:[0,1,2,4,2,1,0,4] },    // fokus, mantap
-  timeattack: { wave:'triangle', beat:0.32, vol:0.055,motif:[4,3,2,4,5,4,3,2] },    // cepat, tegang
-  memory:     { wave:'sine',     beat:0.42, vol:0.05, motif:[2,4,3,5,4,2,3,4] },    // riang, ala teka-teki
-};
-let currentBgmMode = 'latihan';
+function bgmEl(){ return document.getElementById('bgmAudio'); }
 let bgmPlaying = false;
-let bgmTimeoutId = null;
-let bgmGainNode = null;
-let bgmStepIndex = 0;
 
-/* Mode permainan mana dapat nuansa musik apa — otomatis, tanpa
-   perlu siswa memilih apa-apa. Dengar & Tebak sengaja TIDAK
-   dikembalikan tema apapun (artinya: tanpa musik). */
+/* Mode permainan mana dapat musik, mana yang tidak — hanya Dengar &
+   Tebak yang dikecualikan (return null = tanpa musik). Selain itu
+   semua pakai lagu yang sama, jadi nilai kembaliannya sekadar
+   penanda "ada musik" (truthy), bukan nama tema lagi. */
 function gameModeBgmTheme(mode, type){
-  if(type === 'listening') return null;       // tanpa musik, biar tidak ganggu dengar
-  if(mode === 'timeattack') return 'timeattack';
-  if(mode === 'memory') return 'memory';
-  if(mode === 'ujian') return 'ujian';
-  return 'latihan';
+  if(type === 'listening') return null; // tanpa musik, biar tidak ganggu dengar
+  return 'gyutto';
 }
 function setBgmTheme(themeId){
-  if(!themeId){ stopBGM(); return; } // listening -> matikan total, bukan cuma diredam
-  currentBgmMode = BGM_MODES[themeId] ? themeId : 'latihan';
-  bgmStepIndex = 0;
-  if(bgmPlaying){ // ganti instan kalau lagi main, bukan nunggu loop lama selesai
-    if(bgmTimeoutId){ clearTimeout(bgmTimeoutId); bgmTimeoutId = null; }
-    bgmScheduleLoop();
-  }
-}
-
-/* Satu "petikan" nada ala koto: serangan cepat lalu meluruh halus,
-   dengan sedikit nada harmonik lembut di atasnya biar tidak flat. */
-function playKotoPluck(freq, t0, dur, wave, vol){
-  const osc = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  osc.type = wave;
-  osc.frequency.value = freq;
-  osc.connect(g); g.connect(bgmGainNode);
-  g.gain.setValueAtTime(0, t0);
-  g.gain.linearRampToValueAtTime(vol, t0 + 0.015);       // serangan cepat (pluck)
-  g.gain.exponentialRampToValueAtTime(Math.max(vol*0.15, 0.0008), t0 + dur*0.85); // meluruh halus
-  g.gain.linearRampToValueAtTime(0, t0 + dur);
-  osc.start(t0); osc.stop(t0 + dur + 0.05);
-
-  // harmonik lembut 1 oktaf di atas, volume kecil, biar berkarakter koto
-  const hOsc = audioCtx.createOscillator();
-  const hG = audioCtx.createGain();
-  hOsc.type = 'sine';
-  hOsc.frequency.value = freq * 2;
-  hOsc.connect(hG); hG.connect(bgmGainNode);
-  hG.gain.setValueAtTime(0, t0);
-  hG.gain.linearRampToValueAtTime(vol*0.25, t0 + 0.01);
-  hG.gain.exponentialRampToValueAtTime(0.0005, t0 + dur*0.6);
-  hOsc.start(t0); hOsc.stop(t0 + dur + 0.05);
-}
-
-function bgmScheduleLoop(){
-  if(!bgmPlaying) return;
-  const m = BGM_MODES[currentBgmMode] || BGM_MODES.latihan;
-  const now = audioCtx.currentTime;
-  const noteIdx = m.motif[bgmStepIndex % m.motif.length];
-  const freq = JP_SCALE[noteIdx];
-  playKotoPluck(freq, now, m.beat * 0.95, m.wave, m.vol);
-  bgmStepIndex++;
-  bgmTimeoutId = setTimeout(bgmScheduleLoop, m.beat * 1000);
+  if(!themeId){ stopBGM(); return; } // listening -> matikan total
+  // Hanya ada 1 lagu, jadi tidak perlu ganti track apa pun di sini;
+  // startBGM() di bawah ini yang akan memastikan lagu diputar/dilanjut.
 }
 
 function startBGM(){
-  if(bgmPlaying) return; // idempotent, tidak dobel kalau sudah main
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  if(!bgmGainNode){
-    bgmGainNode = audioCtx.createGain();
-    bgmGainNode.gain.value = 1;
-    bgmGainNode.connect(audioCtx.destination);
-  }
+  const audio = bgmEl();
+  if(!audio) return;
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if(bgmPlaying && !audio.paused) return; // idempotent, tidak dobel kalau sudah main
+  audio.volume = 1;
+  const p = audio.play();
+  if(p && typeof p.catch === 'function') p.catch(()=>{ /* diabaikan: browser blokir autoplay sblm ada interaksi user */ });
   bgmPlaying = true;
-  bgmScheduleLoop();
 }
 
 function stopBGM(){
+  const audio = bgmEl();
   bgmPlaying = false;
-  if(bgmTimeoutId){ clearTimeout(bgmTimeoutId); bgmTimeoutId = null; }
+  if(!audio || audio.paused) return;
   // fade out halus biar tidak putus mendadak
-  if(bgmGainNode){
-    const now = audioCtx.currentTime;
-    bgmGainNode.gain.cancelScheduledValues(now);
-    bgmGainNode.gain.setValueAtTime(bgmGainNode.gain.value, now);
-    bgmGainNode.gain.linearRampToValueAtTime(0, now + 0.4);
-    // pulihkan gain node supaya siap dipakai lagi nanti
-    setTimeout(() => { if(bgmGainNode) bgmGainNode.gain.value = 1; }, 450);
-  }
+  const startVol = audio.volume;
+  let step = 0;
+  const steps = 8;
+  const fadeTimer = setInterval(()=>{
+    step++;
+    audio.volume = Math.max(0, startVol * (1 - step/steps));
+    if(step >= steps){
+      clearInterval(fadeTimer);
+      audio.pause();
+      audio.volume = 1; // pulihkan volume penuh, siap dipakai lagi nanti
+    }
+  }, 40);
 }
 
 /* "Duck" = redam volume musik (bukan matikan total) — dipakai saat
-   sedang main (kuis/mini-game) supaya tetap ada nuansa suara sesuai
-   tema mode-nya tanpa mengganggu konsentrasi menjawab. */
+   sedang main (kuis/mini-game) supaya tetap ada nuansa suara tanpa
+   mengganggu konsentrasi menjawab. */
 function duckBGM(volume){
-  if(!bgmGainNode) return;
-  const now = audioCtx.currentTime;
-  bgmGainNode.gain.cancelScheduledValues(now);
-  bgmGainNode.gain.setValueAtTime(bgmGainNode.gain.value, now);
-  bgmGainNode.gain.linearRampToValueAtTime(volume, now + 0.4);
+  const audio = bgmEl();
+  if(!audio) return;
+  audio.volume = volume;
 }
 function restoreBGMVolume(){ duckBGM(1); }
 
@@ -2445,7 +2414,13 @@ function makeQuestionForPattern(correct, pool, wide, rng){
 
 function makeQuestionForVocab(correct, pool, wide, rng){
   rng = rng || Math.random;
-  const variants = ['meaning_to_word','word_to_meaning','word_to_romaji','romaji_to_word'];
+  // Kanji 1 huruf: hindari varian soal yang menguji cara baca (on'yomi
+  // di field .romaji), karena on'yomi berdiri sendiri itu sulit ditebak
+  // (baru natural kalau dalam kata majemuk). Cukup uji dari sisi arti saja.
+  const isSingleKanji = correct.type === 'kanji' && correct.jp && correct.jp.length === 1;
+  const variants = isSingleKanji
+    ? ['meaning_to_word','word_to_meaning']
+    : ['meaning_to_word','word_to_meaning','word_to_romaji','romaji_to_word'];
   const v = variants[Math.floor(rng()*variants.length)];
   const label = correct.type === 'kanji' ? 'kanji' : 'kata';
   if(v === 'meaning_to_word'){
@@ -3196,7 +3171,7 @@ function renderQuestionActual(){
       const triesEl = $("listenTries");
       if(triesEl) triesEl.textContent = tries;
       playBtn.classList.add("playing");
-      speakJapanese(q.correct.jp, q.correct.level);
+      speakJapanese(preferredReadingFor(q.correct), q.correct.level);
       setTimeout(()=> playBtn.classList.remove("playing"), 900);
       if(tries >= maxTries) playBtn.disabled = true;
     };
