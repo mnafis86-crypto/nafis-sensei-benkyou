@@ -949,12 +949,6 @@
       <div class="jp-line">ゲームをしながら勉強しましょう！</div>
     </div>
 
-    <div class="music-picker">
-      <div class="mp-label">🎵 PILIH MUSIK</div>
-      <div class="mp-row" id="musicPickerRow"></div>
-      <div class="mp-name" id="musicPickerName"></div>
-    </div>
-
     <button class="insert-coin" id="landingStartBtn">▶ Mulai Bermain</button>
   </div>
 </div>
@@ -1243,80 +1237,82 @@ function playSFX(type) {
 }
 
 /* ============================================================
-   MUSIK LATAR (BGM) — 5 TEMA berbeda + sistem "duck" (volume
-   diredam, bukan dimatikan total) saat masuk mode permainan, jadi
-   tiap mode kerasa beda nuansanya tanpa bikin senyap total.
-   Semua dibuat dgn Web Audio API murni, tanpa file audio eksternal.
+   MUSIK LATAR (BGM) — aransemen ala Jepang, memakai tangga nada
+   pentatonik (bukan chord Barat yang ramai/berisik). Nadanya
+   dimainkan SATU-SATU seperti petikan koto (serangan cepat lalu
+   meluruh), jadi terasa lebih halus & tidak mengganggu. Tiap mode
+   permainan otomatis dapat pola melodi & tempo berbeda — TANPA
+   perlu siswa memilih apapun. Mode Dengar & Tebak sengaja TANPA
+   musik sama sekali (biar tidak mengganggu konsentrasi mendengar).
    ============================================================ */
-const BGM_THEMES = {
-  synthwave: { id:'synthwave', name:'Synthwave Neon', icon:'🌃', wave:'triangle', melodyWave:'sine', melodyVol:1,
-    chords: [[174.61,220.00,261.63],[155.56,196.00,233.08],[138.59,174.61,207.65],[164.81,207.65,246.94]], beat:1.15 },
-  chiptune: { id:'chiptune', name:'Chiptune Retro', icon:'🎮', wave:'square', melodyWave:'square', melodyVol:0.7,
-    chords: [[261.63,329.63,392.00],[293.66,369.99,440.00],[220.00,277.18,329.63],[246.94,311.13,369.99]], beat:0.55 },
-  lofi: { id:'lofi', name:'Lo-fi Santai', icon:'🌙', wave:'sine', melodyWave:'sine', melodyVol:0.6,
-    chords: [[130.81,164.81,196.00],[146.83,174.61,220.00],[110.00,138.59,164.81],[123.47,155.56,196.00]], beat:1.8 },
-  epic: { id:'epic', name:'Epic Battle', icon:'⚡', wave:'sawtooth', melodyWave:'triangle', melodyVol:1.2,
-    chords: [[196.00,246.94,293.66],[220.00,277.18,329.63],[174.61,220.00,261.63],[196.00,246.94,311.13]], beat:0.48 },
-  ambient: { id:'ambient', name:'Ambient Zen', icon:'🍃', wave:'sine', melodyWave:'sine', melodyVol:0.4,
-    chords: [[196.00,246.94],[220.00,277.18],[174.61,220.00],[164.81,207.65]], beat:2.6 }
+const JP_SCALE = [220.00, 246.94, 261.63, 329.63, 349.23, 440.00, 493.88]; // A yonanuki (pentatonik Jepang): A B C E F A B
+const BGM_MODES = {
+  latihan:    { wave:'sine',     beat:0.85, vol:0.05, motif:[0,2,4,3,2,0] },       // tenang, santai
+  ujian:      { wave:'triangle', beat:0.6,  vol:0.05, motif:[0,1,2,4,2,1,0,4] },    // fokus, mantap
+  timeattack: { wave:'triangle', beat:0.32, vol:0.055,motif:[4,3,2,4,5,4,3,2] },    // cepat, tegang
+  memory:     { wave:'sine',     beat:0.42, vol:0.05, motif:[2,4,3,5,4,2,3,4] },    // riang, ala teka-teki
 };
-let currentBgmTheme = BGM_THEMES.synthwave;
+let currentBgmMode = 'latihan';
 let bgmPlaying = false;
 let bgmTimeoutId = null;
 let bgmGainNode = null;
+let bgmStepIndex = 0;
 
+/* Mode permainan mana dapat nuansa musik apa — otomatis, tanpa
+   perlu siswa memilih apa-apa. Dengar & Tebak sengaja TIDAK
+   dikembalikan tema apapun (artinya: tanpa musik). */
+function gameModeBgmTheme(mode, type){
+  if(type === 'listening') return null;       // tanpa musik, biar tidak ganggu dengar
+  if(mode === 'timeattack') return 'timeattack';
+  if(mode === 'memory') return 'memory';
+  if(mode === 'ujian') return 'ujian';
+  return 'latihan';
+}
 function setBgmTheme(themeId){
-  currentBgmTheme = BGM_THEMES[themeId] || BGM_THEMES.synthwave;
+  if(!themeId){ stopBGM(); return; } // listening -> matikan total, bukan cuma diredam
+  currentBgmMode = BGM_MODES[themeId] ? themeId : 'latihan';
+  bgmStepIndex = 0;
   if(bgmPlaying){ // ganti instan kalau lagi main, bukan nunggu loop lama selesai
     if(bgmTimeoutId){ clearTimeout(bgmTimeoutId); bgmTimeoutId = null; }
     bgmScheduleLoop();
   }
 }
-/* Mode permainan mana dapat tema musik apa — inilah yang bikin tiap
-   cara main kerasa beda suasananya, bukan cuma beda soal. */
-function gameModeBgmTheme(mode, type){
-  if(mode === 'timeattack') return 'epic';      // tegang, dikejar waktu
-  if(mode === 'memory') return 'chiptune';      // playful, ala teka-teki retro
-  if(type === 'listening') return 'ambient';    // tenang, biar fokus dengar
-  if(mode === 'ujian') return 'synthwave';      // serius/fokus, official
-  return getPlayerProfile().bgmTheme || 'synthwave'; // latihan bebas -> tema pilihan siswa
+
+/* Satu "petikan" nada ala koto: serangan cepat lalu meluruh halus,
+   dengan sedikit nada harmonik lembut di atasnya biar tidak flat. */
+function playKotoPluck(freq, t0, dur, wave, vol){
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.type = wave;
+  osc.frequency.value = freq;
+  osc.connect(g); g.connect(bgmGainNode);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(vol, t0 + 0.015);       // serangan cepat (pluck)
+  g.gain.exponentialRampToValueAtTime(Math.max(vol*0.15, 0.0008), t0 + dur*0.85); // meluruh halus
+  g.gain.linearRampToValueAtTime(0, t0 + dur);
+  osc.start(t0); osc.stop(t0 + dur + 0.05);
+
+  // harmonik lembut 1 oktaf di atas, volume kecil, biar berkarakter koto
+  const hOsc = audioCtx.createOscillator();
+  const hG = audioCtx.createGain();
+  hOsc.type = 'sine';
+  hOsc.frequency.value = freq * 2;
+  hOsc.connect(hG); hG.connect(bgmGainNode);
+  hG.gain.setValueAtTime(0, t0);
+  hG.gain.linearRampToValueAtTime(vol*0.25, t0 + 0.01);
+  hG.gain.exponentialRampToValueAtTime(0.0005, t0 + dur*0.6);
+  hOsc.start(t0); hOsc.stop(t0 + dur + 0.05);
 }
 
 function bgmScheduleLoop(){
   if(!bgmPlaying) return;
-  const theme = currentBgmTheme;
-  const chords = theme.chords;
+  const m = BGM_MODES[currentBgmMode] || BGM_MODES.latihan;
   const now = audioCtx.currentTime;
-  const beat = theme.beat;
-  chords.forEach((chord, i) => {
-    const t0 = now + i * beat;
-    chord.forEach(freq => {
-      const osc = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      osc.type = theme.wave;
-      osc.frequency.value = freq;
-      osc.connect(g); g.connect(bgmGainNode);
-      g.gain.setValueAtTime(0, t0);
-      g.gain.linearRampToValueAtTime(0.045, t0 + Math.min(0.25, beat*0.2));
-      g.gain.linearRampToValueAtTime(0.03, Math.max(t0, t0 + beat - 0.2));
-      g.gain.linearRampToValueAtTime(0, t0 + beat);
-      osc.start(t0); osc.stop(t0 + beat + 0.05);
-    });
-    // lapisan melodi tipis di oktaf atas, sesekali (biar tidak monoton)
-    if(i % 2 === 0){
-      const mOsc = audioCtx.createOscillator();
-      const mG = audioCtx.createGain();
-      mOsc.type = theme.melodyWave;
-      mOsc.frequency.value = chord[chord.length-1] * 2;
-      mOsc.connect(mG); mG.connect(bgmGainNode);
-      const mv = 0.03 * theme.melodyVol;
-      mG.gain.setValueAtTime(0, t0 + beat*0.3);
-      mG.gain.linearRampToValueAtTime(mv, t0 + beat*0.4);
-      mG.gain.linearRampToValueAtTime(0, t0 + beat*0.9);
-      mOsc.start(t0 + beat*0.3); mOsc.stop(t0 + beat + 0.05);
-    }
-  });
-  bgmTimeoutId = setTimeout(bgmScheduleLoop, chords.length * beat * 1000);
+  const noteIdx = m.motif[bgmStepIndex % m.motif.length];
+  const freq = JP_SCALE[noteIdx];
+  playKotoPluck(freq, now, m.beat * 0.95, m.wave, m.vol);
+  bgmStepIndex++;
+  bgmTimeoutId = setTimeout(bgmScheduleLoop, m.beat * 1000);
 }
 
 function startBGM(){
@@ -2084,7 +2080,7 @@ $("brandLogoImg").src = NAFIS_LOGO_URI;
    sudah aktif sejak awal jadi tidak perlu logika tambahan. */
 $("landingStartBtn").addEventListener("click", () => {
   $("landing").classList.add("hide");
-  setBgmTheme(getPlayerProfile().bgmTheme || 'synthwave');
+  setBgmTheme('latihan');
   startBGM();
   playSFX('start');
 });
@@ -2163,39 +2159,9 @@ window.addEventListener("load", ()=>{
     student = JSON.parse(saved);
     initApp();
   }
-  renderMusicPicker();
   const patN = PATTERNS.length, vocN = VOCAB.length, dokN = (typeof DOKKAI !== 'undefined' ? DOKKAI.length : 0);
   $("dataStats").textContent = `${patN} pola kalimat • ${vocN} kanji/kosakata • ${dokN} bacaan dokkai (N5-N2)`;
 });
-
-/* Pemilih tema musik di landing page — 5 tema, disimpan sebagai
-   preferensi siswa (dipakai lagi sbg musik dashboard & Latihan Bebas;
-   mode2 lain tetap pakai tema khasnya sendiri, lihat gameModeBgmTheme). */
-function renderMusicPicker(){
-  const row = $("musicPickerRow");
-  if(!row) return;
-  const profile = getPlayerProfile();
-  const current = profile.bgmTheme || 'synthwave';
-  const themes = Object.values(BGM_THEMES);
-  row.innerHTML = themes.map(t=>`<button class="mp-btn ${t.id===current?'active':''}" data-id="${t.id}" title="${t.name}">${t.icon}</button>`).join("");
-  const nameEl = $("musicPickerName");
-  if(nameEl) nameEl.textContent = (themes.find(t=>t.id===current)||themes[0]).name;
-  row.querySelectorAll(".mp-btn").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      row.querySelectorAll(".mp-btn").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
-      const id = btn.dataset.id;
-      setBgmTheme(id);
-      if(!bgmPlaying){ startBGM(); } // kasih preview langsung biar kedengeran
-      const p = getPlayerProfile();
-      p.bgmTheme = id;
-      savePlayerProfile(p);
-      const nm = BGM_THEMES[id];
-      if(nameEl) nameEl.textContent = nm.name;
-      playSFX('click');
-    });
-  });
-}
 
 function initApp(){
   $("panel-login").classList.remove("active");
@@ -2596,7 +2562,7 @@ function buildQuestionsForPacket(scope, count, typeMode, packetIndex){
 }
 
 function renderStart(){
-  setBgmTheme(getPlayerProfile().bgmTheme || 'synthwave'); // kembali ke tema pilihan siswa
+  setBgmTheme('latihan'); // kembali ke musik dashboard/latihan biasa
   startBGM(); // pastikan musik latar menyala lagi begitu kembali ke layar setup/dashboard
   restoreBGMVolume();
   $("gameArea").innerHTML = `
@@ -2805,12 +2771,13 @@ function renderPacketRow(){
 let gState = null;
 function startGame(){
   playSFX('start');
-  // Ganti tema musik sesuai mode yg dipilih, lalu redam volumenya
-  // (bukan dimatikan total) supaya tiap mode kerasa beda nuansa
-  // suaranya sambil tetap tidak mengganggu fokus menjawab.
-  setBgmTheme(gameModeBgmTheme(setupMode, setupType));
-  startBGM();
-  duckBGM(0.35);
+  // Ganti musik sesuai mode yg dipilih (aransemen pentatonik ala Jepang,
+  // beda tempo/nuansa tiap mode). Khusus Dengar & Tebak: TANPA musik
+  // sama sekali (gameModeBgmTheme mengembalikan null), biar tidak
+  // mengganggu konsentrasi mendengar.
+  const bgmTheme = gameModeBgmTheme(setupMode, setupType);
+  setBgmTheme(bgmTheme);
+  if(bgmTheme){ startBGM(); duckBGM(0.35); }
   const isTimeAttack = setupMode === "timeattack";
   // Serbu Waktu: pakai SEMUA soal yang tersedia (biar 60 detik tidak
   // kehabisan soal di tengah jalan), tanpa sistem paket level.
@@ -2873,9 +2840,9 @@ const MEM_PAIRS_TARGET = 6; // 6 pasang = 12 kartu, pas utk grid 3 kolom
 
 function startMemoryMatch(){
   playSFX('start');
-  setBgmTheme(gameModeBgmTheme('memory', setupType));
-  startBGM();
-  duckBGM(0.35);
+  const bgmTheme = gameModeBgmTheme('memory', setupType);
+  setBgmTheme(bgmTheme);
+  if(bgmTheme){ startBGM(); duckBGM(0.35); }
   const rawPool = setupType === 'bunpo'
     ? PATTERNS.filter(p=>matchesBook(p, setupScope))
     : VOCAB.filter(v=>matchesBook(v, setupScope));
@@ -2974,7 +2941,7 @@ function flipMemoryCard(idx){
 
 function endMemoryMatch(won){
   clearInterval(gMem.timer);
-  setBgmTheme(getPlayerProfile().bgmTheme || 'synthwave');
+  setBgmTheme('latihan');
   restoreBGMVolume();
   const timeBonus = Math.max(0, Math.round(gMem.timeLeft));
   const movesPenalty = Math.max(0, (gMem.moves - gMem.totalPairs) * 2);
@@ -3413,7 +3380,7 @@ function gradeFor(pct){
 
 function renderResult(){
   if(gState.sessionTimer) clearInterval(gState.sessionTimer); // jaga2 kalau renderResult terpanggil lebih dari sekali
-  setBgmTheme(getPlayerProfile().bgmTheme || 'synthwave');
+  setBgmTheme('latihan');
   startBGM(); // kuis sudah selesai -> musik latar menyala lagi
   restoreBGMVolume();
   // Serbu Waktu: pool soal bisa "digandakan" via looping saat waktu blm habis,
