@@ -872,12 +872,53 @@
   .miss-list, .history-list { text-align: left; max-height: 220px; overflow-y: auto; margin: 0 0 20px; padding-right: 4px; }
   .miss-item, .history-item { background: rgba(0,0,0,.2); border-left: 3px solid var(--sakura); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
   .history-item { border-left-color: var(--cyan); }
+  .hi-row { display: flex; align-items: center; gap: 10px; }
+  .hi-main { flex: 1; min-width: 0; }
+  .hi-download-btn {
+    flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line);
+    background: rgba(0,229,255,0.1); color: var(--cyan); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hi-download-btn:active { background: rgba(0,229,255,0.25); }
   .miss-item .mi-pattern, .history-item .hi-title { font-family: "Noto Sans JP", sans-serif; font-weight: 700; color: #fff; font-size: 14px; }
   .miss-item .mi-meaning, .history-item .hi-sub { color: var(--sub); font-size: 12px; margin-top: 2px; }
   .no-miss { color: var(--mint); font-weight: 600; padding: 14px; background: rgba(0, 240, 181, 0.1); border-radius: 10px; border: 1px solid rgba(0, 240, 181, 0.3); font-size: 13.5px; }
   
   .dashboard-layout { display: flex; flex-direction: column; gap: 16px; }
   .col-title { font-family: "Noto Sans JP", sans-serif; font-size: 16px; color: var(--cyan); margin-top: 0; margin-bottom: 14px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+
+  /* ===== DASHBOARD / HOME — menu utama gaya kartu besar ===== */
+  .dashboard-menu { display: flex; flex-direction: column; gap: 12px; }
+  .dash-menu-btn {
+    display: flex; align-items: center; gap: 14px; text-align: left;
+    padding: 16px; border-radius: 16px; border: 1px solid var(--line);
+    background: var(--panel); backdrop-filter: blur(10px); cursor: pointer;
+    transition: transform .15s ease, border-color .15s ease;
+  }
+  .dash-menu-btn:active { transform: scale(0.98); }
+  .dash-menu-btn .dmb-icon {
+    flex-shrink: 0; width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; font-size: 26px;
+  }
+  .dash-menu-btn .dmb-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .dash-menu-btn .dmb-text b { font-size: 15px; color: #fff; font-family: "Noto Sans JP", sans-serif; }
+  .dash-menu-btn .dmb-text small { font-size: 11.5px; color: var(--sub); line-height: 1.4; }
+  .dash-menu-btn.dash-game { border-color: rgba(0,229,255,0.35); }
+  .dash-menu-btn.dash-game .dmb-icon { background: rgba(0,229,255,0.15); box-shadow: 0 0 16px rgba(0,229,255,0.25) inset; }
+  .dash-menu-btn.dash-study { border-color: rgba(255,42,122,0.35); }
+  .dash-menu-btn.dash-study .dmb-icon { background: rgba(255,42,122,0.15); box-shadow: 0 0 16px rgba(255,42,122,0.25) inset; }
+  .dash-menu-btn.dash-history { border-color: rgba(255,215,0,0.35); }
+  .dash-menu-btn.dash-history .dmb-icon { background: rgba(255,215,0,0.15); box-shadow: 0 0 16px rgba(255,215,0,0.25) inset; }
+
+  /* ===== HALAMAN ISI (Game/Pelajaran/Riwayat) — header + tombol Home ===== */
+  .page-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .page-header .back-btn {
+    flex-shrink: 0; display: flex; align-items: center; gap: 5px;
+    padding: 9px 13px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--panel); color: var(--ink); font-weight: 700; font-size: 12.5px; cursor: pointer;
+  }
+  .page-header .back-btn:active { background: var(--panel2); }
+  .page-header .page-title { font-family: "Noto Sans JP", sans-serif; font-weight: 800; font-size: 15px; color: #fff; }
   
   .modern-select-wrap { margin-bottom: 14px; }
   .modern-select-wrap label { display: block; font-size: 11.5px; color: var(--sub); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
@@ -989,27 +1030,44 @@
   <!-- MAIN APP -->
   <div id="mainApp" style="display:none;" class="dashboard-layout">
 
-    <div class="player-bar" id="playerBar"></div>
-    <div class="missions-card" id="missionsCard"></div>
-    <div id="omikujiSlot"></div>
+    <!-- ================= DASHBOARD / HOME ================= -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="player-bar" id="playerBar"></div>
+      <div class="missions-card" id="missionsCard"></div>
+      <div id="omikujiSlot"></div>
 
-    <!-- NAVIGATION TABS -->
-    <div class="nav-tabs" id="navTabs">
-      <div class="tab-btn active" id="tabGameBtn">🎮 Mode Kuis</div>
-      <div class="tab-btn" id="tabStudyBtn">📖 Pelajari Materi</div>
-      <div class="tab-btn" id="tabHistoryBtn">📜 Riwayat Saya</div>
+      <div class="dashboard-menu">
+        <button class="dash-menu-btn dash-game" id="menuGameBtn" type="button">
+          <span class="dmb-icon">🎮</span>
+          <span class="dmb-text"><b>Mode Game</b><small>Kuis interaktif: Pola Kalimat, Kosakata & Kanji, Dokkai, Listening</small></span>
+        </button>
+        <button class="dash-menu-btn dash-study" id="menuStudyBtn" type="button">
+          <span class="dmb-icon">📖</span>
+          <span class="dmb-text"><b>Menu Pelajaran</b><small>Baca & hafalkan materi sebelum main</small></span>
+        </button>
+        <button class="dash-menu-btn dash-history" id="menuHistoryBtn" type="button">
+          <span class="dmb-icon">📜</span>
+          <span class="dmb-text"><b>Riwayat Saya</b><small>Lihat progres & skor sesi sebelumnya</small></span>
+        </button>
+      </div>
     </div>
 
-    <!-- TAB 1: KUIS / GAME PENILAIAN -->
-    <div class="panel active" id="panel-game">
+    <!-- ================= HALAMAN: MODE GAME (isinya game saja) ================= -->
+    <div class="panel" id="panel-game">
+      <div class="page-header">
+        <button class="back-btn" id="backFromGameBtn" type="button">← Home</button>
+        <span class="page-title">🎮 Mode Game</span>
+      </div>
       <div class="card" id="gameArea"></div>
     </div>
 
-    <!-- TAB 2: MATERI -->
+    <!-- ================= HALAMAN: MENU PELAJARAN (isinya materi saja) ================= -->
     <div class="panel" id="panel-study">
+      <div class="page-header">
+        <button class="back-btn" id="backFromStudyBtn" type="button">← Home</button>
+        <span class="page-title">📖 Menu Pelajaran</span>
+      </div>
       <div class="card">
-        <h3 class="col-title">📖 Pelajari Materi</h3>
-        
         <div class="modern-select-wrap">
           <label>Jenis Materi</label>
           <select id="typeSelect" class="modern-select">
@@ -1039,10 +1097,13 @@
       </div>
     </div>
 
-    <!-- TAB 3: RIWAYAT SAYA -->
+    <!-- ================= HALAMAN: RIWAYAT SAYA (isinya riwayat saja) ================= -->
     <div class="panel" id="panel-history">
+      <div class="page-header">
+        <button class="back-btn" id="backFromHistoryBtn" type="button">← Home</button>
+        <span class="page-title">📜 Riwayat Saya</span>
+      </div>
       <div class="card">
-        <h3 class="col-title">📜 Riwayat Permainan Saya</h3>
         <div class="export-row" style="margin-bottom:12px;">
           <button id="downloadHistoryBtn">⬇️ Unduh Riwayat (CSV)</button>
         </div>
@@ -1052,6 +1113,7 @@
 
   </div>
 </div>
+
 
 <script>
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQ6D2YcJWDNvrfKZzgvAjazDYNJh5kJNdEL12rXHec8h6k_gGDlMvTsrQ-Sbesho56sQ/exec";
@@ -2131,28 +2193,42 @@ function levelColor(lvl){
   return 'var(--n5)';
 }
 
-$("tabGameBtn").addEventListener("click", () => switchTab('game'));
-$("tabStudyBtn").addEventListener("click", () => switchTab('study'));
-$("tabHistoryBtn").addEventListener("click", () => switchTab('history'));
+$("menuGameBtn").addEventListener("click", () => showPage('game'));
+$("menuStudyBtn").addEventListener("click", () => showPage('study'));
+$("menuHistoryBtn").addEventListener("click", () => showPage('history'));
+$("backFromGameBtn").addEventListener("click", goHome);
+$("backFromStudyBtn").addEventListener("click", goHome);
+$("backFromHistoryBtn").addEventListener("click", goHome);
 
-function switchTab(tab) {
+function showPage(page) {
   startBGM(); // navigasi dashboard (bukan sedang mengerjakan kuis) -> musik menyala
-  document.querySelectorAll(".nav-tabs .tab-btn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".dashboard-layout > .panel").forEach(p => p.classList.remove("active"));
-  
-  if (tab === 'game') {
-    $("tabGameBtn").classList.add("active");
+
+  if (page === 'game') {
     $("panel-game").classList.add("active");
     renderStart();
-  } else if (tab === 'study') {
-    $("tabStudyBtn").classList.add("active");
+  } else if (page === 'study') {
     $("panel-study").classList.add("active");
     applyStudyFilter();
-  } else if (tab === 'history') {
-    $("tabHistoryBtn").classList.add("active");
+  } else if (page === 'history') {
     $("panel-history").classList.add("active");
     renderHistory();
   }
+}
+
+/* Tombol "← Home" di tiap halaman (Game/Pelajaran/Riwayat) kembali ke
+   Dashboard. Kalau lagi di tengah kuis dgn timer jalan, timer dihentikan
+   dulu supaya tidak terus jalan diam-diam di background. Widget dashboard
+   (XP bar, misi, omikuji) di-refresh ulang siapa tahu ada perubahan
+   (misalnya baru saja dapat XP/koin dari sesi kuis). */
+function goHome() {
+  if (typeof gState !== 'undefined' && gState && gState.timer) clearInterval(gState.timer);
+  document.querySelectorAll(".dashboard-layout > .panel").forEach(p => p.classList.remove("active"));
+  $("panel-dashboard").classList.add("active");
+  renderPlayerBar();
+  renderMissionsCard();
+  renderOmikujiSlot();
+  startBGM();
 }
 
 $("loginBtn").addEventListener("click", ()=>{
@@ -2185,8 +2261,7 @@ function initApp(){
   renderPlayerBar();
   renderMissionsCard();
   renderOmikujiSlot();
-  applyStudyFilter();
-  renderStart();
+  $("panel-dashboard").classList.add("active"); // selalu mulai dari Dashboard/Home
 }
 
 /* ================= STUDY MODE ================= */
@@ -3512,15 +3587,33 @@ function renderResult(){
   $("againBtn").addEventListener("click", ()=>{ playSFX('click'); renderStart(); });
 }
 
+/* Peta warna nilai huruf -> hex asli (BUKAN var(--xxx)) khusus untuk dipakai
+   di dalam <canvas>, karena canvas 2D context tidak bisa membaca CSS custom
+   property seperti "var(--mint)" — kalau dipaksa, warnanya gagal tergambar. */
+function gradeColorHex(letter){
+  switch(letter){
+    case "A": return "#00F0B5";
+    case "B": return "#00E5FF";
+    case "C": return "#FFD700";
+    case "D": return "#FFD700";
+    default:  return "#FF3366";
+  }
+}
+
 /* Menggambar kartu hasil sebagai PNG memakai <canvas> (murni JS, tanpa
    library luar) supaya tetap berfungsi offline. Gaya "dark card" dengan efek
-   glow, meniru tampilan kartu hasil yang lama, lalu memicu unduhan file
-   lewat elemen <a download>. */
-function downloadResultCard(grade, acc, total, dateStr){
+   glow. FUNGSI INI GENERIK — menerima satu object data polos "opts" saja
+   (bukan gState/setupType langsung), supaya bisa dipakai baik:
+   1) tepat setelah kuis selesai (data diambil dari gState yg masih hidup), maupun
+   2) dari daftar Riwayat Saya (data diambil dari record localStorage lama).
+   opts = { materiLabel, paketLabel, studentName, studentNis, studentKelas,
+            dateStr, gradeLetter, score, correctCount, total, acc, filenameBase } */
+function renderResultCardToImage(opts){
   const W = 900, H = 620;
   const canvas = document.createElement("canvas");
   canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext("2d");
+  const gradeColor = gradeColorHex(opts.gradeLetter);
 
   // ===== latar belakang gelap dengan gradasi dasar =====
   const bg = ctx.createLinearGradient(0,0,W,H);
@@ -3554,8 +3647,7 @@ function downloadResultCard(grade, acc, total, dateStr){
   ctx.fillText("NAFIS SENSEI ゲームコーナー", pad+46, pad+30);
 
   // sub-judul: jenis materi + paket soal (jika ada)
-  const typeLabel = setupType === "bunpo" ? "POLA KALIMAT" : (setupType === "dokkai" ? "DOKKAI (BACAAN)" : (setupType === "jlpttest" ? "TES KOSAKATA (JLPT)" : "KOSAKATA & KANJI"));
-  const subLabel = "HASIL PENILAIAN — " + typeLabel + (gState.paketLabel ? "  ·  " + gState.paketLabel.toUpperCase() : "");
+  const subLabel = "HASIL PENILAIAN — " + opts.materiLabel.toUpperCase() + (opts.paketLabel && opts.paketLabel !== '-' ? "  ·  " + opts.paketLabel.toUpperCase() : "");
   ctx.fillStyle = "#9ca3af";
   ctx.font = "bold 15px sans-serif";
   ctx.fillText(subLabel, pad+2, pad+62);
@@ -3570,23 +3662,23 @@ function downloadResultCard(grade, acc, total, dateStr){
   const infoY = pad+150;
   ctx.fillStyle = "#ffffff";
   ctx.font = "bold 40px sans-serif";
-  ctx.fillText(student.nama || "-", pad, infoY);
+  ctx.fillText(opts.studentName || "-", pad, infoY);
 
   ctx.fillStyle = "#9ca3af";
   ctx.font = "20px sans-serif";
-  const kelasBagian = student.kelas ? ("NIS "+student.nis+"  ·  "+student.kelas) : ("NIS "+(student.nis||"-"));
+  const kelasBagian = opts.studentKelas ? ("NIS "+opts.studentNis+"  ·  "+opts.studentKelas) : ("NIS "+(opts.studentNis||"-"));
   ctx.fillText(kelasBagian, pad+2, infoY+34);
-  ctx.fillText(dateStr, pad+2, infoY+62);
+  ctx.fillText(opts.dateStr, pad+2, infoY+62);
 
   // ===== lingkaran nilai huruf dengan efek glow (kanan atas) =====
   const circleX = W-pad-90, circleY = pad+70, circleR = 66;
   ctx.save();
-  ctx.shadowColor = grade.color;
+  ctx.shadowColor = gradeColor;
   ctx.shadowBlur = 30;
   ctx.beginPath();
   ctx.arc(circleX, circleY, circleR, 0, Math.PI*2);
   ctx.lineWidth = 6;
-  ctx.strokeStyle = grade.color;
+  ctx.strokeStyle = gradeColor;
   ctx.stroke();
   ctx.restore();
   ctx.fillStyle = "rgba(255,255,255,0.03)";
@@ -3596,7 +3688,7 @@ function downloadResultCard(grade, acc, total, dateStr){
   ctx.fillStyle = "#ffffff";
   ctx.font = "bold 56px sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText(grade.letter, circleX, circleY+20);
+  ctx.fillText(opts.gradeLetter, circleX, circleY+20);
   ctx.textAlign = "left";
 
   // ===== kotak info skor (bawah) =====
@@ -3613,7 +3705,7 @@ function downloadResultCard(grade, acc, total, dateStr){
   // skor besar kuning, di kiri kotak
   ctx.fillStyle = "#facc15";
   ctx.font = "bold 56px sans-serif";
-  ctx.fillText(`${gState.score}`, pad+34, boxY+72);
+  ctx.fillText(`${opts.score}`, pad+34, boxY+72);
   ctx.fillStyle = "#9ca3af";
   ctx.font = "bold 16px sans-serif";
   ctx.fillText("POIN", pad+36, boxY+98);
@@ -3626,10 +3718,10 @@ function downloadResultCard(grade, acc, total, dateStr){
   // benar & akurasi, di kanan kotak
   ctx.fillStyle = "#ffffff";
   ctx.font = "bold 26px sans-serif";
-  ctx.fillText(`${gState.correctCount} / ${total} benar`, pad+320, boxY+58);
+  ctx.fillText(`${opts.correctCount} / ${opts.total} benar`, pad+320, boxY+58);
   ctx.fillStyle = "#9ca3af";
   ctx.font = "18px sans-serif";
-  ctx.fillText(`Akurasi ${acc}%`, pad+320, boxY+92);
+  ctx.fillText(`Akurasi ${opts.acc}%`, pad+320, boxY+92);
 
   // ===== footer =====
   ctx.textAlign = "center";
@@ -3638,10 +3730,29 @@ function downloadResultCard(grade, acc, total, dateStr){
   ctx.fillText("Dibuat otomatis oleh Nafis Sensei ゲームコーナー — mohon kirim gambar ini ke gurumu.", W/2, H-pad+2);
 
   const link = document.createElement("a");
-  const safeName = (student.nama||"hasil").replace(/[^a-zA-Z0-9]+/g,"_");
-  link.download = `hasil_${safeName}_${student.nis||""}.png`;
+  const safeName = (opts.studentName||"hasil").replace(/[^a-zA-Z0-9]+/g,"_");
+  link.download = `${opts.filenameBase || ('hasil_'+safeName+'_'+(opts.studentNis||''))}.png`;
   link.href = canvas.toDataURL("image/png");
   link.click();
+}
+
+/* Dipanggil dari tombol "Unduh Kartu Hasil" tepat setelah kuis selesai —
+   data diambil dari gState/setupType yang masih "hidup" di sesi ini. */
+function downloadResultCard(grade, acc, total, dateStr){
+  const materiLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : (setupType === "jlpttest" ? "Tes Kosakata (JLPT)" : "Kosakata & Kanji"));
+  renderResultCardToImage({
+    materiLabel,
+    paketLabel: gState.paketLabel || "-",
+    studentName: student.nama,
+    studentNis: student.nis,
+    studentKelas: student.kelas,
+    dateStr,
+    gradeLetter: grade.letter,
+    score: gState.score,
+    correctCount: gState.correctCount,
+    total,
+    acc
+  });
 }
 
 function roundRect(ctx, x, y, w, h, r){
@@ -3688,12 +3799,47 @@ function renderHistory() {
     return;
   }
   const list = JSON.parse(saved);
-  listEl.innerHTML = list.map(h => `
+  listEl.innerHTML = list.map((h,idx) => `
     <div class="history-item">
-      <div class="hi-title">[${h.jenis}${h.paket && h.paket!=='-' ? ' · '+h.paket : ''}] ⭐ Skor: ${h.skor} (${h.benar}/${h.total} Benar - ${h.akurasi}%) - Nilai: ${h.nilai}</div>
-      <div class="hi-sub">🕒 ${h.tanggal}</div>
+      <div class="hi-row">
+        <div class="hi-main">
+          <div class="hi-title">[${h.jenis}${h.paket && h.paket!=='-' ? ' · '+h.paket : ''}] ⭐ Skor: ${h.skor} (${h.benar}/${h.total} Benar - ${h.akurasi}%) - Nilai: ${h.nilai}</div>
+          <div class="hi-sub">🕒 ${h.tanggal}</div>
+        </div>
+        <button class="hi-download-btn" data-idx="${idx}" title="Unduh kartu hasil ini sebagai gambar">🖼️</button>
+      </div>
     </div>
   `).join("");
+
+  document.querySelectorAll(".hi-download-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const idx = parseInt(btn.dataset.idx);
+      downloadHistoryItemCard(list[idx]);
+    });
+  });
+}
+
+/* Unduh SATU riwayat kuis tertentu (bukan digabung) sebagai gambar PNG,
+   memakai desain kartu hasil yang sama seperti yang muncul tepat setelah
+   kuis selesai. Datanya diambil dari record riwayat yang tersimpan (bukan
+   gState yang sudah tidak "hidup" lagi), digabung dengan identitas siswa
+   yang sedang login saat ini. */
+function downloadHistoryItemCard(record){
+  const safeDate = (record.tanggal||"").replace(/[^0-9a-zA-Z]+/g,"_");
+  renderResultCardToImage({
+    materiLabel: record.jenis,
+    paketLabel: record.paket || "-",
+    studentName: student ? student.nama : "-",
+    studentNis: student ? student.nis : "",
+    studentKelas: student ? student.kelas : "",
+    dateStr: record.tanggal,
+    gradeLetter: record.nilai,
+    score: record.skor,
+    correctCount: record.benar,
+    total: record.total,
+    acc: record.akurasi,
+    filenameBase: `riwayat_${(student&&student.nama||"hasil").replace(/[^a-zA-Z0-9]+/g,"_")}_${safeDate}`
+  });
 }
 
 /* Unduh seluruh riwayat kuis (tersimpan di perangkat ini) sebagai file CSV,
