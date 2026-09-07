@@ -1610,7 +1610,7 @@ function currentAvatarThumb(sizePx){
   const profile = getPlayerProfile();
   const a = AVATAR_SHOP.find(x=>x.id===profile.avatar) || AVATAR_SHOP[0];
   if(a.img){
-    return `<img src="avatars/${a.img}" alt="${a.name}" style="width:${sizePx}px;height:${sizePx}px;object-fit:cover;border-radius:50%;display:inline-block;vertical-align:middle;">`;
+    return `<img src="${a.img}" alt="${a.name}" style="width:${sizePx}px;height:${sizePx}px;object-fit:cover;border-radius:50%;display:inline-block;vertical-align:middle;">`;
   }
   return `<span style="font-size:${Math.round(sizePx*0.55)}px;line-height:1;display:inline-block;vertical-align:middle;">${a.emoji}</span>`;
 }
@@ -1769,7 +1769,7 @@ function openShop(initialTab){
           const top = AVATAR_SHOP.reduce((m,a)=> a.price>m.price?a:m, AVATAR_SHOP[0]);
           const tier = avatarTierInfo(top.price);
           const owned = profile.ownedAvatars.includes(top.id);
-          const stageContent = top.img ? `<img src="avatars/${top.img}" alt="${top.name}" style="width:100%;height:100%;object-fit:cover;object-position:center 12%;">` : top.emoji;
+          const stageContent = top.img ? `<img src="${top.img}" alt="${top.name}" style="width:100%;height:100%;object-fit:cover;object-position:center 12%;">` : top.emoji;
           return `<div class="avatar-feature ${tier.cls}">
             <div class="af-badges"><span class="af-badge">SPESIAL</span><span class="af-badge">${tier.name}</span></div>
             <div class="af-stage">${stageContent}</div>
@@ -1782,7 +1782,7 @@ function openShop(initialTab){
             const owned = profile.ownedAvatars.includes(a.id);
             const active = profile.avatar === a.id;
             const tier = avatarTierInfo(a.price);
-            const cellContent = a.img ? `<img class="ac-emoji ac-img" src="avatars/${a.img}" alt="${a.name}">` : `<span class="ac-emoji">${a.emoji}</span>`;
+            const cellContent = a.img ? `<img class="ac-emoji ac-img" src="${a.img}" alt="${a.name}">` : `<span class="ac-emoji">${a.emoji}</span>`;
             return `<div class="avatar-cell ${tier.cls} ${active?'equipped':''} ${!owned?'locked':''}" data-kind="avatar" data-id="${a.id}" data-price="${a.price}" data-name="${a.name}" title="${a.name}">
               ${cellContent}
               ${active ? '<span class="ac-check">✓</span>' : (!owned ? '<span class="ac-lock">🔒</span>' : '')}
