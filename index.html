@@ -31,12 +31,10 @@
   body {
     margin: 0; min-height: 100vh; 
     background:
-      radial-gradient(circle at 15% 10%, rgba(255, 42, 122, 0.15) 0%, transparent 45%),
-      radial-gradient(circle at 85% 90%, rgba(0, 229, 255, 0.15) 0%, transparent 45%),
+      url('data:image/svg+xml;utf8,<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><text x="15" y="45" font-size="20" fill="rgba(255,255,255,0.015)" font-family="sans-serif">語彙</text></svg>'),
+      radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--sakura) 40%, transparent) 0%, transparent 45%),
+      radial-gradient(circle at 85% 90%, color-mix(in srgb, var(--cyan) 40%, transparent) 0%, transparent 45%),
       var(--bg);
-    background-image: url('data:image/svg+xml;utf8,<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><text x="15" y="45" font-size="20" fill="rgba(255,255,255,0.015)" font-family="sans-serif">語彙</text></svg>'),
-                      radial-gradient(circle at 15% 10%, rgba(255, 42, 122, 0.15) 0%, transparent 45%),
-      radial-gradient(circle at 85% 90%, rgba(0, 229, 255, 0.15) 0%, transparent 45%), var(--bg);
     color: var(--ink); 
     font-family: "Inter", "Noto Sans JP", sans-serif;
     display: flex;
@@ -1663,15 +1661,16 @@ function playerTitle(level){
 }
 
 const THEME_SHOP = [
-  { id: "default", name: "Neon Klasik", price: 0, colors: { cyan: "#00E5FF", sakura: "#FF2A7A" } },
-  { id: "emerald", name: "Emerald Gold", price: 300, colors: { cyan: "#00F0B5", sakura: "#FFD700" } },
-  { id: "crimson", name: "Crimson Violet", price: 500, colors: { cyan: "#FF3366", sakura: "#9D00FF" } },
-  { id: "sunset",  name: "Sunset Blaze", price: 800, colors: { cyan: "#FF9F5B", sakura: "#FF2A7A" } }
+  { id: "default", name: "Neon Klasik", price: 0, colors: { cyan: "#00E5FF", sakura: "#FF2A7A", bg: "#0A0A14" } },
+  { id: "emerald", name: "Emerald Gold", price: 300, colors: { cyan: "#00F0B5", sakura: "#FFD700", bg: "#08120E" } },
+  { id: "crimson", name: "Crimson Violet", price: 500, colors: { cyan: "#FF3366", sakura: "#9D00FF", bg: "#12080F" } },
+  { id: "sunset",  name: "Sunset Blaze", price: 800, colors: { cyan: "#FF9F5B", sakura: "#FF2A7A", bg: "#150D07" } }
 ];
 function applyTheme(themeId){
   const t = THEME_SHOP.find(x=>x.id===themeId) || THEME_SHOP[0];
   document.documentElement.style.setProperty("--cyan", t.colors.cyan);
   document.documentElement.style.setProperty("--sakura", t.colors.sakura);
+  document.documentElement.style.setProperty("--bg", t.colors.bg || "#0A0A14");
 }
 
 /* Tambah XP+koin, tampilkan toast, dan cek level-up (banner). Dipanggil
