@@ -24,6 +24,7 @@
     --n4: #FFD700;
     --n3: #FF9F5B;
     --n2: #FF2A7A;
+    --n1: #D90429;
   }
   
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -292,6 +293,7 @@
   .flash .lvl.n4 { background: rgba(255, 215, 0, 0.1); color: var(--n4); border-color: var(--n4); }
   .flash .lvl.n3 { background: rgba(255, 159, 91, 0.1); color: var(--n3); border-color: var(--n3); }
   .flash .lvl.n2 { background: rgba(255, 42, 122, 0.1); color: var(--n2); border-color: var(--n2); }
+  .flash .lvl.n1 { background: rgba(217, 4, 41, 0.12); color: var(--n1); border-color: var(--n1); }
   .flash .src { position: absolute; top: 12px; right: 14px; font-size: 10.5px; color: var(--sub); background: rgba(255,255,255,0.05); padding: 3px 6px; border-radius: 6px; }
   
   .flash .pattern { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 24px; line-height: 1.4; color: #fff; text-shadow: 0 0 12px rgba(255,255,255,0.3); }
@@ -333,6 +335,10 @@
   .opt-row button.active { background: linear-gradient(135deg, var(--sakura), #c2185b); border-color: var(--sakura); color: #fff;
     box-shadow: 0 0 12px rgba(255, 42, 122, 0.5); }
   .opt-row button:disabled { opacity: .38; cursor: not-allowed; filter: grayscale(.6); }
+  /* scopeRow sekarang punya 6 tombol (Semua + N5-N1) — lebarkan ambang
+     bungkus baris supaya semua muat proporsional, tidak ada yang sendirian
+     terdampar di baris baru. */
+  #scopeRow button { min-width: calc(30.5% - 6px); }
 
   /* tile-row: dipakai utk MODE & JENIS KUIS — kartu ikon+label bertumpuk,
      supaya teks panjang (mis. "Mode Ujian / Level Berjenjang") tidak
@@ -681,6 +687,7 @@
   .rarity-N4 { --r1:#00c07a; --r2:#7CFFDB; --rname:"JARANG"; }
   .rarity-N3 { --r1:#2f7bff; --r2:#8fc2ff; --rname:"LANGKA"; }
   .rarity-N2 { --r1:#a020f0; --r2:#e6a8ff; --rname:"EPIK"; }
+  .rarity-N1 { --r1:#d90429; --r2:#ff8fa3; --rname:"MITOS"; }
   .rarity-legend { --r1:#ffb300; --r2:#fff3b0; --rname:"LEGENDARIS"; }
 
   .card-reveal-overlay { position: fixed; inset: 0; z-index: 10001; display: flex; align-items: center; justify-content: center;
@@ -770,7 +777,7 @@
     animation: mcBolt 3s ease-in-out infinite;
   }
   @keyframes mcBolt { 0%,100% { opacity: .12; } 46% { opacity: .12; } 50% { opacity: .6; } 54% { opacity: .18; } 78% { opacity: .5; } 82% { opacity: .12; } }
-  .mini-card.rarity-N3, .mini-card.rarity-N2 { animation: mcEdgeGlow 2.6s ease-in-out infinite; }
+  .mini-card.rarity-N3, .mini-card.rarity-N2, .mini-card.rarity-N1 { animation: mcEdgeGlow 2.6s ease-in-out infinite; }
 
   .mini-card.rarity-N2::after { /* EPIK — kilau ungu menyapu */
     content: ""; position: absolute; inset: -20%; z-index: 0; pointer-events: none;
@@ -790,6 +797,13 @@
     background-repeat: repeat; background-size: 70px 150px;
     animation: mcKanjiRain 7s linear infinite;
   }
+  .mini-card.rarity-N1::after { /* MITOS — percikan energi merah membara */
+    content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .22;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="120"><circle cx="10" cy="20" r="2" fill="%23d90429"/><circle cx="45" cy="55" r="1.5" fill="%23ff8fa3"/><circle cx="25" cy="90" r="2.2" fill="%23d90429"/><circle cx="52" cy="15" r="1.3" fill="%23ff8fa3"/></svg>');
+    background-repeat: repeat; background-size: 60px 120px;
+    animation: mcEmberRise 4.5s linear infinite;
+  }
+  @keyframes mcEmberRise { from { background-position-y: 0; } to { background-position-y: -120px; } }
   @keyframes mcKanjiRain { from { background-position-y: 0; } to { background-position-y: 150px; } }
   .mini-card.rarity-legend { animation: mcLegendGlow 2.4s ease-in-out infinite; }
   @keyframes mcLegendGlow {
@@ -892,6 +906,36 @@
   .mem-card.jp-card .mem-face.front { font-family: "Noto Sans JP", sans-serif; font-size: 17px; }
   .mem-card.wrong-flash .mem-face.front { animation: memWrongFlash 0.4s ease; }
   @keyframes memWrongFlash { 0%,100% { border-color: var(--cyan); } 50% { border-color: var(--red); background: rgba(255,51,102,.2); } }
+
+  /* ============================================================
+     MODE TEKA-TEKI KATA (WORD PUZZLE) — santai, susun huruf romaji
+     acak berdasar arti kata yang jadi petunjuk. Tanpa timer, fokus
+     ke ketepatan tebakan pertama & hemat petunjuk.
+     ============================================================ */
+  .puzzle-hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 12px; font-weight: 800; color: var(--sub); }
+  .puzzle-clue { text-align: center; background: linear-gradient(160deg, rgba(255,255,255,.04), rgba(0,0,0,.25));
+    border: 1px solid var(--line); border-radius: 16px; padding: 20px 14px; margin-bottom: 18px; position: relative; }
+  .puzzle-clue .pz-lvl-badge { position: absolute; top: 10px; left: 10px; font-size: 10px; font-weight: 900; color: #fff;
+    background: var(--cyan); border-radius: 6px; padding: 2px 7px; }
+  .puzzle-clue .pz-meaning { font-size: 19px; font-weight: 800; color: #fff; line-height: 1.4; }
+  .puzzle-slots { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 22px; transition: transform .05s; }
+  .puzzle-slots.pz-shake { animation: pzShake .4s ease; }
+  @keyframes pzShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  .pz-slot { width: 34px; height: 40px; border-radius: 8px; border-bottom: 3px solid var(--line); background: rgba(255,255,255,.03);
+    display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 17px; color: #fff;
+    text-transform: uppercase; cursor: pointer; }
+  .pz-slot.filled { border-bottom-color: var(--cyan); background: rgba(0,229,255,.12); }
+  .puzzle-tiles { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 20px; }
+  .pz-tile { width: 40px; height: 44px; border-radius: 10px; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--cyan), #0099FF); color: #000; font-weight: 900; font-size: 18px;
+    text-transform: uppercase; box-shadow: 0 3px 0 #0077bb; transition: transform .1s ease; }
+  .pz-tile:active { transform: translateY(2px); box-shadow: 0 1px 0 #0077bb; }
+  .pz-tile.used { visibility: hidden; }
+  .puzzle-actions { display: flex; gap: 10px; }
+  .pz-hint-btn, .pz-skip-btn { flex: 1; padding: 11px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.03);
+    color: var(--sub); font-weight: 800; font-size: 13px; cursor: pointer; }
+  .pz-hint-btn:active, .pz-skip-btn:active { transform: scale(.96); }
+  .pz-hint-btn { color: var(--gold); border-color: var(--gold); }
 
   /* ============================================================
      MODE DENGAR & TEBAK — pakai Web Speech API (TTS bawaan browser,
@@ -1214,6 +1258,7 @@
             <option value="n4">Level N4</option>
             <option value="n3">Level N3</option>
             <option value="n2">Level N2</option>
+            <option value="n1">Level N1</option>
           </select>
         </div>
         
@@ -1897,6 +1942,7 @@ function cardRarityInfo(level, isBoss){
     case "N4": return { cls: "rarity-N4", name: "JARANG", icon: "🍀" };
     case "N3": return { cls: "rarity-N3", name: "LANGKA", icon: "💎" };
     case "N2": return { cls: "rarity-N2", name: "EPIK", icon: "👑" };
+    case "N1": return { cls: "rarity-N1", name: "MITOS", icon: "🔥" };
     default:   return { cls: "rarity-N5", name: "UMUM", icon: "⚪" };
   }
 }
@@ -1971,7 +2017,7 @@ function openAlbum(initialLevel){
   const total = totalCollectibleCount();
   const el = document.createElement("div");
   el.className = "album-overlay";
-  const levels = ["all","N5","N4","N3","N2"];
+  const levels = ["all","N5","N4","N3","N2","N1"];
   const renderGrid = (lvl)=>{
     const filtered = lvl==="all" ? cards : cards.filter(c=>c.level===lvl);
     filtered.sort((a,b)=> new Date(b.dateFirst) - new Date(a.dateFirst));
@@ -2323,6 +2369,7 @@ function mulberry32(seed){
 
 function levelClass(lvl){ return (lvl||'').toLowerCase(); }
 function levelColor(lvl){
+  if(lvl==='N1') return 'var(--n1)';
   if(lvl==='N2') return 'var(--n2)';
   if(lvl==='N3') return 'var(--n3)';
   if(lvl==='N4') return 'var(--n4)';
@@ -2384,7 +2431,7 @@ window.addEventListener("load", ()=>{
     initApp();
   }
   const patN = PATTERNS.length, vocN = VOCAB.length, dokN = (typeof DOKKAI !== 'undefined' ? DOKKAI.length : 0);
-  $("dataStats").textContent = `${patN} pola kalimat • ${vocN} kanji/kosakata • ${dokN} bacaan dokkai (N5-N2)`;
+  $("dataStats").textContent = `${patN} pola kalimat (N5-N1) • ${vocN} kanji/kosakata • ${dokN} bacaan dokkai (N5-N2)`;
 });
 
 function initApp(){
@@ -2422,6 +2469,7 @@ function matchesBook(p, filterVal){
     case "n4": return p.level==="N4";
     case "n3": return p.level==="N3";
     case "n2": return p.level==="N2";
+    case "n1": return p.level==="N1";
     default: return true;
   }
 }
@@ -2806,6 +2854,7 @@ function renderStart(){
             <button data-v="ujian"><span class="opt-icon">📝</span><span class="opt-label">Mode Ujian<small>Level Berjenjang</small></span></button>
             <button data-v="timeattack"><span class="opt-icon">⏱️</span><span class="opt-label">Serbu Waktu<small>60 detik</small></span></button>
             <button data-v="memory"><span class="opt-icon">🎴</span><span class="opt-label">Cocok Kartu<small>Memory</small></span></button>
+            <button data-v="puzzle"><span class="opt-icon">🧠</span><span class="opt-label">Teka-teki<small>Susun Huruf</small></span></button>
           </div>
         </div>
         <div class="setup-box">
@@ -2827,6 +2876,7 @@ function renderStart(){
             <button data-v="n4">N4</button>
             <button data-v="n3">N3</button>
             <button data-v="n2">N2</button>
+            <button data-v="n1">N1</button>
           </div>
         </div>
         <div class="setup-box" id="countBox">
@@ -2878,6 +2928,7 @@ function renderStart(){
 
   $("startBtn").addEventListener("click", ()=>{
     if(setupMode === 'memory') startMemoryMatch();
+    else if(setupMode === 'puzzle') startWordPuzzle();
     else startGame();
   });
   renderCountRow();
@@ -3207,6 +3258,197 @@ function endMemoryMatch(won){
     </div>
   `;
   $("memAgainBtn").addEventListener("click", ()=>{ playSFX('click'); renderStart(); });
+}
+
+/* ============================================================
+   MODE TEKA-TEKI KATA (WORD PUZZLE) — mode santai baru: susun huruf
+   romaji yang diacak berdasarkan arti kata yang ditampilkan sbg
+   petunjuk. Tanpa tekanan waktu (santai). Skor dari tebakan-pertama-
+   benar & pemakaian petunjuk, tetap terhubung ke sistem XP/koin/
+   kartu koleksi yang sama seperti mode lain.
+   ============================================================ */
+let gPuzzle = null;
+function startWordPuzzle(){
+  playSFX('start');
+  const bgmTheme = gameModeBgmTheme('puzzle', setupType);
+  setBgmTheme(bgmTheme);
+  if(bgmTheme){ startBGM(); duckBGM(0.35); }
+  const rawSrc = setupType === 'bunpo'
+    ? PATTERNS.filter(p=>matchesBook(p, setupScope))
+    : VOCAB.filter(v=>matchesBook(v, setupScope));
+  const rawPool = rawSrc.filter(item=>{
+    if(!item.romaji) return false;
+    const len = item.romaji.replace(/[^a-zA-Z]/g,'').length;
+    return len >= 2 && len <= 12;
+  });
+  if(rawPool.length < 3){
+    alert("Maaf, kata untuk cakupan ini terlalu sedikit buat Teka-teki Kata."); return;
+  }
+  const n = setupCount === "semua" ? rawPool.length : Math.min(parseInt(setupCount), rawPool.length);
+  const words = shuffle(rawPool.slice()).slice(0, n);
+  gPuzzle = { words, wi: 0, correctFirstTry: 0, hintsUsed: 0, wrongTries: 0, startedAt: new Date() };
+  renderPuzzleWord();
+}
+
+function setupPuzzleWord(){
+  const item = gPuzzle.words[gPuzzle.wi];
+  const answer = item.romaji.replace(/[^a-zA-Z]/g,'').toLowerCase();
+  const scrambled = shuffle(answer.split('').map((ch,i)=>({ ch, id:i, used:false })));
+  gPuzzle.answer = answer;
+  gPuzzle.slots = new Array(answer.length).fill(null);
+  gPuzzle.tiles = scrambled;
+  gPuzzle.attemptWrongThisWord = 0;
+  gPuzzle.hintUsedThisWord = false;
+}
+
+function renderPuzzleWord(){
+  if(gPuzzle.wi >= gPuzzle.words.length){ endWordPuzzle(); return; }
+  setupPuzzleWord();
+  const item = gPuzzle.words[gPuzzle.wi];
+  $("gameArea").innerHTML = `
+    <div class="quiz-avatar" id="quizAvatar">${currentAvatarThumb(42)}</div>
+    <div class="puzzle-hud">
+      <span>🧩 Kata ${gPuzzle.wi+1}/${gPuzzle.words.length}</span>
+      <span>✅ ${gPuzzle.correctFirstTry}</span>
+      <span>💡 ${gPuzzle.hintsUsed}</span>
+    </div>
+    <div class="puzzle-clue">
+      <div class="pz-lvl-badge">${item.level||'N5'}</div>
+      <div class="pz-meaning">${dispMeaning(item)}</div>
+    </div>
+    <div class="puzzle-slots" id="puzzleSlots"></div>
+    <div class="puzzle-tiles" id="puzzleTiles"></div>
+    <div class="puzzle-actions">
+      <button class="pz-hint-btn" id="pzHintBtn">💡 Petunjuk</button>
+      <button class="pz-skip-btn" id="pzSkipBtn">Lewati ⏭️</button>
+    </div>
+  `;
+  $("pzHintBtn").addEventListener("click", usePuzzleHint);
+  $("pzSkipBtn").addEventListener("click", skipPuzzleWord);
+  renderPuzzleBoardOnly();
+}
+
+function renderPuzzleBoardOnly(){
+  const slotsEl = $("puzzleSlots");
+  const tilesEl = $("puzzleTiles");
+  if(slotsEl){
+    slotsEl.innerHTML = gPuzzle.slots.map((tid,i)=>{
+      const tile = (tid!==null && tid!==undefined) ? gPuzzle.tiles.find(t=>t.id===tid) : null;
+      return `<div class="pz-slot ${tile?'filled':''}" data-slot="${i}">${tile?tile.ch:''}</div>`;
+    }).join("");
+    document.querySelectorAll(".pz-slot").forEach(el=>{
+      el.addEventListener("click", ()=> tapPuzzleSlot(parseInt(el.dataset.slot)));
+    });
+  }
+  if(tilesEl){
+    tilesEl.innerHTML = gPuzzle.tiles.map(t=>`<button class="pz-tile ${t.used?'used':''}" data-tid="${t.id}" ${t.used?'disabled':''}>${t.ch}</button>`).join("");
+    document.querySelectorAll(".pz-tile:not(.used)").forEach(el=>{
+      el.addEventListener("click", ()=> tapPuzzleTile(parseInt(el.dataset.tid)));
+    });
+  }
+}
+
+function tapPuzzleTile(tid){
+  const tile = gPuzzle.tiles.find(t=>t.id===tid);
+  if(!tile || tile.used) return;
+  const emptyIdx = gPuzzle.slots.findIndex(s=>s===null);
+  if(emptyIdx === -1) return;
+  gPuzzle.slots[emptyIdx] = tid;
+  tile.used = true;
+  playSFX('click');
+  renderPuzzleBoardOnly();
+  if(gPuzzle.slots.every(s=>s!==null)) checkPuzzleAnswer();
+}
+
+function tapPuzzleSlot(slotIdx){
+  const tid = gPuzzle.slots[slotIdx];
+  if(tid === null || tid === undefined) return;
+  const tile = gPuzzle.tiles.find(t=>t.id===tid);
+  if(tile) tile.used = false;
+  gPuzzle.slots[slotIdx] = null;
+  playSFX('click');
+  renderPuzzleBoardOnly();
+}
+
+function checkPuzzleAnswer(){
+  const built = gPuzzle.slots.map(tid=>gPuzzle.tiles.find(t=>t.id===tid).ch).join('');
+  const item = gPuzzle.words[gPuzzle.wi];
+  if(built === gPuzzle.answer){
+    playSFX('correct');
+    spawnConfetti(window.innerWidth/2, window.innerHeight/3, 16);
+    if(gPuzzle.attemptWrongThisWord === 0 && !gPuzzle.hintUsedThisWord) gPuzzle.correctFirstTry++;
+    awardCard(item, false);
+    setTimeout(()=>{ gPuzzle.wi++; renderPuzzleWord(); }, 700);
+  } else {
+    playSFX('wrong');
+    gPuzzle.wrongTries++;
+    gPuzzle.attemptWrongThisWord++;
+    const slotsEl = $("puzzleSlots");
+    if(slotsEl){ slotsEl.classList.add("pz-shake"); setTimeout(()=>slotsEl && slotsEl.classList.remove("pz-shake"), 400); }
+    setTimeout(()=>{
+      gPuzzle.tiles.forEach(t=>t.used=false);
+      gPuzzle.slots = new Array(gPuzzle.answer.length).fill(null);
+      renderPuzzleBoardOnly();
+    }, 550);
+  }
+}
+
+function usePuzzleHint(){
+  const emptyIdx = gPuzzle.slots.findIndex(s=>s===null);
+  if(emptyIdx === -1) return;
+  const correctChar = gPuzzle.answer[emptyIdx];
+  const tile = gPuzzle.tiles.find(t=>!t.used && t.ch === correctChar);
+  if(!tile) return;
+  gPuzzle.slots[emptyIdx] = tile.id;
+  tile.used = true;
+  gPuzzle.hintsUsed++;
+  gPuzzle.hintUsedThisWord = true;
+  playSFX('click');
+  renderPuzzleBoardOnly();
+  if(gPuzzle.slots.every(s=>s!==null)) checkPuzzleAnswer();
+}
+
+function skipPuzzleWord(){
+  playSFX('click');
+  gPuzzle.wi++;
+  renderPuzzleWord();
+}
+
+function endWordPuzzle(){
+  setBgmTheme('latihan');
+  restoreBGMVolume();
+  const total = gPuzzle.words.length;
+  const acc = total>0 ? Math.round(gPuzzle.correctFirstTry/total*100) : 0;
+  const score = Math.max(0, gPuzzle.correctFirstTry*20 - gPuzzle.hintsUsed*3 - gPuzzle.wrongTries*2);
+  const earnedXP = total*3 + gPuzzle.correctFirstTry*2;
+  const earnedCoins = total*2 + gPuzzle.correctFirstTry*1;
+  awardXPCoins(earnedXP, earnedCoins);
+  progressMission('sessions', 1);
+  saveHistoryToLocal({
+    tanggal: new Date().toLocaleString("id-ID"),
+    jenis: "Teka-teki Kata",
+    paket: "-",
+    skor: score,
+    benar: gPuzzle.correctFirstTry,
+    total,
+    akurasi: acc,
+    nilai: gradeFor(acc).letter
+  });
+  const grade = gradeFor(acc);
+  startBGM();
+  $("gameArea").innerHTML = `
+    <div class="result">
+      <div class="grade-badge" style="background:${grade.color}22;color:${grade.color};border:2px solid ${grade.color};">${grade.letter}</div>
+      <div class="id-line" style="font-size:22px;">${currentAvatarThumb(46)}</div>
+      <div class="id-line">${student.nama} &middot; NIS ${student.nis}</div>
+      <div class="id-line" style="opacity:.8;">🧠 Teka-teki Kata</div>
+      <div class="big-score">${score}</div>
+      <div class="sub">${gPuzzle.correctFirstTry}/${total} tebakan pertama benar (${acc}%) &middot; 💡${gPuzzle.hintsUsed} petunjuk</div>
+      <div class="sub" style="color:var(--gold);font-weight:700;">✨ +${earnedXP} XP &middot; 🪙 +${earnedCoins} koin</div>
+      <button class="play-btn" id="pzAgainBtn" style="margin-top:10px;">↻ Main Lagi</button>
+    </div>
+  `;
+  $("pzAgainBtn").addEventListener("click", ()=>{ playSFX('click'); renderStart(); });
 }
 
 /* Waktu pengerjaan bacaan dokkai mengikuti standar durasi resmi JLPT
