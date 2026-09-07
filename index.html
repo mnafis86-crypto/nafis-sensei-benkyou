@@ -314,17 +314,38 @@
 
   /* GAME SETUP / PLAY */
   .start-screen { text-align: center; padding: 4px; }
-  .start-screen h2 { font-family: "Noto Sans JP", sans-serif; font-size: 22px; margin: 0 0 8px; color: #fff; }
+  .start-screen h2 { font-family: "Noto Sans JP", sans-serif; font-size: 22px; margin: 0 0 8px; color: #fff;
+    display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .start-screen h2 .gamepad-badge { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px;
+    border-radius: 10px; background: linear-gradient(135deg, rgba(0,229,255,.18), rgba(123,42,255,.18)); border: 1px solid var(--line);
+    font-size: 17px; }
   .start-screen p { color: var(--sub); font-size: 13.5px; margin: 0 0 20px; line-height: 1.5; }
-  
+
   .setup-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 22px; }
-  .setup-box { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 14px; padding: 14px; text-align: left; }
-  .setup-box .lbl { font-size: 11px; color: var(--cyan); font-weight: 700; margin-bottom: 10px; letter-spacing: 1.2px; text-transform: uppercase; }
-  .setup-box .lbl .cnt { color: var(--sub); font-weight: 500; text-transform: none; letter-spacing: 0; }
-  .opt-row { display: flex; gap: 6px; flex-wrap: wrap; }
-  .opt-row button { flex: 1; min-width: calc(20% - 6px); padding: 9px 4px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--sub); font-size: 12px; font-weight: 600; cursor: pointer; min-height: 38px; }
-  .opt-row button.active { background: var(--sakura); border-color: var(--sakura); color: #fff; box-shadow: 0 0 8px rgba(255, 42, 122, 0.4); }
+  .setup-box { background: linear-gradient(160deg, rgba(255,255,255,.035), rgba(0,0,0,0.3)); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px; padding: 14px; text-align: left; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+  .setup-box .lbl { font-size: 11.5px; color: var(--cyan); font-weight: 800; margin-bottom: 11px; letter-spacing: 1.2px; text-transform: uppercase;
+    display: flex; align-items: center; gap: 5px; }
+  .setup-box .lbl .cnt { color: var(--sub); font-weight: 500; text-transform: none; letter-spacing: 0; margin-left: auto; font-size: 10.5px; }
+  .opt-row { display: flex; gap: 7px; flex-wrap: wrap; }
+  .opt-row button { flex: 1; min-width: calc(20% - 6px); padding: 9px 4px; border-radius: 10px; border: 1px solid var(--line);
+    background: rgba(255,255,255,.02); color: var(--sub); font-size: 12px; font-weight: 700; cursor: pointer; min-height: 40px;
+    transition: transform .12s ease, border-color .12s ease, background .12s ease; }
+  .opt-row button:active { transform: scale(.95); }
+  .opt-row button.active { background: linear-gradient(135deg, var(--sakura), #c2185b); border-color: var(--sakura); color: #fff;
+    box-shadow: 0 0 12px rgba(255, 42, 122, 0.5); }
   .opt-row button:disabled { opacity: .38; cursor: not-allowed; filter: grayscale(.6); }
+
+  /* tile-row: dipakai utk MODE & JENIS KUIS — kartu ikon+label bertumpuk,
+     supaya teks panjang (mis. "Mode Ujian / Level Berjenjang") tidak
+     terpotong atau berdesakan seperti tombol pil biasa. */
+  .opt-row.tile-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .opt-row.tile-row button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    min-height: 68px; padding: 10px 6px; border-radius: 14px; font-size: 12px; line-height: 1.25; text-align: center; }
+  .opt-row.tile-row button .opt-icon { font-size: 20px; line-height: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,.4)); }
+  .opt-row.tile-row button .opt-label { display: flex; flex-direction: column; gap: 1px; }
+  .opt-row.tile-row button .opt-label small { font-size: 9.5px; font-weight: 600; opacity: .75; text-transform: none; letter-spacing: 0; }
+  .opt-row.tile-row button.active .opt-label small { opacity: .9; }
 
   /* ============================================================
      PETA LEVEL — jalur bergelombang ala game (Level Berjenjang)
@@ -352,8 +373,10 @@
   @keyframes nodePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.09); } }
   .level-node.boss-node { width: 58px; height: 58px; border-color: var(--sakura); }
   .level-node.boss-node.unlocked, .level-node.boss-node.active-pick { background: linear-gradient(135deg, var(--sakura), #7b2aff); }
-  
-  .play-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; cursor: pointer; background: linear-gradient(135deg, var(--cyan), #0099FF); color: #000; font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 1.2px; box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); min-height: 52px; }
+
+  .play-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; cursor: pointer; background: linear-gradient(135deg, var(--cyan), #0099FF); color: #000; font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 1.2px; box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); min-height: 52px;
+    animation: playBtnPulse 2.4s ease-in-out infinite; }
+  @keyframes playBtnPulse { 0%,100% { box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); } 50% { box-shadow: 0 0 30px rgba(0, 229, 255, 0.65); } }
 
   .hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13px; font-family: monospace; }
 
@@ -2774,31 +2797,31 @@ function renderStart(){
   restoreBGMVolume();
   $("gameArea").innerHTML = `
     <div class="start-screen">
-      <h2>Siap uji ingatanmu?</h2>
+      <h2><span class="gamepad-badge">🎮</span>Siap uji ingatanmu?</h2>
       <p>Pilih jenis dan cakupan kuis, lalu jawab sebelum waktu habis!</p>
       <div class="setup-grid">
         <div class="setup-box">
-          <div class="lbl">MODE</div>
-          <div class="opt-row" id="modeRow">
-            <button data-v="latihan" class="active">🔀 Latihan Bebas (acak)</button>
-            <button data-v="ujian">📝 Mode Ujian (Level Berjenjang)</button>
-            <button data-v="timeattack">⏱️ Serbu Waktu (60 detik)</button>
-            <button data-v="memory">🎴 Cocok Kartu (Memory)</button>
+          <div class="lbl">🎮 MODE</div>
+          <div class="opt-row tile-row" id="modeRow">
+            <button data-v="latihan" class="active"><span class="opt-icon">🔀</span><span class="opt-label">Latihan Bebas<small>acak</small></span></button>
+            <button data-v="ujian"><span class="opt-icon">📝</span><span class="opt-label">Mode Ujian<small>Level Berjenjang</small></span></button>
+            <button data-v="timeattack"><span class="opt-icon">⏱️</span><span class="opt-label">Serbu Waktu<small>60 detik</small></span></button>
+            <button data-v="memory"><span class="opt-icon">🎴</span><span class="opt-label">Cocok Kartu<small>Memory</small></span></button>
           </div>
         </div>
         <div class="setup-box">
-          <div class="lbl">JENIS KUIS</div>
-          <div class="opt-row" id="typeRow" style="grid-template-columns: repeat(3, 1fr);">
-            <button data-v="bunpo">Pola Kalimat</button>
-            <button data-v="kotoba" class="active">Kosakata &amp; Kanji</button>
-            <button data-v="dokkai">📖 Dokkai (Bacaan)</button>
-            <button data-v="jlpttest">📝 Tes Kosakata (JLPT)</button>
-            <button data-v="listening">🎧 Dengar &amp; Tebak</button>
+          <div class="lbl">📚 JENIS KUIS</div>
+          <div class="opt-row tile-row" id="typeRow">
+            <button data-v="bunpo"><span class="opt-icon">🧩</span><span class="opt-label">Pola Kalimat</span></button>
+            <button data-v="kotoba" class="active"><span class="opt-icon">🔤</span><span class="opt-label">Kosakata &amp; Kanji</span></button>
+            <button data-v="dokkai"><span class="opt-icon">📖</span><span class="opt-label">Dokkai<small>Bacaan</small></span></button>
+            <button data-v="jlpttest"><span class="opt-icon">📝</span><span class="opt-label">Tes Kosakata<small>JLPT</small></span></button>
+            <button data-v="listening"><span class="opt-icon">🎧</span><span class="opt-label">Dengar &amp; Tebak</span></button>
           </div>
-          <div class="voice-picker-link" id="voicePickerLink" style="display:none;">🔊 Pilih Suara Jepang (uji & pilih sendiri)</div>
+          <div class="voice-picker-link" id="voicePickerLink" style="display:none;">🔊 Pilih Suara Jepang (uji &amp; pilih sendiri)</div>
         </div>
         <div class="setup-box">
-          <div class="lbl">CAKUPAN LEVEL <span class="cnt" id="countHint"></span></div>
+          <div class="lbl">🌏 CAKUPAN LEVEL <span class="cnt" id="countHint"></span></div>
           <div class="opt-row" id="scopeRow">
             <button data-v="all" class="active">Semua</button>
             <button data-v="n5">N5</button>
@@ -2808,7 +2831,7 @@ function renderStart(){
           </div>
         </div>
         <div class="setup-box" id="countBox">
-          <div class="lbl" id="countLbl">JUMLAH SOAL</div>
+          <div class="lbl" id="countLbl">🔢 JUMLAH SOAL</div>
           <div class="opt-row" id="countRow" style="grid-template-columns: repeat(4, 1fr);">
             <button data-v="25">25</button>
             <button data-v="50" class="active">50</button>
