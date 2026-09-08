@@ -2431,7 +2431,7 @@ window.addEventListener("load", ()=>{
     initApp();
   }
   const patN = PATTERNS.length, vocN = VOCAB.length, dokN = (typeof DOKKAI !== 'undefined' ? DOKKAI.length : 0);
-  $("dataStats").textContent = `${patN} pola kalimat (N5-N1) • ${vocN} kanji/kosakata (N5-N1) • ${dokN} bacaan dokkai (N5-N2)`;
+  $("dataStats").textContent = `${patN} pola kalimat (N5-N1) • ${vocN} kanji/kosakata (N5-N1) • ${dokN} bacaan dokkai (N5-N1)`;
 });
 
 function initApp(){
@@ -3464,6 +3464,7 @@ function dokkaiTotalTimeForLevel(level){
     case "N4": return 150;
     case "N3": return 210;
     case "N2": return 270;
+    case "N1": return 330;
     default: return 150;
   }
 }
