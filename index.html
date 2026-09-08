@@ -827,9 +827,14 @@
   .omikuji-card { margin: 10px 14px 0; padding: 12px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
     display: flex; align-items: center; gap: 10px; cursor: pointer; }
   .omikuji-card .om-icon { font-size: 26px; flex-shrink: 0; }
-  .omikuji-card .om-mid { flex: 1; }
-  .omikuji-card .om-title { font-weight: 800; font-size: 12.5px; }
+  .omikuji-card .om-mid { flex: 1; min-width: 0; }
+  .omikuji-card .om-title { font-weight: 800; font-size: 12.5px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .omikuji-card .om-sub { font-size: 10.5px; color: var(--sub); margin-top: 1px; }
+  .omikuji-card .om-streak { font-size: 9.5px; font-weight: 900; padding: 1px 7px; border-radius: 8px;
+    background: linear-gradient(135deg, #ff9f1c, #ff2a7a); color: #fff; }
+  .omikuji-card .om-hist { display: flex; gap: 3px; margin-top: 6px; }
+  .omikuji-card .om-hist-dot { font-family: "Noto Sans JP", sans-serif; font-size: 8.5px; font-weight: 900; width: 17px; height: 17px;
+    border-radius: 5px; border: 1px solid; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.04); }
   .omikuji-card .om-cta { flex-shrink: 0; font-size: 10.5px; font-weight: 900; color: var(--gold); padding: 5px 10px;
     border: 1px solid var(--gold); border-radius: 8px; background: rgba(255,215,0,.08); }
   .omikuji-card.done { opacity: .55; cursor: default; }
@@ -842,16 +847,28 @@
     border: 3px solid var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center;
     font-size: 34px; cursor: pointer; box-shadow: 0 0 24px rgba(255,215,0,.5); animation: omikujiShake 1.8s infinite ease-in-out;
   }
+  .omikuji-box.omikuji-crack { animation: omikujiCrack .42s ease-in forwards; }
+  @keyframes omikujiCrack {
+    0% { transform: scale(1) rotate(0); }
+    30% { transform: scale(1.15) rotate(-8deg); }
+    60% { transform: scale(1.25) rotate(8deg); filter: brightness(1.6); }
+    100% { transform: scale(0.2) rotate(0); opacity: 0; filter: brightness(2.4); }
+  }
   @keyframes omikujiShake { 0%,100% { transform: rotate(0); } 10% { transform: rotate(-4deg); } 20% { transform: rotate(4deg); } 30% { transform: rotate(0); } }
   .omikuji-slip {
     width: 220px; text-align: center; padding: 26px 18px; border-radius: 14px;
     background: linear-gradient(160deg, #fff8e6, #ffe9b0); color: #3a2400;
-    box-shadow: 0 10px 40px rgba(0,0,0,.5); animation: slipDrop 0.6s cubic-bezier(.34,1.56,.64,1);
+    box-shadow: 0 10px 40px rgba(0,0,0,.5), 0 0 50px var(--tier-color, transparent); animation: slipDrop 0.6s cubic-bezier(.34,1.56,.64,1);
+    border: 2px solid var(--tier-color, #ffb300);
   }
   @keyframes slipDrop { 0% { transform: translateY(-40px) rotate(-6deg); opacity: 0; } 100% { transform: translateY(0) rotate(0); opacity: 1; } }
-  .omikuji-slip .os-fortune { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 32px; margin-bottom: 6px; }
+  .omikuji-slip .os-fortune { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 32px; margin-bottom: 6px;
+    animation: osFortunePop .5s .15s backwards cubic-bezier(.34,1.56,.64,1); }
+  @keyframes osFortunePop { 0% { transform: scale(0); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
   .omikuji-slip .os-sub { font-size: 12px; font-weight: 700; opacity: .8; margin-bottom: 14px; }
   .omikuji-slip .os-reward { font-size: 13px; font-weight: 800; background: rgba(255,193,7,.25); border-radius: 10px; padding: 8px 12px; margin-bottom: 4px; }
+  .omikuji-slip .os-streak-bonus { background: rgba(255,42,122,.2); color: #7a1140; animation: triviaStreakPulse 1s ease-in-out infinite; }
+  .omikuji-slip .os-streaknote { font-size: 11px; font-weight: 700; opacity: .75; margin-top: 4px; }
   .omikuji-slip .os-msg { font-size: 11px; font-style: italic; opacity: .75; margin-top: 8px; line-height: 1.5; }
   .omikuji-close { display: block; margin: 16px auto 0; padding: 9px 24px; border-radius: 10px; border: none;
     background: linear-gradient(135deg, var(--cyan), #7b2aff); color: #fff; font-weight: 800; cursor: pointer; }
@@ -1112,8 +1129,6 @@
   .dash-menu-btn.dash-study .dmb-icon { background: rgba(255,42,122,0.15); box-shadow: 0 0 16px rgba(255,42,122,0.25) inset; }
   .dash-menu-btn.dash-history { border-color: rgba(255,215,0,0.35); }
   .dash-menu-btn.dash-history .dmb-icon { background: rgba(255,215,0,0.15); box-shadow: 0 0 16px rgba(255,215,0,0.25) inset; }
-  .dash-menu-btn.dash-trivia { border-color: rgba(0,240,181,0.35); }
-  .dash-menu-btn.dash-trivia .dmb-icon { background: rgba(0,240,181,0.15); box-shadow: 0 0 16px rgba(0,240,181,0.25) inset; }
 
   /* ===== HALAMAN ISI (Game/Pelajaran/Riwayat) — header + tombol Home ===== */
   .page-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
@@ -1255,20 +1270,7 @@
           <span class="dmb-icon">📜</span>
           <span class="dmb-text"><b>Riwayat Saya</b><small>Lihat progres & skor sesi sebelumnya</small></span>
         </button>
-        <button class="dash-menu-btn dash-trivia" id="menuTriviaBtn" type="button">
-          <span class="dmb-icon">🎲</span>
-          <span class="dmb-text"><b>Trivia Jepang</b><small>Uji wawasan budaya & bahasa Jepang, santai & cepat</small></span>
-        </button>
       </div>
-    </div>
-
-    <!-- ================= HALAMAN: MODE TRIVIA ================= -->
-    <div class="panel" id="panel-trivia">
-      <div class="page-header">
-        <button class="back-btn" id="backFromTriviaBtn" type="button">← Home</button>
-        <span class="page-title">🎲 Trivia Jepang</span>
-      </div>
-      <div class="card" id="triviaArea"></div>
     </div>
 
     <!-- ================= HALAMAN: MODE GAME (isinya game saja) ================= -->
@@ -2156,21 +2158,50 @@ function showSenseiBubble(kind){
    末吉(Baik Nanti) > 凶(Kurang Baik, tetap dpt hiburan kecil).
    ============================================================ */
 const OMIKUJI_TIERS = [
-  { kanji: "大吉", name: "Daikichi — Sangat Beruntung!", weight: 5,  coins: 60, xp: 40, guaranteedCard: true,
+  { kanji: "大吉", name: "Daikichi — Sangat Beruntung!", weight: 5,  coins: 60, xp: 40, guaranteedCard: true, color: "#ffb300",
     msg: "Hari ini segalanya akan berjalan lancar. Manfaatkan momentum ini!" },
-  { kanji: "吉",   name: "Kichi — Beruntung", weight: 20, coins: 35, xp: 25, guaranteedCard: false,
+  { kanji: "吉",   name: "Kichi — Beruntung", weight: 20, coins: 35, xp: 25, guaranteedCard: false, color: "#00c07a",
     msg: "Keberuntungan menyertaimu. Waktu yang baik untuk belajar hal baru." },
-  { kanji: "中吉", name: "Chūkichi — Cukup Beruntung", weight: 25, coins: 25, xp: 18, guaranteedCard: false,
+  { kanji: "中吉", name: "Chūkichi — Cukup Beruntung", weight: 25, coins: 25, xp: 18, guaranteedCard: false, color: "#00b4d8",
     msg: "Usaha kecil hari ini akan membuahkan hasil besar nanti." },
-  { kanji: "小吉", name: "Shōkichi — Sedikit Beruntung", weight: 25, coins: 18, xp: 12, guaranteedCard: false,
+  { kanji: "小吉", name: "Shōkichi — Sedikit Beruntung", weight: 25, coins: 18, xp: 12, guaranteedCard: false, color: "#7b8cff",
     msg: "Hal-hal baik datang perlahan. Tetap konsisten, ya!" },
-  { kanji: "末吉", name: "Suekichi — Beruntung Nanti", weight: 15, coins: 12, xp: 10, guaranteedCard: false,
+  { kanji: "末吉", name: "Suekichi — Beruntung Nanti", weight: 15, coins: 12, xp: 10, guaranteedCard: false, color: "#a0a0a8",
     msg: "Keberuntungan besar sedang menuju arahmu, bersabarlah." },
-  { kanji: "凶",   name: "Kyō — Kurang Beruntung", weight: 10, coins: 8,  xp: 8, guaranteedCard: false,
+  { kanji: "凶",   name: "Kyō — Kurang Beruntung", weight: 10, coins: 8,  xp: 8, guaranteedCard: false, color: "#8a8a95",
     msg: "Hari yang menantang, tapi justru di situ kamu bisa belajar paling banyak." }
 ];
 function omikujiKey(){ return `nafis_omikuji_${(student && student.nis) || "guest"}`; }
+function omikujiStreakKey(){ return `nafis_omikuji_streak_${(student && student.nis) || "guest"}`; }
+function omikujiHistKey(){ return `nafis_omikuji_hist_${(student && student.nis) || "guest"}`; }
 function hasDrawnOmikujiToday(){ return localStorage.getItem(omikujiKey()) === todayKey(); }
+function getOmikujiStreak(){
+  try { return JSON.parse(localStorage.getItem(omikujiStreakKey())) || { count: 0, lastDate: null }; }
+  catch(e){ return { count: 0, lastDate: null }; }
+}
+function getOmikujiHistory(){
+  try { return JSON.parse(localStorage.getItem(omikujiHistKey())) || []; }
+  catch(e){ return []; }
+}
+/* Streak omikuji: naik terus kalau ditarik hari-berturut2 (kemarin -> hari
+   ini), reset ke 1 kalau ada hari yg kelewat. Setiap kelipatan 7 hari dapat
+   bonus ekstra, biar siswa termotivasi buka web tiap hari. */
+function bumpOmikujiStreak(){
+  const streak = getOmikujiStreak();
+  const y = new Date(); y.setDate(y.getDate()-1);
+  const yKey = y.toISOString().slice(0,10);
+  streak.count = (streak.lastDate === yKey) ? streak.count + 1 : 1;
+  streak.lastDate = todayKey();
+  localStorage.setItem(omikujiStreakKey(), JSON.stringify(streak));
+  return streak;
+}
+function pushOmikujiHistory(tier){
+  const hist = getOmikujiHistory();
+  hist.push({ kanji: tier.kanji, color: tier.color });
+  while(hist.length > 7) hist.shift();
+  localStorage.setItem(omikujiHistKey(), JSON.stringify(hist));
+  return hist;
+}
 function drawOmikujiTier(){
   const totalW = OMIKUJI_TIERS.reduce((s,t)=>s+t.weight, 0);
   let r = Math.random() * totalW;
@@ -2181,12 +2212,17 @@ function renderOmikujiSlot(){
   const slot = $("omikujiSlot");
   if(!slot) return;
   const done = hasDrawnOmikujiToday();
+  const streak = getOmikujiStreak();
+  const hist = getOmikujiHistory();
+  const streakLine = streak.count >= 2 ? `<div class="om-streak">🔥 ${streak.count} hari beruntun</div>` : "";
+  const histRow = hist.length ? `<div class="om-hist">${hist.map(h=>`<span class="om-hist-dot" style="border-color:${h.color};color:${h.color};">${h.kanji}</span>`).join("")}</div>` : "";
   slot.innerHTML = `
     <div class="omikuji-card ${done?'done':''}" id="omikujiCardBtn">
       <div class="om-icon">⛩️</div>
       <div class="om-mid">
-        <div class="om-title">Omikuji Hari Ini</div>
+        <div class="om-title">Omikuji Hari Ini ${streakLine}</div>
         <div class="om-sub">${done ? 'Sudah ditarik — balik lagi besok!' : 'Tarik nasib keberuntunganmu, gratis!'}</div>
+        ${histRow}
       </div>
       <div class="om-cta">${done ? '✓ Selesai' : 'Tarik ▶'}</div>
     </div>
@@ -2201,33 +2237,47 @@ function openOmikuji(){
   el.className = "omikuji-overlay";
   el.innerHTML = `<div><div class="omikuji-box" id="omikujiBox">⛩️</div><div style="text-align:center;color:#fff;font-size:12px;font-weight:700;">Ketuk kotak untuk menarik nasib...</div></div>`;
   document.body.appendChild(el);
-  el.querySelector("#omikujiBox").addEventListener("click", ()=>{
+  el.querySelector("#omikujiBox").addEventListener("click", (e)=>{
+    const box = e.currentTarget;
+    box.style.pointerEvents = "none";
+    box.classList.add("omikuji-crack");
     localStorage.setItem(omikujiKey(), todayKey());
     const tier = drawOmikujiTier();
-    playSFX('correct');
-    awardXPCoins(tier.xp, tier.coins);
-    let cardHtml = "";
-    if(tier.guaranteedCard){
-      // 大吉 menjamin kartu langka acak dari pool yang tersedia
-      const pool = (VOCAB && VOCAB.length) ? VOCAB : PATTERNS;
-      if(pool && pool.length){
-        const pick = pool[Math.floor(Math.random()*pool.length)];
-        setTimeout(()=> awardCard(pick, false), 900);
-        cardHtml = `<div class="os-reward">🃏 + Kartu spesial "${pick.jp}"!</div>`;
+    const streak = bumpOmikujiStreak();
+    pushOmikujiHistory(tier);
+    const streakBonus = (streak.count > 0 && streak.count % 7 === 0);
+    const bonusCoins = streakBonus ? 50 : 0;
+    const bonusXp = streakBonus ? 30 : 0;
+    setTimeout(()=>{
+      playSFX('correct');
+      awardXPCoins(tier.xp + bonusXp, tier.coins + bonusCoins);
+      let cardHtml = "";
+      if(tier.guaranteedCard){
+        // 大吉 menjamin kartu langka acak dari pool yang tersedia
+        const pool = (VOCAB && VOCAB.length) ? VOCAB : PATTERNS;
+        if(pool && pool.length){
+          const pick = pool[Math.floor(Math.random()*pool.length)];
+          setTimeout(()=> awardCard(pick, false), 900);
+          cardHtml = `<div class="os-reward">🃏 + Kartu spesial "${pick.jp}"!</div>`;
+        }
       }
-    }
-    el.innerHTML = `
-      <div class="omikuji-slip">
-        <div class="os-fortune">${tier.kanji}</div>
-        <div class="os-sub">${tier.name}</div>
-        <div class="os-reward">✨ +${tier.xp} XP &nbsp; 🪙 +${tier.coins} koin</div>
-        ${cardHtml}
-        <div class="os-msg">"${tier.msg}"</div>
-        <button class="omikuji-close" id="omikujiCloseBtn">Tutup</button>
-      </div>
-    `;
-    spawnConfetti(window.innerWidth/2, window.innerHeight/2, tier.kanji==='大吉' ? 55 : 25);
-    el.querySelector("#omikujiCloseBtn").addEventListener("click", ()=>{ el.remove(); renderOmikujiSlot(); });
+      const streakHtml = streakBonus
+        ? `<div class="os-reward os-streak-bonus">🎉 Bonus ${streak.count} Hari Beruntun! +${bonusXp} XP &nbsp; +${bonusCoins} koin</div>`
+        : (streak.count >= 2 ? `<div class="os-streaknote">🔥 Beruntun ${streak.count} hari — jangan putus, ya!</div>` : "");
+      el.innerHTML = `
+        <div class="omikuji-slip" style="--tier-color:${tier.color};">
+          <div class="os-fortune" style="color:${tier.color};text-shadow:0 0 18px ${tier.color}88;">${tier.kanji}</div>
+          <div class="os-sub">${tier.name}</div>
+          <div class="os-reward">✨ +${tier.xp} XP &nbsp; 🪙 +${tier.coins} koin</div>
+          ${cardHtml}
+          ${streakHtml}
+          <div class="os-msg">"${tier.msg}"</div>
+          <button class="omikuji-close" id="omikujiCloseBtn">Tutup</button>
+        </div>
+      `;
+      spawnConfetti(window.innerWidth/2, window.innerHeight/2, tier.kanji==='大吉' ? 55 : (streakBonus ? 45 : 25));
+      el.querySelector("#omikujiCloseBtn").addEventListener("click", ()=>{ el.remove(); renderOmikujiSlot(); });
+    }, 420);
   });
 }
 
@@ -2429,8 +2479,6 @@ function levelColor(lvl){
 $("menuGameBtn").addEventListener("click", () => showPage('game'));
 $("menuStudyBtn").addEventListener("click", () => showPage('study'));
 $("menuHistoryBtn").addEventListener("click", () => showPage('history'));
-$("menuTriviaBtn").addEventListener("click", () => showPage('trivia'));
-$("backFromTriviaBtn").addEventListener("click", goHome);
 $("backFromGameBtn").addEventListener("click", goHome);
 $("backFromStudyBtn").addEventListener("click", goHome);
 $("backFromHistoryBtn").addEventListener("click", goHome);
@@ -2448,9 +2496,6 @@ function showPage(page) {
   } else if (page === 'history') {
     $("panel-history").classList.add("active");
     renderHistory();
-  } else if (page === 'trivia') {
-    $("panel-trivia").classList.add("active");
-    renderTriviaStart();
   }
 }
 
@@ -2911,9 +2956,10 @@ function renderStart(){
             <button data-v="timeattack"><span class="opt-icon">⏱️</span><span class="opt-label">Serbu Waktu<small>60 detik</small></span></button>
             <button data-v="memory"><span class="opt-icon">🎴</span><span class="opt-label">Cocok Kartu<small>Memory</small></span></button>
             <button data-v="puzzle"><span class="opt-icon">🧠</span><span class="opt-label">Teka-teki<small>Susun Huruf</small></span></button>
+            <button data-v="trivia"><span class="opt-icon">🎲</span><span class="opt-label">Trivia Jepang<small>Budaya & Bahasa</small></span></button>
           </div>
         </div>
-        <div class="setup-box">
+        <div class="setup-box" id="typeBox">
           <div class="lbl">📚 JENIS KUIS</div>
           <div class="opt-row tile-row" id="typeRow">
             <button data-v="bunpo"><span class="opt-icon">🧩</span><span class="opt-label">Pola Kalimat</span></button>
@@ -2924,7 +2970,7 @@ function renderStart(){
           </div>
           <div class="voice-picker-link" id="voicePickerLink" style="display:none;">🔊 Pilih Suara Jepang (uji &amp; pilih sendiri)</div>
         </div>
-        <div class="setup-box">
+        <div class="setup-box" id="scopeBox">
           <div class="lbl">🌏 CAKUPAN LEVEL <span class="cnt" id="countHint"></span></div>
           <div class="opt-row" id="scopeRow">
             <button data-v="all" class="active">Semua</button>
@@ -2985,6 +3031,7 @@ function renderStart(){
   $("startBtn").addEventListener("click", ()=>{
     if(setupMode === 'memory') startMemoryMatch();
     else if(setupMode === 'puzzle') startWordPuzzle();
+    else if(setupMode === 'trivia') renderTriviaStart();
     else startGame();
   });
   renderCountRow();
@@ -3011,6 +3058,12 @@ function toggleSetupBoxesForMode(){
   } else {
     countBox.style.display = "";
   }
+  // Trivia punya kategori & jumlah soal sendiri (di layar renderTriviaStart),
+  // tidak pakai Jenis Kuis / Cakupan Level / Jumlah Soal bawaan sama sekali.
+  const trivia = setupMode === 'trivia';
+  $("typeBox") && ($("typeBox").style.display = trivia ? "none" : "");
+  $("scopeBox") && ($("scopeBox").style.display = trivia ? "none" : "");
+  if(trivia){ countBox.style.display = "none"; $("packetBox") && ($("packetBox").style.display = "none"); }
 }
 
 /* Untuk Dokkai, "jumlah" berarti JUMLAH BACAAN (bukan jumlah soal individual),
@@ -4318,7 +4371,7 @@ let triviaState = null;
 function renderTriviaStart(){
   startBGM();
   restoreBGMVolume();
-  $("triviaArea").innerHTML = `
+  $("gameArea").innerHTML = `
     <div class="start-screen">
       <h2><span class="gamepad-badge">🎲</span>Trivia Jepang</h2>
       <p>Uji wawasanmu soal budaya &amp; bahasa Jepang. Jawab beruntun biar dapat bonus streak!</p>
@@ -4384,7 +4437,7 @@ function renderTriviaQuestion(){
   const streakChip = triviaState.streak >= 3
     ? `<span class="trivia-streak-chip">🔥 Beruntun ${triviaState.streak}</span>` : "";
 
-  $("triviaArea").innerHTML = `
+  $("gameArea").innerHTML = `
     <div class="quiz-avatar" id="quizAvatar">${currentAvatarThumb(42)}</div>
     <div class="hud">
       <span>${streakChip}</span>
@@ -4505,7 +4558,7 @@ function renderTriviaResult(){
     total, akurasi: acc, nilai: grade.letter
   });
 
-  $("triviaArea").innerHTML = `
+  $("gameArea").innerHTML = `
     <div class="result">
       <div class="grade-badge" style="background:${grade.color}22;color:${grade.color};border:2px solid ${grade.color};">${grade.letter}</div>
       <div class="id-line" style="font-size:22px;">${currentAvatarThumb(46)}</div>
