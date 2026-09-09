@@ -334,6 +334,20 @@
   .ir-arti { font-size: 12.5px; color: var(--ink); font-weight: 700; margin-top: 1px; }
   .ir-penjelasan { font-size: 11px; color: var(--sub); margin-top: 3px; line-height: 1.5; }
   .ir-contoh { font-size: 11px; color: var(--mint); margin-top: 4px; line-height: 1.5; font-family: "Noto Sans JP", sans-serif; }
+
+  /* Kartu Pola Kalimat Irodori — rata TENGAH sesuai permintaan:
+     judul pola (besar) di atas, lalu arti & penjelasan di tengah,
+     baru contoh kalimat + cara baca + terjemahan di kotak bawah. */
+  .ir-pola-item { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 14px; text-align: center; }
+  .ir-pola-title { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 19px; color: #fff;
+    line-height: 1.4; margin-bottom: 6px; }
+  .ir-pola-arti { font-size: 13px; font-weight: 800; color: var(--cyan); margin-bottom: 6px; }
+  .ir-pola-penjelasan { font-size: 12px; color: var(--sub); line-height: 1.6; margin-bottom: 12px; padding: 0 4px; }
+  .ir-pola-contoh-box { background: rgba(0,0,0,.2); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 12px; }
+  .ir-pola-contoh-jp { font-family: "Noto Sans JP", sans-serif; font-weight: 700; font-size: 14px; color: #fff; line-height: 1.5; }
+  .ir-pola-contoh-romaji { font-size: 11px; font-style: italic; color: var(--sub); margin-top: 3px; }
+  .ir-pola-contoh-id { font-size: 12px; color: var(--mint); margin-top: 5px; line-height: 1.5; }
   .flash .lvl { position: absolute; top: 12px; left: 14px; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; border: 1px solid; }
   .flash .lvl.n5 { background: rgba(0, 229, 255, 0.1); color: var(--n5); border-color: var(--n5); }
   .flash .lvl.n4 { background: rgba(255, 215, 0, 0.1); color: var(--n4); border-color: var(--n4); }
@@ -2800,13 +2814,15 @@ function renderIrodoriBab(bookKey, bab){
 
   const polaHtml = ch.pola.map(jp=>{
     const d = polaDict[jp];
-    if(!d) return `<div class="ir-item"><div class="ir-jp">${jp}</div><div class="ir-mid"><div class="ir-arti">(materi belum tersedia)</div></div></div>`;
-    return `<div class="ir-item">
-      <div class="ir-jp">${jp}</div>
-      <div class="ir-mid">
-        <div class="ir-arti">${d.meaning}</div>
-        <div class="ir-penjelasan">${d.penjelasan}</div>
-        <div class="ir-contoh">${d.contoh_jp} — ${d.contoh_id}</div>
+    if(!d) return `<div class="ir-pola-item"><div class="ir-pola-title">${jp}</div><div class="ir-arti">(materi belum tersedia)</div></div>`;
+    return `<div class="ir-pola-item">
+      <div class="ir-pola-title">${jp}</div>
+      <div class="ir-pola-arti">${d.meaning}</div>
+      <div class="ir-pola-penjelasan">${d.penjelasan}</div>
+      <div class="ir-pola-contoh-box">
+        <div class="ir-pola-contoh-jp">${d.contoh_jp}</div>
+        ${d.contoh_romaji ? `<div class="ir-pola-contoh-romaji">${d.contoh_romaji}</div>` : ""}
+        <div class="ir-pola-contoh-id">${d.contoh_id}</div>
       </div>
     </div>`;
   }).join("");
