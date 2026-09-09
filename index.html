@@ -35,12 +35,47 @@
       url('data:image/svg+xml;utf8,<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><text x="15" y="45" font-size="20" fill="rgba(255,255,255,0.015)" font-family="sans-serif">語彙</text></svg>'),
       radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--sakura) 40%, transparent) 0%, transparent 45%),
       radial-gradient(circle at 85% 90%, color-mix(in srgb, var(--cyan) 40%, transparent) 0%, transparent 45%),
+      radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--season-color, transparent) 22%, transparent) 0%, transparent 60%),
       var(--bg);
     color: var(--ink); 
     font-family: "Inter", "Noto Sans JP", sans-serif;
     display: flex;
     justify-content: center;
     align-items: flex-start;
+  }
+
+  /* ============================================================
+     TEMA 4 MUSIM — lapisan partikel mengambang di seluruh halaman
+     (salju/sakura/momiji/kunang-kunang), musim dipilih otomatis dari
+     bulan berjalan. Warna latar (--season-color) sudah dicampur ke
+     gradient body di atas; ini murni lapisan hiasan di atasnya,
+     pointer-events:none supaya tidak mengganggu tombol di bawahnya.
+     ============================================================ */
+  #seasonLayer { position: fixed; inset: 0; pointer-events: none; z-index: 5; overflow: hidden; }
+  .season-particle { position: absolute; top: -40px; will-change: transform, opacity; user-select: none; }
+  @keyframes seasonFall {
+    0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+    8%   { opacity: 1; }
+    92%  { opacity: 1; }
+    100% { transform: translate(var(--drift, 40px), 108vh) rotate(var(--spin, 260deg)); opacity: 0; }
+  }
+  .season-particle.sway { animation-name: seasonFallSway; }
+  @keyframes seasonFallSway {
+    0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+    8%   { opacity: 1; }
+    25%  { transform: translate(calc(var(--drift, 40px) * 0.3), 25vh) rotate(calc(var(--spin,260deg) * 0.25)); }
+    50%  { transform: translate(calc(var(--drift, 40px) * -0.2), 50vh) rotate(calc(var(--spin,260deg) * 0.5)); }
+    75%  { transform: translate(calc(var(--drift, 40px) * 0.4), 75vh) rotate(calc(var(--spin,260deg) * 0.75)); }
+    92%  { opacity: 1; }
+    100% { transform: translate(var(--drift, 40px), 108vh) rotate(var(--spin, 260deg)); opacity: 0; }
+  }
+  .season-particle.hotaru { animation-name: hotaruFloat; }
+  @keyframes hotaruFloat {
+    0%   { transform: translate(0,0); opacity: 0; }
+    10%  { opacity: .9; }
+    50%  { transform: translate(var(--drift, 20px), -40vh); opacity: .5; }
+    90%  { opacity: .8; }
+    100% { transform: translate(calc(var(--drift, 20px) * -1), -85vh); opacity: 0; }
   }
 
   .wrap { 
@@ -1147,6 +1182,7 @@
 </style>
 </head>
 <body>
+<div id="seasonLayer"></div>
 
 <!-- ============================================================
      LANDING PAGE — Ruang Arcade Kabinet Neon
@@ -4576,6 +4612,58 @@ function renderTriviaResult(){
   `;
   $("triviaAgainBtn").addEventListener("click", ()=>{ playSFX('click'); renderTriviaStart(); });
 }
+
+/* ============================================================
+   TEMA 4 MUSIM — musim ditentukan otomatis dari bulan berjalan
+   (kalender belahan bumi utara, sesuai musim asli di Jepang):
+   Mar-Mei Semi(sakura), Jun-Ags Panas(kunang-kunang/hanabi),
+   Sep-Nov Gugur(momiji), Des-Feb Dingin(salju). Partikel dibuat
+   murni CSS+JS (elemen emoji melayang jatuh), tidak butuh gambar
+   tambahan sama sekali. Warna --season-color ikut mewarnai gradasi
+   latar halaman secara halus, terpisah dari sistem Tema Toko
+   (--cyan/--sakura/--bg) supaya tidak bentrok dengan tema yang
+   sudah dibeli siswa.
+   ============================================================ */
+const SEASONS = {
+  spring: { color: "#ff8fb3", emojis: ["🌸","🌸","🌸","🌼"], sway: true,  rate: 650 },
+  summer: { color: "#00e5c0", emojis: ["🎇","✨"],           hotaru: true, rate: 1300 },
+  autumn: { color: "#ff7a3d", emojis: ["🍁","🍂","🍁"],       sway: true,  rate: 700 },
+  winter: { color: "#8fd9ff", emojis: ["❄️","❄️","✦"],        sway: false, rate: 450 }
+};
+function currentSeason(){
+  const m = new Date().getMonth() + 1; // 1-12
+  if(m >= 3 && m <= 5) return "spring";
+  if(m >= 6 && m <= 8) return "summer";
+  if(m >= 9 && m <= 11) return "autumn";
+  return "winter";
+}
+let seasonInterval = null;
+function spawnSeasonParticle(cfg){
+  const layer = $("seasonLayer");
+  if(!layer) return;
+  const el = document.createElement("span");
+  el.className = "season-particle" + (cfg.sway ? " sway" : "") + (cfg.hotaru ? " hotaru" : "");
+  el.textContent = cfg.emojis[Math.floor(Math.random()*cfg.emojis.length)];
+  el.style.fontSize = (14 + Math.random()*14) + "px";
+  el.style.left = Math.random()*100 + "vw";
+  if(cfg.hotaru){ el.style.top = (55 + Math.random()*35) + "vh"; }
+  const dur = cfg.hotaru ? (6 + Math.random()*4) : (6 + Math.random()*6);
+  el.style.setProperty("--drift", (Math.random()*140-70) + "px");
+  el.style.setProperty("--spin", (Math.random()*360) + "deg");
+  const animName = cfg.hotaru ? "hotaruFloat" : (cfg.sway ? "seasonFallSway" : "seasonFall");
+  el.style.animation = `${animName} ${dur}s linear forwards`;
+  layer.appendChild(el);
+  setTimeout(()=> el.remove(), dur*1000 + 200);
+}
+function initSeasonalEffects(){
+  const season = currentSeason();
+  const cfg = SEASONS[season];
+  document.documentElement.style.setProperty("--season-color", cfg.color);
+  if(seasonInterval) clearInterval(seasonInterval);
+  seasonInterval = setInterval(()=> spawnSeasonParticle(cfg), cfg.rate);
+  spawnSeasonParticle(cfg);
+}
+initSeasonalEffects();
 </script>
 </body>
 </html>
