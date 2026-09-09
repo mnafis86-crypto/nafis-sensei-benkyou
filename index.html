@@ -323,6 +323,17 @@
 
   /* STUDY & FLASHCARD */
   .flash { border-radius: 16px; padding: 30px 18px; text-align: center; position: relative; background: radial-gradient(circle at top right, rgba(0, 229, 255, 0.1), transparent), rgba(0,0,0,0.3); border: 1px solid var(--line); min-height: 260px; display: flex; flex-direction: column; justify-content: center; gap: 12px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+  .flash.irodori-mode { text-align: left; justify-content: flex-start; padding: 18px 14px; gap: 6px; }
+  .ir-bab-title { font-weight: 900; font-size: 16px; color: var(--cyan); text-align: center; margin-bottom: 4px; }
+  .ir-section-label { font-weight: 800; font-size: 12px; letter-spacing: .5px; color: var(--gold); margin: 12px 0 6px; text-transform: uppercase; }
+  .ir-list { display: flex; flex-direction: column; gap: 8px; }
+  .ir-item { background: rgba(255,255,255,.03); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; display: flex; gap: 10px; align-items: flex-start; }
+  .ir-jp { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 15px; flex-shrink: 0; min-width: 64px; color: #fff; }
+  .ir-mid { flex: 1; min-width: 0; }
+  .ir-baca { font-size: 10.5px; color: var(--sub); font-style: italic; }
+  .ir-arti { font-size: 12.5px; color: var(--ink); font-weight: 700; margin-top: 1px; }
+  .ir-penjelasan { font-size: 11px; color: var(--sub); margin-top: 3px; line-height: 1.5; }
+  .ir-contoh { font-size: 11px; color: var(--mint); margin-top: 4px; line-height: 1.5; font-family: "Noto Sans JP", sans-serif; }
   .flash .lvl { position: absolute; top: 12px; left: 14px; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; border: 1px solid; }
   .flash .lvl.n5 { background: rgba(0, 229, 255, 0.1); color: var(--n5); border-color: var(--n5); }
   .flash .lvl.n4 { background: rgba(255, 215, 0, 0.1); color: var(--n4); border-color: var(--n4); }
@@ -1359,10 +1370,11 @@
             <option value="bunpo">Pola Kalimat (文法)</option>
             <option value="kanji">Kanji (漢字)</option>
             <option value="kotoba" selected>Kosakata (言葉)</option>
+            <option value="irodori">Irodori (Shokyu 1 / 2, per Bab)</option>
           </select>
         </div>
         
-        <div class="modern-select-wrap">
+        <div class="modern-select-wrap" id="bookSelectWrap">
           <label>Filter Level</label>
           <select id="bookSelect" class="modern-select">
             <option value="all" selected>Semua Level</option>
@@ -1373,9 +1385,19 @@
             <option value="n1">Level N1</option>
           </select>
         </div>
+        <div class="modern-select-wrap" id="babSelectWrap" style="display:none;">
+          <label>Pilih Buku &amp; Bab</label>
+          <div style="display:flex;gap:8px;">
+            <select id="irodoriBookSelect" class="modern-select" style="flex:1;">
+              <option value="shokyu1">Shokyu 1</option>
+              <option value="shokyu2">Shokyu 2</option>
+            </select>
+            <select id="babSelect" class="modern-select" style="flex:1;"></select>
+          </div>
+        </div>
         
         <div class="flash" id="flashCard"></div>
-        <div class="study-nav">
+        <div class="study-nav" id="studyNav">
           <button class="navbtn" id="prevBtn">← Sebelumnya</button>
           <span class="progress-text" id="studyProgress"></span>
           <button class="navbtn" id="nextBtn">Berikutnya →</button>
@@ -2570,6 +2592,7 @@ function showBossIntro(callback){
 <script src="jlpt-test.js"></script>
 <script src="kanji-terjemahan.js"></script>
 <script src="kotoba-terjemahan.js"></script>
+<script src="irodori.js"></script>
 <script src="trivia.js"></script>
 
 <script>
@@ -2705,12 +2728,31 @@ let studyIdx = 0;
 
 $("typeSelect").addEventListener("change", (e)=>{
   studyMode = e.target.value;
-  applyStudyFilter();
+  const isIrodori = studyMode === "irodori";
+  $("bookSelectWrap").style.display = isIrodori ? "none" : "";
+  $("babSelectWrap").style.display = isIrodori ? "" : "none";
+  $("studyNav").style.display = isIrodori ? "none" : "";
+  if(isIrodori){ populateBabSelect(); renderIrodoriBab($("irodoriBookSelect").value, parseInt($("babSelect").value || "1")); }
+  else applyStudyFilter();
 });
 $("bookSelect").addEventListener("change", (e)=>{
   studyBookFilter = e.target.value;
   applyStudyFilter();
 });
+$("irodoriBookSelect").addEventListener("change", ()=>{
+  populateBabSelect();
+  renderIrodoriBab($("irodoriBookSelect").value, parseInt($("babSelect").value || "1"));
+});
+$("babSelect").addEventListener("change", (e)=>{
+  renderIrodoriBab($("irodoriBookSelect").value, parseInt(e.target.value));
+});
+function populateBabSelect(){
+  const sel = $("babSelect");
+  const bookKey = $("irodoriBookSelect").value;
+  if(!sel || typeof IRODORI_BOOKS === 'undefined') return;
+  const chapters = IRODORI_BOOKS[bookKey].chapters;
+  sel.innerHTML = chapters.map(c=>`<option value="${c.bab}">Bab ${c.bab}${c.judul ? ' — '+c.judul : ''}</option>`).join("");
+}
 
 function matchesBook(p, filterVal){
   switch(filterVal){
@@ -2724,6 +2766,60 @@ function matchesBook(p, filterVal){
   }
 }
 
+/* ================= MATERI IRODORI (per Bab, terpisah dari sistem level N5-N1) ================= */
+function irodoriLookupKosakata(jp){
+  // Cari di VOCAB (kanji atau kotoba) berdasarkan jp; sudah membawa
+  // meaning_id/onyomi/kunyomi/contoh hasil merge dari file terjemahan.
+  // Beberapa entri kata sifat-na ditulis dgn akhiran "(な)" di daftar Irodori
+  // (mis. "元気(な)") padahal di database cuma tersimpan "元気" saja.
+  return VOCAB.find(v => v.jp === jp) || VOCAB.find(v => v.jp === jp.replace(/\(な\)$/, ""));
+}
+function renderIrodoriBab(bookKey, bab){
+  const book = IRODORI_BOOKS[bookKey];
+  const ch = book.chapters.find(c => c.bab === bab);
+  const polaDict = book.pola;
+  const flash = $("flashCard");
+  flash.classList.add("irodori-mode");
+  flash.classList.remove("kotoba-mode");
+  if(!ch){ flash.innerHTML = `<div class="meaning">Bab tidak ditemukan.</div>`; return; }
+
+  const kosakataHtml = ch.kosakata.map(jp=>{
+    const v = irodoriLookupKosakata(jp);
+    const baca = v ? (v.onyomi || v.kunyomi || v.yomi || v.romaji || "") : "";
+    const arti = v ? (v.meaning_id || v.meaning || "-") : "(materi belum tersedia)";
+    const contoh = v ? (v.contoh_gabungan || (v.contoh_jp ? `${v.contoh_jp}${v.contoh_id ? " — "+v.contoh_id : ""}` : "")) : "";
+    return `<div class="ir-item">
+      <div class="ir-jp">${jp}</div>
+      <div class="ir-mid">
+        ${baca ? `<div class="ir-baca">${baca}</div>` : ""}
+        <div class="ir-arti">${arti}</div>
+        ${contoh ? `<div class="ir-contoh">${contoh}</div>` : ""}
+      </div>
+    </div>`;
+  }).join("");
+
+  const polaHtml = ch.pola.map(jp=>{
+    const d = polaDict[jp];
+    if(!d) return `<div class="ir-item"><div class="ir-jp">${jp}</div><div class="ir-mid"><div class="ir-arti">(materi belum tersedia)</div></div></div>`;
+    return `<div class="ir-item">
+      <div class="ir-jp">${jp}</div>
+      <div class="ir-mid">
+        <div class="ir-arti">${d.meaning}</div>
+        <div class="ir-penjelasan">${d.penjelasan}</div>
+        <div class="ir-contoh">${d.contoh_jp} — ${d.contoh_id}</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  flash.innerHTML = `
+    <div class="ir-bab-title">📘 ${book.label} — Bab ${ch.bab}${ch.judul ? ": "+ch.judul : ""}</div>
+    <div class="ir-section-label">🈶 Kosakata &amp; Kanji</div>
+    <div class="ir-list">${kosakataHtml}</div>
+    <div class="ir-section-label">📐 Pola Kalimat</div>
+    <div class="ir-list">${polaHtml}</div>
+  `;
+}
+
 function applyStudyFilter(){
   let dataSource;
   if (studyMode === "bunpo") dataSource = PATTERNS;
@@ -2735,6 +2831,7 @@ function applyStudyFilter(){
 }
 
 function renderFlash(){
+  $("flashCard").classList.remove("irodori-mode");
   if(!studyList.length){
     $("flashCard").innerHTML = `<div class="meaning">Tidak ada materi untuk filter ini.</div>`;
     $("flashCard").classList.remove("kotoba-mode");
