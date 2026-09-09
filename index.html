@@ -2917,8 +2917,18 @@ let setupType = "kotoba";
 let setupMode = "latihan"; // "latihan" (acak bebas) | "ujian" (paket soal tetap)
 let setupPacketIndex = 0;
 
+function irodoriResultLabel(){
+  if(setupScope === 'irodori1') return 'Irodori Shokyu 1';
+  if(setupScope === 'irodori2') return 'Irodori Shokyu 2';
+  return 'Irodori (Shokyu 1 & 2)';
+}
 function poolFor(scope, typeMode){
-  const src = typeMode === 'bunpo' ? PATTERNS : (typeMode === 'dokkai' ? DOKKAI : ((typeMode === 'jlpttest' || typeMode === 'irodori2test') ? (typeMode === 'jlpttest' ? JLPT_TEST : IRODORI_SHOKYU2_TEST) : VOCAB));
+  if(typeMode === 'irodori'){
+    if(scope === 'irodori1') return IRODORI_SHOKYU1_TEST;
+    if(scope === 'irodori2') return IRODORI_SHOKYU2_TEST;
+    return IRODORI_SHOKYU1_TEST.concat(IRODORI_SHOKYU2_TEST);
+  }
+  const src = typeMode === 'bunpo' ? PATTERNS : (typeMode === 'dokkai' ? DOKKAI : (typeMode === 'jlpttest' ? JLPT_TEST : VOCAB));
   return src.filter(p=>matchesBook(p, scope));
 }
 
@@ -3094,7 +3104,7 @@ function buildQuestions(scope, count, typeMode){
   if(typeMode === 'dokkai'){
     return chosen.flatMap(passage => makeQuestionsForDokkai(passage));
   }
-  if(typeMode === 'jlpttest' || typeMode === 'irodori2test'){
+  if(typeMode === 'jlpttest' || typeMode === 'irodori'){
     return chosen.map(item => makeQuestionForJLPT(item));
   }
   if(typeMode === 'listening'){
@@ -3228,7 +3238,7 @@ function renderStart(){
             <button data-v="kotoba" class="active"><span class="opt-icon">🔤</span><span class="opt-label">Kosakata &amp; Kanji</span></button>
             <button data-v="dokkai"><span class="opt-icon">📖</span><span class="opt-label">Dokkai<small>Bacaan</small></span></button>
             <button data-v="jlpttest"><span class="opt-icon">📝</span><span class="opt-label">Tes Kosakata<small>JLPT</small></span></button>
-            <button data-v="irodori2test"><span class="opt-icon">🈴</span><span class="opt-label">Latihan<small>Irodori Shokyu 2</small></span></button>
+            <button data-v="irodori"><span class="opt-icon">🈴</span><span class="opt-label">Irodori<small>Shokyu 1 / 2</small></span></button>
             <button data-v="listening"><span class="opt-icon">🎧</span><span class="opt-label">Dengar &amp; Tebak</span></button>
           </div>
           <div class="voice-picker-link" id="voicePickerLink" style="display:none;">🔊 Pilih Suara Jepang (uji &amp; pilih sendiri)</div>
@@ -3236,12 +3246,14 @@ function renderStart(){
         <div class="setup-box" id="scopeBox">
           <div class="lbl">🌏 CAKUPAN LEVEL <span class="cnt" id="countHint"></span></div>
           <div class="opt-row" id="scopeRow">
-            <button data-v="all" class="active">Semua</button>
-            <button data-v="n5">N5</button>
-            <button data-v="n4">N4</button>
-            <button data-v="n3">N3</button>
-            <button data-v="n2">N2</button>
-            <button data-v="n1">N1</button>
+            <button data-v="all" class="active lvl-scope-btn">Semua</button>
+            <button data-v="n5" class="lvl-scope-btn">N5</button>
+            <button data-v="n4" class="lvl-scope-btn">N4</button>
+            <button data-v="n3" class="lvl-scope-btn">N3</button>
+            <button data-v="n2" class="lvl-scope-btn">N2</button>
+            <button data-v="n1" class="lvl-scope-btn">N1</button>
+            <button data-v="irodori1" class="irodori-scope-btn" style="display:none;">Irodori Shokyu 1</button>
+            <button data-v="irodori2" class="irodori-scope-btn" style="display:none;">Irodori Shokyu 2</button>
           </div>
         </div>
         <div class="setup-box" id="countBox">
@@ -3276,15 +3288,27 @@ function renderStart(){
       renderCountRow(); updateCountHint(); renderPacketRow();
       const vpLink = $("voicePickerLink");
       if(vpLink) vpLink.style.display = (setupType === 'listening') ? '' : 'none';
-      // Latihan Irodori tidak dibagi per level N5-N1, jadi kolom Cakupan
-      // Level disembunyikan (soalnya cuma satu paket tetap, 100 soal).
+      // Irodori pakai cakupan "Shokyu 1/Shokyu 2" sendiri, bukan level N5-N1.
       const scopeBox = $("scopeBox");
-      if(setupType === 'irodori2test'){
-        if(scopeBox) scopeBox.style.display = 'none';
-        setupScope = 'all';
-        document.querySelectorAll("#scopeRow button").forEach(x=>x.classList.toggle("active", x.dataset.v==='all'));
-        updateCountHint();
-      } else if(scopeBox) scopeBox.style.display = '';
+      if(setupType === 'irodori'){
+        document.querySelectorAll(".lvl-scope-btn").forEach(x=> x.style.display = 'none');
+        document.querySelectorAll(".irodori-scope-btn").forEach(x=> x.style.display = '');
+        // default ke Shokyu 1 kalau scope sekarang bukan salah satu dari keduanya
+        if(setupScope !== 'irodori1' && setupScope !== 'irodori2'){
+          setupScope = 'irodori1';
+          document.querySelectorAll("#scopeRow button").forEach(x=>x.classList.toggle("active", x.dataset.v==='irodori1'));
+        }
+        if(scopeBox) scopeBox.style.display = '';
+      } else {
+        document.querySelectorAll(".lvl-scope-btn").forEach(x=> x.style.display = '');
+        document.querySelectorAll(".irodori-scope-btn").forEach(x=> x.style.display = 'none');
+        if(setupScope === 'irodori1' || setupScope === 'irodori2'){
+          setupScope = 'all';
+          document.querySelectorAll("#scopeRow button").forEach(x=>x.classList.toggle("active", x.dataset.v==='all'));
+        }
+        if(scopeBox) scopeBox.style.display = '';
+      }
+      updateCountHint();
     });
   });
   document.querySelectorAll("#scopeRow button").forEach(b=>{
@@ -3879,7 +3903,7 @@ function renderQuestionActual(){
   gState.locked = false;
   const isBoss = gState.qi === gState.bossIndex;
 
-  let typeLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : (setupType === "jlpttest" ? "Tes Kosakata (JLPT)" : (setupType === "irodori2test" ? "Latihan Irodori Shokyu 2" : (setupType === "listening" ? "🎧 Dengar & Tebak" : "Kosakata & Kanji"))));
+  let typeLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : (setupType === "jlpttest" ? "Tes Kosakata (JLPT)" : (setupType === "irodori" ? irodoriResultLabel() : (setupType === "listening" ? "🎧 Dengar & Tebak" : "Kosakata & Kanji"))));
   let paketTag = gState.paketLabel ? ` &middot; ${gState.paketLabel}` : "";
 
   const bodyHtml = q.type === 'susun_kalimat' ? `
@@ -4247,7 +4271,7 @@ function renderResult(){
   const grade = gradeFor(acc);
   const dateStr = gState.startedAt.toLocaleString("id-ID");
 
-  const materiLabel = setupType === 'bunpo' ? 'Pola Kalimat' : (setupType === 'dokkai' ? 'Dokkai (Bacaan)' : (setupType === 'jlpttest' ? 'Tes Kosakata (JLPT)' : (setupType === 'irodori2test' ? 'Latihan Irodori Shokyu 2' : (setupType === 'listening' ? '🎧 Dengar & Tebak' : 'Kosakata & Kanji'))));
+  const materiLabel = setupType === 'bunpo' ? 'Pola Kalimat' : (setupType === 'dokkai' ? 'Dokkai (Bacaan)' : (setupType === 'jlpttest' ? 'Tes Kosakata (JLPT)' : (setupType === 'irodori' ? irodoriResultLabel() : (setupType === 'listening' ? '🎧 Dengar & Tebak' : 'Kosakata & Kanji'))));
 
   let justUnlocked = false;
   if(setupMode === "ujian"){
@@ -4505,7 +4529,7 @@ function renderResultCardToImage(opts){
 /* Dipanggil dari tombol "Unduh Kartu Hasil" tepat setelah kuis selesai —
    data diambil dari gState/setupType yang masih "hidup" di sesi ini. */
 function downloadResultCard(grade, acc, total, dateStr){
-  const materiLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : (setupType === "jlpttest" ? "Tes Kosakata (JLPT)" : (setupType === "irodori2test" ? "Latihan Irodori Shokyu 2" : "Kosakata & Kanji")));
+  const materiLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : (setupType === "jlpttest" ? "Tes Kosakata (JLPT)" : (setupType === "irodori" ? irodoriResultLabel() : "Kosakata & Kanji")));
   renderResultCardToImage({
     materiLabel,
     paketLabel: gState.paketLabel || "-",
