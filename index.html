@@ -891,22 +891,50 @@
   }
   @keyframes omikujiShake { 0%,100% { transform: rotate(0); } 10% { transform: rotate(-4deg); } 20% { transform: rotate(4deg); } 30% { transform: rotate(0); } }
   .omikuji-slip {
-    width: 220px; text-align: center; padding: 26px 18px; border-radius: 14px;
+    width: 300px; max-width: 88vw; text-align: center; padding: 26px 18px; border-radius: 14px;
     background: linear-gradient(160deg, #fff8e6, #ffe9b0); color: #3a2400;
     box-shadow: 0 10px 40px rgba(0,0,0,.5), 0 0 50px var(--tier-color, transparent); animation: slipDrop 0.6s cubic-bezier(.34,1.56,.64,1);
     border: 2px solid var(--tier-color, #ffb300);
+    position: relative; max-height: 82vh; overflow-y: auto;
   }
   @keyframes slipDrop { 0% { transform: translateY(-40px) rotate(-6deg); opacity: 0; } 100% { transform: translateY(0) rotate(0); opacity: 1; } }
   .omikuji-slip .os-fortune { font-family: "Noto Sans JP", sans-serif; font-weight: 900; font-size: 32px; margin-bottom: 6px;
     animation: osFortunePop .5s .15s backwards cubic-bezier(.34,1.56,.64,1); }
   @keyframes osFortunePop { 0% { transform: scale(0); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
+  .omikuji-slip .os-title { font-family: "Noto Sans JP", sans-serif; font-weight: 800; font-size: 15px; margin-bottom: 8px; }
+  .omikuji-slip .os-pesan-jp { font-size: 11px; line-height: 1.6; opacity: .8; font-family: "Noto Sans JP", sans-serif; margin-bottom: 6px; }
   .omikuji-slip .os-sub { font-size: 12px; font-weight: 700; opacity: .8; margin-bottom: 14px; }
+  .omikuji-slip .os-forecasts { text-align: left; background: rgba(0,0,0,.06); border-radius: 10px; padding: 10px 12px; margin: 10px 0; }
+  .omikuji-slip .os-frow { display: flex; align-items: flex-start; gap: 7px; padding: 4px 0; font-size: 11.5px; line-height: 1.4; border-bottom: 1px dashed rgba(0,0,0,.1); }
+  .omikuji-slip .os-frow:last-child { border-bottom: none; }
+  .omikuji-slip .os-ficon { flex-shrink: 0; }
+  .omikuji-slip .os-flabel { flex-shrink: 0; font-weight: 800; width: 62px; opacity: .75; }
+  .omikuji-slip .os-ftext { flex: 1; text-align: left; }
+  .omikuji-slip .os-lucky { display: flex; justify-content: space-around; gap: 4px; font-size: 10.5px; font-weight: 800;
+    background: rgba(0,0,0,.08); border-radius: 10px; padding: 7px 6px; margin-bottom: 10px; flex-wrap: wrap; }
   .omikuji-slip .os-reward { font-size: 13px; font-weight: 800; background: rgba(255,193,7,.25); border-radius: 10px; padding: 8px 12px; margin-bottom: 4px; }
+  .omikuji-slip .os-reward-bad { background: rgba(120,20,20,.18); color: #7a1f1f; }
   .omikuji-slip .os-streak-bonus { background: rgba(255,42,122,.2); color: #7a1140; animation: triviaStreakPulse 1s ease-in-out infinite; }
   .omikuji-slip .os-streaknote { font-size: 11px; font-weight: 700; opacity: .75; margin-top: 4px; }
-  .omikuji-slip .os-msg { font-size: 11px; font-style: italic; opacity: .75; margin-top: 8px; line-height: 1.5; }
+  .omikuji-slip .os-msg { font-size: 12px; font-weight: 600; margin-top: 4px; margin-bottom: 4px; line-height: 1.5; }
   .omikuji-close { display: block; margin: 16px auto 0; padding: 9px 24px; border-radius: 10px; border: none;
     background: linear-gradient(135deg, var(--cyan), #7b2aff); color: #fff; font-weight: 800; cursor: pointer; }
+
+  /* Kartu "sial" (凶/小凶/大凶) dapat perlakuan gelap & efek retak,
+     kontras dgn kartu keberuntungan yg terang keemasan. */
+  .omikuji-slip.is-bad {
+    background: linear-gradient(160deg, #2a2020, #140d0d); color: #e8d8d8;
+    border-color: var(--tier-color, #dc2626);
+  }
+  .omikuji-slip.is-bad .os-title { color: #fff; }
+  .omikuji-slip.is-bad .os-forecasts,
+  .omikuji-slip.is-bad .os-lucky { background: rgba(255,255,255,.05); }
+  .omikuji-slip.is-bad .os-frow { border-bottom-color: rgba(255,255,255,.08); }
+  .omikuji-slip.is-bad .os-flabel { opacity: .6; }
+  .omikuji-slip.is-bad::before {
+    content: ""; position: absolute; inset: 0; border-radius: 14px; pointer-events: none; opacity: .5;
+    background-image: repeating-linear-gradient(115deg, transparent 0 18px, rgba(255,255,255,.04) 18px 20px);
+  }
 
   /* fusi kartu (Kirakira / evolved) */
   .mini-card.evolved { border-width: 3px; box-shadow: 0 0 14px var(--r1, var(--gold)); animation: evolvedShine 2s infinite ease-in-out; }
@@ -1807,11 +1835,12 @@ function applyTheme(themeId){
 function awardXPCoins(xp, coins){
   const profile = getPlayerProfile();
   const before = levelInfoFromXP(profile.xp);
-  profile.xp += xp;
-  profile.coins += coins;
+  profile.xp = Math.max(0, profile.xp + xp);
+  profile.coins = Math.max(0, profile.coins + coins);
   const after = levelInfoFromXP(profile.xp);
   savePlayerProfile(profile);
-  showGameToast(`✨ +${xp} XP  🪙 +${coins} koin`);
+  const coinSign = coins < 0 ? "-" : "+";
+  showGameToast(`✨ +${xp} XP  🪙 ${coinSign}${Math.abs(coins)} koin`);
   if(after.level > before.level){
     setTimeout(()=> showLevelUpBanner(after.level), 900);
   }
@@ -2193,20 +2222,75 @@ function showSenseiBubble(kind){
    Tingkatan asli: 大吉(Sangat Baik) > 吉(Baik) > 中吉 > 小吉 >
    末吉(Baik Nanti) > 凶(Kurang Baik, tetap dpt hiburan kecil).
    ============================================================ */
-const OMIKUJI_TIERS = [
-  { kanji: "大吉", name: "Daikichi — Sangat Beruntung!", weight: 5,  coins: 60, xp: 40, guaranteedCard: true, color: "#ffb300",
-    msg: "Hari ini segalanya akan berjalan lancar. Manfaatkan momentum ini!" },
-  { kanji: "吉",   name: "Kichi — Beruntung", weight: 20, coins: 35, xp: 25, guaranteedCard: false, color: "#00c07a",
-    msg: "Keberuntungan menyertaimu. Waktu yang baik untuk belajar hal baru." },
-  { kanji: "中吉", name: "Chūkichi — Cukup Beruntung", weight: 25, coins: 25, xp: 18, guaranteedCard: false, color: "#00b4d8",
-    msg: "Usaha kecil hari ini akan membuahkan hasil besar nanti." },
-  { kanji: "小吉", name: "Shōkichi — Sedikit Beruntung", weight: 25, coins: 18, xp: 12, guaranteedCard: false, color: "#7b8cff",
-    msg: "Hal-hal baik datang perlahan. Tetap konsisten, ya!" },
-  { kanji: "末吉", name: "Suekichi — Beruntung Nanti", weight: 15, coins: 12, xp: 10, guaranteedCard: false, color: "#a0a0a8",
-    msg: "Keberuntungan besar sedang menuju arahmu, bersabarlah." },
-  { kanji: "凶",   name: "Kyō — Kurang Beruntung", weight: 10, coins: 8,  xp: 8, guaranteedCard: false, color: "#8a8a95",
-    msg: "Hari yang menantang, tapi justru di situ kamu bisa belajar paling banyak." }
+const OMIKUJI_DATA = [
+{"tier":"大吉","title":"桜満開の運","pesanJp":"努力してきたことが実を結び、大きな幸運が訪れるでしょう。自信を持って前に進みましょう。","artiId":"Usaha yang selama ini dilakukan akan membuahkan hasil. Keberuntungan besar akan datang.","harapan":"Keinginanmu akan terwujud sesuai rencana.","gakumon":"Jika berusaha, nilai akan naik pesat.","renai":"Kamu akan bertemu seseorang yang istimewa.","kerja":"Kesempatan menunjukkan kemampuanmu akan datang.","sehat":"Kondisi prima, badan akan terasa bugar.","jalan":"Sangat baik, perjalanan akan menyenangkan.","warna":"Emas","angka":7,"benda":"Bunga sakura"},
+{"tier":"大吉","title":"龍神の運","pesanJp":"強い運気に守られ、困難を乗り越える力が与えられます。","artiId":"Energi keberuntungan yang kuat akan melindungi dan memberi kekuatan menghadapi kesulitan.","harapan":"Keinginanmu akan cepat terkabul.","gakumon":"Konsentrasi meningkat, hasil belajar akan bagus.","renai":"Jodoh baik akan terjalin.","kerja":"Peluang besar akan datang.","sehat":"Sangat prima.","jalan":"Bepergian jauh pun membawa keberuntungan.","warna":"Merah","angka":8,"benda":"Patung naga"},
+{"tier":"大吉","title":"富士山の運","pesanJp":"高い目標を目指すほど、運気が上昇します。諦めずに挑戦しましょう。","artiId":"Makin tinggi targetmu, makin naik pula keberuntunganmu. Teruslah berjuang tanpa menyerah.","harapan":"Ada tanda bahkan keinginan besar akan terkabul.","gakumon":"Ada keberuntungan lulus/berhasil.","renai":"Akan diberkati jodoh yang baik.","kerja":"Ada kemungkinan naik jabatan atau penilaian meningkat.","sehat":"Stabil.","jalan":"Baik, disarankan ke tempat berpemandangan indah.","warna":"Putih","angka":1,"benda":"Jimat Gunung Fuji"},
+{"tier":"大吉","title":"黄金の運","pesanJp":"思いがけない幸運が舞い込み、物事が順調に進みます。","artiId":"Keberuntungan tak terduga akan datang, segala hal akan berjalan lancar.","harapan":"Keinginanmu akan terkabul.","gakumon":"Usaha akan membuahkan hasil.","renai":"Jarak denganmu dan pasangan akan makin dekat.","kerja":"Akan mendapat penilaian tinggi dari sekitar.","sehat":"Baik.","jalan":"Akan ada penemuan baru.","warna":"Kuning","angka":3,"benda":"Lonceng emas"},
+{"tier":"大吉","title":"七福神の運","pesanJp":"多くの人から助けられ、幸せが次々と訪れるでしょう。","artiId":"Akan dibantu banyak orang, kebahagiaan akan datang berturut-turut.","harapan":"Akan terkabul berkat bantuan orang lain.","gakumon":"Akan bertemu guru/teman belajar yang baik.","renai":"Senyuman akan mendatangkan jodoh.","kerja":"Sukses lewat kerja sama.","sehat":"Jiwa dan raga sama-sama prima.","jalan":"Baik, disarankan bepergian bersama teman.","warna":"Emas","angka":7,"benda":"Maneki-neko"},
+{"tier":"中吉","title":"若葉の運","pesanJp":"新しいことを始めるのに良い時期です。","artiId":"Ini waktu yang baik untuk memulai hal baru.","harapan":"Butuh waktu sedikit, tapi akan terkabul.","gakumon":"Konsistensi akan jadi kekuatanmu.","renai":"Akan berkembang perlahan.","kerja":"Akan dipercaya tugas baru.","sehat":"Baik selama tidak memaksakan diri.","jalan":"Disarankan ke tempat yang dekat.","warna":"Hijau","angka":4,"benda":"Daun muda"},
+{"tier":"中吉","title":"鳥居の運","pesanJp":"正しい道を選べば、自然と運が開けます。","artiId":"Jika memilih jalan yang benar, keberuntungan akan terbuka dengan sendirinya.","harapan":"Akan terkabul jika berusaha.","gakumon":"Jangan lupa mengulang pelajaran.","renai":"Ketulusan akan mendatangkan jodoh baik.","kerja":"Kerja yang teliti akan dihargai.","sehat":"Baik.","jalan":"Disarankan mengunjungi kuil.","warna":"Merah","angka":6,"benda":"Jimat gerbang torii"},
+{"tier":"中吉","title":"青空の運","pesanJp":"悩みが晴れ、明るい未来が見えてきます。","artiId":"Kekhawatiran akan sirna, masa depan cerah mulai terlihat.","harapan":"Akan menuju arah yang baik.","gakumon":"Konsentrasi akan meningkat.","renai":"Obrolan ceria membawa keberuntungan.","kerja":"Hubungan dengan sekitar akan membaik.","sehat":"Baik.","jalan":"Bepergian di hari cerah membawa keberuntungan.","warna":"Biru","angka":2,"benda":"Kipas biru"},
+{"tier":"中吉","title":"鶴の運","pesanJp":"長く続けてきた努力が評価されるでしょう。","artiId":"Usaha yang sudah lama dijalani akan dihargai.","harapan":"Akan terkabul jika diberi waktu.","gakumon":"Konsistensi adalah kunci sukses.","renai":"Hubungan baik akan bertahan lama.","kerja":"Akan mendapat kepercayaan.","sehat":"Stabil.","jalan":"Baik.","warna":"Putih","angka":8,"benda":"Patung burung bangau"},
+{"tier":"中吉","title":"月夜の運","pesanJp":"静かに努力することで、後から大きな成果が得られます。","artiId":"Dengan berusaha diam-diam, hasil besar akan didapat kemudian.","harapan":"Akan terkabul jika tidak terburu-buru.","gakumon":"Belajar malam hari akan lancar.","renai":"Sikap peduli pada pasangan itu penting.","kerja":"Persiapan akan membawa ke kesuksesan.","sehat":"Jaga waktu tidur.","jalan":"Pemandangan malam membawa keberuntungan.","warna":"Navy","angka":9,"benda":"Aksesori bulan"},
+{"tier":"小吉","title":"四つ葉の運","pesanJp":"小さな幸せを大切にすると、運気が上がります。","artiId":"Jika menghargai kebahagiaan kecil, keberuntungan akan naik.","harapan":"Akan terkabul sedikit demi sedikit.","gakumon":"Belajar setiap hari itu penting.","renai":"Kebaikan kecil akan menumbuhkan jodoh.","kerja":"Usaha tekun akan dihargai.","sehat":"Jangan lupa istirahat.","jalan":"Perjalanan singkat membawa keberuntungan.","warna":"Hijau","angka":4,"benda":"Semanggi berdaun empat"},
+{"tier":"小吉","title":"猫の運","pesanJp":"焦らず、自分のペースを守りましょう。","artiId":"Jangan terburu-buru, jaga ritme sendiri.","harapan":"Akan terkabul perlahan.","gakumon":"Jaga dasar-dasarnya.","renai":"Jadi diri sendiri adalah yang terbaik.","kerja":"Bekerja dengan ritme sendiri membawa keberuntungan.","sehat":"Biasa saja.","jalan":"Disarankan jalan-jalan santai.","warna":"Oranye","angka":5,"benda":"Maneki-neko"},
+{"tier":"小吉","title":"朝日の運","pesanJp":"新しい一日を大切にすると、良い流れが始まります。","artiId":"Jika menghargai hari baru, alur baik akan dimulai.","harapan":"Bertindak sejak pagi membawa keberuntungan.","gakumon":"Disarankan belajar di pagi hari.","renai":"Sikap ceria memberi kesan baik.","kerja":"Rencana pagi hari membawa ke kesuksesan.","sehat":"Tidur dan bangun awal membawa keberuntungan.","jalan":"Disarankan berangkat pagi hari.","warna":"Oranye","angka":1,"benda":"Jimat matahari"},
+{"tier":"小吉","title":"風鈴の運","pesanJp":"周囲の声に耳を傾けると良い知らせが入ってきます。","artiId":"Jika mendengarkan suara sekitar, kabar baik akan datang.","harapan":"Nasihat orang lain akan membantu.","gakumon":"Dengarkan baik-baik penjelasan guru.","renai":"Komunikasi itu penting.","kerja":"Utamakan lapor-koordinasi-konsultasi.","sehat":"Perlu istirahat batin.","jalan":"Tempat sejuk membawa keberuntungan.","warna":"Biru muda","angka":6,"benda":"Lonceng angin"},
+{"tier":"小吉","title":"桜餅の運","pesanJp":"楽しむ気持ちを忘れなければ、良い運が訪れます。","artiId":"Selama tidak lupa bersenang-senang, keberuntungan baik akan datang.","harapan":"Berpikir optimis membawa keberuntungan.","gakumon":"Belajar dengan senang akan mendorong perkembangan.","renai":"Waktu bersenang-senang bersama itu penting.","kerja":"Kerja sama tim membawa keberuntungan.","sehat":"Perhatikan pola makan.","jalan":"Disarankan wisata kuliner.","warna":"Pink","angka":3,"benda":"Kue mochi sakura"},
+{"tier":"吉","title":"幸せの種","pesanJp":"今は小さな運でも、育てれば大きな幸運になります。","artiId":"Meski sekarang keberuntungan kecil, jika dipupuk akan jadi besar.","harapan":"Tergantung usaha, akan terkabul.","gakumon":"Teruslah tekun sedikit demi sedikit.","renai":"Sikap peduli itu penting.","kerja":"Ketelitian akan dihargai.","sehat":"Biasa saja.","jalan":"Baik.","warna":"Hijau","angka":5,"benda":"Benih"},
+{"tier":"吉","title":"だるまの運","pesanJp":"失敗しても諦めなければ、最後には成功します。","artiId":"Meski gagal, jika tidak menyerah, akhirnya akan sukses.","harapan":"Butuh kesabaran.","gakumon":"Berlatih berulang akan meningkatkan kemampuan.","renai":"Perasaan setia membawa keberuntungan.","kerja":"Bertanggung jawablah sampai akhir.","sehat":"Jangan memaksakan diri.","jalan":"Jika membuat rencana akan membawa keberuntungan.","warna":"Merah","angka":8,"benda":"Boneka daruma"},
+{"tier":"吉","title":"竹の運","pesanJp":"柔軟な心を持つことで、困難を乗り越えられます。","artiId":"Dengan hati yang lentur, kesulitan bisa dilewati.","harapan":"Akan terkabul secara bertahap.","gakumon":"Memperkuat dasar itu penting.","renai":"Hargailah perasaan pasangan.","kerja":"Sikap fleksibel membawa ke kesuksesan.","sehat":"Baik.","jalan":"Tempat yang banyak alamnya membawa keberuntungan.","warna":"Hijau tua","angka":3,"benda":"Bambu"},
+{"tier":"吉","title":"扇の運","pesanJp":"新しい風があなたの人生に良い変化をもたらします。","artiId":"Angin baru akan membawa perubahan baik dalam hidupmu.","harapan":"Mencoba cara baru membawa keberuntungan.","gakumon":"Disarankan mencoba materi belajar baru.","renai":"Akan ada pertemuan baru.","kerja":"Cobalah tantangan pekerjaan baru.","sehat":"Olahraga membawa keberuntungan.","jalan":"Baik jika pergi ke tempat baru.","warna":"Putih","angka":7,"benda":"Kipas lipat"},
+{"tier":"吉","title":"金魚の運","pesanJp":"流れに逆らわず、チャンスが来たら動きましょう。","artiId":"Jangan melawan arus, bergeraklah saat peluang datang.","harapan":"Waktu yang tepat itu penting.","gakumon":"Buatlah waktu khusus untuk fokus belajar.","renai":"Membiarkan mengalir alami membawa keberuntungan.","kerja":"Jangan sampai melewatkan peluang.","sehat":"Jaga asupan cairan.","jalan":"Tempat dekat air membawa keberuntungan.","warna":"Merah","angka":2,"benda":"Ikan mas koki"},
+{"tier":"半吉","title":"雲間の光","pesanJp":"今はまだ運気が安定しませんが、少しずつ良くなります。","artiId":"Sekarang keberuntungan belum stabil, tapi akan membaik sedikit demi sedikit.","harapan":"Akan terkabul jika tidak terburu-buru.","gakumon":"Teruslah berusaha.","renai":"Memberi waktu itu penting.","kerja":"Bertindaklah dengan hati-hati.","sehat":"Perlu istirahat.","jalan":"Periksa kembali rencana perjalanan.","warna":"Abu-abu","angka":6,"benda":"Jimat awan"},
+{"tier":"半吉","title":"竹林の運","pesanJp":"今は準備の時期。焦らず力を蓄えましょう。","artiId":"Sekarang masa persiapan. Kumpulkan kekuatan tanpa terburu-buru.","harapan":"Hasil baik akan muncul kemudian.","gakumon":"Utamakan belajar dasar.","renai":"Dekatkan jarak secara perlahan.","kerja":"Persiapan itu penting.","sehat":"Jaga waktu tidur.","jalan":"Disarankan ke tempat dekat.","warna":"Hijau","angka":4,"benda":"Daun bambu"},
+{"tier":"半吉","title":"雨上がり","pesanJp":"悩みは少しずつ消えていきます。","artiId":"Kekhawatiran akan menghilang sedikit demi sedikit.","harapan":"Waktu akan menyelesaikannya.","gakumon":"Jika terus tanpa menyerah, akan berkembang.","renai":"Ada tanda kesalahpahaman akan terurai.","kerja":"Ada peluang menyelesaikan masalah.","sehat":"Jangan memaksakan diri.","jalan":"Perhatikan cuaca.","warna":"Biru","angka":5,"benda":"Payung"},
+{"tier":"半吉","title":"小舟の運","pesanJp":"大きな決断は急がず、慎重に進みましょう。","artiId":"Jangan terburu dalam keputusan besar, majulah dengan hati-hati.","harapan":"Akan maju sedikit demi sedikit.","gakumon":"Buatlah rencana belajar.","renai":"Jangan terburu-buru mendesak pasangan.","kerja":"Utamakan pengecekan ulang.","sehat":"Ambillah waktu istirahat.","jalan":"Keselamatan yang utama.","warna":"Biru tua","angka":2,"benda":"Perahu kecil"},
+{"tier":"半吉","title":"鈴の音","pesanJp":"小さなチャンスを見逃さないようにしましょう。","artiId":"Jangan sampai melewatkan peluang kecil.","harapan":"Akan berkembang dari tempat tak terduga.","gakumon":"Pengetahuan baru akan berguna.","renai":"Kontak/komunikasi jadi awal yang baik.","kerja":"Mengumpulkan informasi membawa keberuntungan.","sehat":"Biasa saja.","jalan":"Jangan lupa periksa kontak/komunikasi.","warna":"Emas","angka":9,"benda":"Lonceng"},
+{"tier":"末吉","title":"夕焼けの運","pesanJp":"今はまだ結果が見えませんが、最後には良い方向へ進みます。","artiId":"Hasilnya belum terlihat sekarang, tapi akhirnya akan menuju arah baik.","harapan":"Akan terkabul di kemudian hari.","gakumon":"Konsistensi itu penting.","renai":"Hubungan akan mendalam seiring waktu.","kerja":"Akan dihargai belakangan.","sehat":"Aturlah ritme hidup.","jalan":"Bagian akhir perjalanan membawa keberuntungan.","warna":"Jingga","angka":7,"benda":"Lukisan matahari terbenam"},
+{"tier":"末吉","title":"藤の運","pesanJp":"焦らず待つことで、良い結果がやってきます。","artiId":"Dengan menunggu tanpa terburu-buru, hasil baik akan datang.","harapan":"Tunggulah sebentar.","gakumon":"Hasil akan muncul di paruh akhir.","renai":"Akan berkembang perlahan.","kerja":"Peluang akan datang kemudian.","sehat":"Jangan memaksakan diri.","jalan":"Pilihlah waktu yang tepat.","warna":"Ungu","angka":4,"benda":"Bunga wisteria"},
+{"tier":"末吉","title":"月見の運","pesanJp":"今は静かに力を蓄える時期です。","artiId":"Sekarang masa mengumpulkan kekuatan dengan tenang.","harapan":"Akan terkabul kemudian.","gakumon":"Fokus sendirian membawa keberuntungan.","renai":"Bangunlah kepercayaan perlahan.","kerja":"Hargai masa persiapan.","sehat":"Utamakan tidur.","jalan":"Disarankan siang hari daripada malam.","warna":"Perak","angka":8,"benda":"Hiasan bulan"},
+{"tier":"末吉","title":"紅葉の運","pesanJp":"時間が経つほど、状況が良くなっていきます。","artiId":"Semakin waktu berlalu, keadaan akan semakin membaik.","harapan":"Kabar baik akan datang sekitar musim gugur.","gakumon":"Usaha akan membuahkan hasil.","renai":"Akan berkembang jadi hubungan yang mendalam.","kerja":"Pengalaman akan jadi kekuatan.","sehat":"Akan stabil secara bertahap.","jalan":"Tempat yang banyak alamnya membawa keberuntungan.","warna":"Merah","angka":6,"benda":"Daun momiji"},
+{"tier":"末吉","title":"朝霧の運","pesanJp":"今は先が見えなくても、やがて道が開けます。","artiId":"Meski sekarang belum terlihat arahnya, jalan akan terbuka nantinya.","harapan":"Menunggu itu penting.","gakumon":"Perkuat dasar tanpa terburu-buru.","renai":"Waktu akan berpihak padamu.","kerja":"Majulah dengan hati-hati.","sehat":"Hargai waktu istirahat.","jalan":"Periksa cuaca.","warna":"Putih","angka":3,"benda":"Bola kabut"},
+{"tier":"末小吉","title":"小さな花","pesanJp":"大きな幸運ではありませんが、小さな喜びが増えていきます。","artiId":"Bukan keberuntungan besar, tapi kebahagiaan kecil akan bertambah.","harapan":"Akan terkabul sedikit demi sedikit.","gakumon":"Akumulasi harian itu penting.","renai":"Hargai kebaikan kecil.","kerja":"Perlu usaha yang tekun.","sehat":"Biasa saja.","jalan":"Tempat dekat membawa keberuntungan.","warna":"Pink","angka":2,"benda":"Bunga kecil"},
+{"tier":"末小吉","title":"風の便り","pesanJp":"思いがけない知らせが幸運を運んできます。","artiId":"Kabar tak terduga akan membawa keberuntungan.","harapan":"Tunggulah kabar baik.","gakumon":"Informasi baru akan berguna.","renai":"Ada kemungkinan berkembang lewat kontak.","kerja":"Mengumpulkan informasi itu penting.","sehat":"Jangan memaksakan diri.","jalan":"Jangan lupa periksa kontak/komunikasi.","warna":"Biru muda","angka":5,"benda":"Surat"},
+{"tier":"末小吉","title":"蛍の運","pesanJp":"小さな光を大切にすれば、未来が明るくなります。","artiId":"Jika menghargai cahaya kecil, masa depan akan cerah.","harapan":"Butuh waktu, tapi ada kemungkinan.","gakumon":"Belajar fokus malam hari membawa keberuntungan.","renai":"Mengobrol di tempat tenang membawa keberuntungan.","kerja":"Kumpulkan hasil kecil sedikit demi sedikit.","sehat":"Jaga waktu tidur.","jalan":"Disarankan di tengah alam.","warna":"Kuning muda","angka":1,"benda":"Patung kunang-kunang"},
+{"tier":"末小吉","title":"朝顔の運","pesanJp":"毎日の努力が未来の幸運につながります。","artiId":"Usaha harian akan membawa ke keberuntungan masa depan.","harapan":"Akan terkabul jika konsisten.","gakumon":"Belajarlah sedikit setiap hari.","renai":"Jadi diri sendiri membawa keberuntungan.","kerja":"Jangan lupa ketelitian.","sehat":"Disarankan olahraga pagi.","jalan":"Berangkat pagi membawa keberuntungan.","warna":"Biru","angka":7,"benda":"Bunga morning glory"},
+{"tier":"末小吉","title":"小狐の運","pesanJp":"知恵を使えば、難しい問題も解決できます。","artiId":"Dengan menggunakan kecerdikan, masalah sulit pun bisa diselesaikan.","harapan":"Akan berkembang dengan berkreasi.","gakumon":"Kemampuan berpikir akan berkembang.","renai":"Pikirkanlah perasaan pasangan.","kerja":"Ide akan mendatangkan kesuksesan.","sehat":"Jangan memaksakan diri.","jalan":"Bepergian ke tempat asing membawa keberuntungan.","warna":"Oranye","angka":9,"benda":"Jimat rubah"},
+{"tier":"凶","title":"霧の運","pesanJp":"今は無理に進まず、状況を見極める時期です。","artiId":"Sekarang bukan waktunya memaksakan maju, ini masa mengamati keadaan.","harapan":"Jika terburu-buru bisa gagal.","gakumon":"Mulailah lagi dari dasar.","renai":"Waspada kesalahpahaman.","kerja":"Periksa dengan teliti.","sehat":"Ambillah istirahat.","jalan":"Hindari rencana yang memaksakan.","warna":"Abu-abu","angka":4,"benda":"Bola kabut"},
+{"tier":"凶","title":"逆風の運","pesanJp":"思い通りに進まない時期です。焦らず耐えましょう。","artiId":"Ini masa segala sesuatu tak berjalan sesuai rencana. Bertahanlah tanpa terburu-buru.","harapan":"Butuh waktu.","gakumon":"Waspada terhadap konsentrasi.","renai":"Jangan sampai terbawa emosi.","kerja":"Waspada terhadap kesalahan.","sehat":"Waspada kelelahan.","jalan":"Periksa keamanan.","warna":"Biru tua","angka":6,"benda":"Payung"},
+{"tier":"凶","title":"枯れ葉の運","pesanJp":"古い考えや習慣を手放すことで、運気が変わります。","artiId":"Dengan melepas pikiran/kebiasaan lama, keberuntungan akan berubah.","harapan":"Sekarang masanya menunggu.","gakumon":"Tinjau ulang caramu belajar.","renai":"Jangan terpaku pada masa lalu.","kerja":"Perbaikilah cara lama.","sehat":"Tinjau ulang gaya hidupmu.","jalan":"Berhati-hatilah.","warna":"Cokelat","angka":3,"benda":"Daun kering"},
+{"tier":"凶","title":"迷い道","pesanJp":"大きな決断は一度立ち止まって考えましょう。","artiId":"Untuk keputusan besar, berhentilah sejenak dan pikirkan.","harapan":"Sebaiknya jangan terburu-buru sekarang.","gakumon":"Susun ulang rencana belajarmu.","renai":"Waspada salah paham.","kerja":"Jangan terburu mengambil keputusan.","sehat":"Waspada kurang tidur.","jalan":"Periksa rute perjalanan.","warna":"Abu-abu","angka":5,"benda":"Kompas"},
+{"tier":"凶","title":"冬風の運","pesanJp":"今は耐える時期ですが、春は必ず訪れます。","artiId":"Sekarang masa bertahan, tapi musim semi pasti akan datang.","harapan":"Tidak akan langsung terkabul.","gakumon":"Tidak menyerah itu penting.","renai":"Perlu juga waktu berjarak untuk berpikir.","kerja":"Bertindaklah hati-hati.","sehat":"Jaga kondisi tubuh.","jalan":"Jangan memaksakan diri.","warna":"Biru muda","angka":2,"benda":"Syal"},
+{"tier":"小凶","title":"小雨の運","pesanJp":"小さな問題が起こるかもしれませんが、冷静なら乗り越えられます。","artiId":"Mungkin akan ada masalah kecil, tapi bisa dilewati jika tenang.","harapan":"Perlu usaha.","gakumon":"Waspada kesalahan ceroboh.","renai":"Waspada pilihan kata.","kerja":"Jangan lupa memeriksa ulang.","sehat":"Beristirahatlah.","jalan":"Menyiapkan payung membawa keberuntungan.","warna":"Abu-abu","angka":3,"benda":"Payung"},
+{"tier":"小凶","title":"割れた鈴","pesanJp":"小さな誤解に注意しましょう。素直なコミュニケーションが大切です。","artiId":"Waspada kesalahpahaman kecil. Komunikasi yang jujur itu penting.","harapan":"Jangan memendam sendirian.","gakumon":"Tanyakan hal yang tidak dimengerti.","renai":"Waspada kesalahpahaman.","kerja":"Jangan lupa melapor.","sehat":"Waspada stres.","jalan":"Waspada barang tertinggal.","warna":"Perak","angka":8,"benda":"Lonceng"},
+{"tier":"小凶","title":"迷い猫","pesanJp":"判断に迷うことがありそうです。信頼できる人に相談しましょう。","artiId":"Sepertinya akan ragu dalam mengambil keputusan. Konsultasilah pada orang yang dipercaya.","harapan":"Jangan memutuskan sendirian.","gakumon":"Berkonsultasi ke guru/teman membawa keberuntungan.","renai":"Dengarkanlah cerita pasangan.","kerja":"Kerja sama tim itu penting.","sehat":"Istirahatkan hati/pikiran.","jalan":"Bepergian bersama teman lebih baik daripada sendirian.","warna":"Kuning","angka":4,"benda":"Gantungan kucing"},
+{"tier":"小凶","title":"曇り空","pesanJp":"気持ちが落ち込みやすい時期ですが、無理に答えを出す必要はありません。","artiId":"Masa ini perasaan mudah down, tapi tak perlu memaksakan mencari jawaban.","harapan":"Tunggulah sebentar.","gakumon":"Belajarlah sambil beristirahat.","renai":"Jangan terburu-buru.","kerja":"Boleh menunda keputusan besar.","sehat":"Hargai waktu istirahat.","jalan":"Jangan memaksakan diri.","warna":"Putih","angka":7,"benda":"Jimat awan"},
+{"tier":"小凶","title":"風車の運","pesanJp":"状況が変わりやすい時期です。柔軟に対応しましょう。","artiId":"Masa ini keadaan mudah berubah. Bersikaplah fleksibel.","harapan":"Mungkin perlu mengubah rencana.","gakumon":"Mengubah cara belajar membawa keberuntungan.","renai":"Menyesuaikan diri dengan pasangan itu penting.","kerja":"Bersikaplah fleksibel.","sehat":"Waspada perubahan kondisi tubuh.","jalan":"Bersiaplah untuk perubahan jadwal.","warna":"Hijau","angka":1,"benda":"Kincir angin"},
+{"tier":"大凶","title":"暗闇の運","pesanJp":"今は無理に行動せず、力を蓄える時期です。夜明けは必ず訪れます。","artiId":"Sekarang jangan memaksakan bertindak, ini masa mengumpulkan kekuatan. Fajar pasti akan tiba.","harapan":"Sebaiknya jangan bergerak dulu.","gakumon":"Tinjau ulang dasar-dasarnya.","renai":"Hindari tindakan emosional.","kerja":"Tundalah keputusan besar.","sehat":"Perlu istirahat yang cukup.","jalan":"Hindari perjalanan yang memaksakan.","warna":"Hitam","angka":0,"benda":"Batu hitam"},
+{"tier":"大凶","title":"嵐の運","pesanJp":"大きな変化が起こりやすい時期です。慎重に行動しましょう。","artiId":"Masa ini rentan terjadi perubahan besar. Bertindaklah hati-hati.","harapan":"Menunggu itu penting sekarang.","gakumon":"Kerjakan satu-satu tanpa terburu-buru.","renai":"Waspada ucapan emosional.","kerja":"Hindari risiko besar.","sehat":"Jangan memaksakan diri.","jalan":"Tunda jika memungkinkan.","warna":"Abu-abu tua","angka":13,"benda":"Batu"},
+{"tier":"大凶","title":"枯れ木の運","pesanJp":"今は成長が見えない時期ですが、土台を作る大切な時間です。","artiId":"Sekarang masa pertumbuhan belum terlihat, tapi ini waktu penting membangun fondasi.","harapan":"Butuh waktu yang lama.","gakumon":"Mulailah lagi dari dasar.","renai":"Jangan terburu-buru.","kerja":"Jangan terburu mengejar hasil.","sehat":"Perbaikilah gaya hidup.","jalan":"Rencanakan dengan hati-hati.","warna":"Cokelat tua","angka":0,"benda":"Ranting kayu"},
+{"tier":"大凶","title":"黒雲の運","pesanJp":"悪い流れに感じても、冷静に行動すれば被害を小さくできます。","artiId":"Meski terasa berada di alur buruk, jika bertindak tenang kerugian bisa diperkecil.","harapan":"Tunggulah dulu.","gakumon":"Jangan memaksakan diri, fokus pada pengulangan materi.","renai":"Tunda dulu pembicaraan penting.","kerja":"Hati-hati dalam keputusan penting.","sehat":"Utamakan menjaga kondisi tubuh.","jalan":"Utamakan keselamatan.","warna":"Hitam","angka":4,"benda":"Payung hitam"},
+{"tier":"大凶","title":"夜明け前の運","pesanJp":"今は最も苦しい時期かもしれません。しかし、夜明け前が最も暗いものです。焦らず力を蓄えましょう。","artiId":"Sekarang mungkin masa tersulit. Tapi sebelum fajar adalah saat paling gelap. Kumpulkan kekuatan tanpa terburu-buru.","harapan":"Sekarang saatnya menunggu.","gakumon":"Jagalah dasar-dasarnya.","renai":"Pedulilah pada pasangan, jangan terbawa emosi.","kerja":"Tunda dulu tantangan besar.","sehat":"Utamakan istirahat jiwa dan raga.","jalan":"Hindari perjalanan yang memaksakan.","warna":"Hitam","angka":0,"benda":"Jimat matahari fajar"}
 ];
+/* Metadata per tingkat (10 tingkat, urutan sesuai daftar 50 omikuji):
+   warna tema kartu, bobot kemunculan (total 100), XP & koin (bisa
+   negatif utk tingkat sial — nilai koin/XP pemain tidak akan pernah
+   minus, sudah di-clamp di awardXPCoins), dan hanya 大吉 yg menjamin
+   kartu koleksi spesial. */
+const OMIKUJI_TIER_META = {
+  "大吉":   { weight: 5,  coins: 100, xp: 60, guaranteedCard: true,  color: "#ffb300", glow: "#ffe08a" },
+  "中吉":   { weight: 15, coins: 70,  xp: 40, guaranteedCard: false, color: "#00c07a", glow: "#7CFFDB" },
+  "小吉":   { weight: 20, coins: 50,  xp: 28, guaranteedCard: false, color: "#a3e635", glow: "#d9f99d" },
+  "吉":     { weight: 20, coins: 40,  xp: 22, guaranteedCard: false, color: "#38bdf8", glow: "#bae6fd" },
+  "半吉":   { weight: 15, coins: 25,  xp: 15, guaranteedCard: false, color: "#94a3b8", glow: "#e2e8f0" },
+  "末吉":   { weight: 10, coins: 15,  xp: 10, guaranteedCard: false, color: "#f59e0b", glow: "#fde68a" },
+  "末小吉": { weight: 8,  coins: 10,  xp: 8,  guaranteedCard: false, color: "#f472b6", glow: "#fbcfe8" },
+  "凶":     { weight: 4,  coins: -10, xp: 6,  guaranteedCard: false, color: "#6b7280", glow: "#9ca3af" },
+  "小凶":   { weight: 2,  coins: -15, xp: 5,  guaranteedCard: false, color: "#a13d3d", glow: "#dc9a9a" },
+  "大凶":   { weight: 1,  coins: -30, xp: 4,  guaranteedCard: false, color: "#dc2626", glow: "#450a0a" }
+};
 function omikujiKey(){ return `nafis_omikuji_${(student && student.nis) || "guest"}`; }
 function omikujiStreakKey(){ return `nafis_omikuji_streak_${(student && student.nis) || "guest"}`; }
 function omikujiHistKey(){ return `nafis_omikuji_hist_${(student && student.nis) || "guest"}`; }
@@ -2231,18 +2315,26 @@ function bumpOmikujiStreak(){
   localStorage.setItem(omikujiStreakKey(), JSON.stringify(streak));
   return streak;
 }
-function pushOmikujiHistory(tier){
+function pushOmikujiHistory(entry, meta){
   const hist = getOmikujiHistory();
-  hist.push({ kanji: tier.kanji, color: tier.color });
+  hist.push({ kanji: entry.tier, color: meta.color });
   while(hist.length > 7) hist.shift();
   localStorage.setItem(omikujiHistKey(), JSON.stringify(hist));
   return hist;
 }
-function drawOmikujiTier(){
-  const totalW = OMIKUJI_TIERS.reduce((s,t)=>s+t.weight, 0);
+/* Undian 2 tahap: pilih dulu TINGKAT-nya (berbobot, 大吉 paling langka,
+   大凶 paling langka juga), baru pilih 1 dari 5 varian omikuji di tingkat
+   itu secara acak — jadi tiap tarikan bisa dapat kartu yg beda meski
+   tingkatnya sama. */
+function drawOmikujiEntry(){
+  const tiers = Object.keys(OMIKUJI_TIER_META);
+  const totalW = tiers.reduce((s,t)=> s + OMIKUJI_TIER_META[t].weight, 0);
   let r = Math.random() * totalW;
-  for(const t of OMIKUJI_TIERS){ if(r < t.weight) return t; r -= t.weight; }
-  return OMIKUJI_TIERS[OMIKUJI_TIERS.length-1];
+  let pickedTier = tiers[tiers.length-1];
+  for(const t of tiers){ if(r < OMIKUJI_TIER_META[t].weight){ pickedTier = t; break; } r -= OMIKUJI_TIER_META[t].weight; }
+  const pool = OMIKUJI_DATA.filter(e => e.tier === pickedTier);
+  const entry = pool[Math.floor(Math.random()*pool.length)];
+  return { entry, meta: OMIKUJI_TIER_META[pickedTier] };
 }
 function renderOmikujiSlot(){
   const slot = $("omikujiSlot");
@@ -2267,6 +2359,19 @@ function renderOmikujiSlot(){
     $("omikujiCardBtn").addEventListener("click", openOmikuji);
   }
 }
+function omikujiForecastRows(entry){
+  const rows = [
+    ["💭", "Harapan", entry.harapan],
+    ["📚", "Akademik", entry.gakumon],
+    ["💕", "Asmara", entry.renai],
+    ["💼", "Pekerjaan", entry.kerja],
+    ["🩺", "Kesehatan", entry.sehat],
+    ["✈️", "Perjalanan", entry.jalan]
+  ];
+  return rows.map(([icon,label,text])=>
+    `<div class="os-frow"><span class="os-ficon">${icon}</span><span class="os-flabel">${label}</span><span class="os-ftext">${text}</span></div>`
+  ).join("");
+}
 function openOmikuji(){
   if(hasDrawnOmikujiToday()) return;
   const el = document.createElement("div");
@@ -2278,17 +2383,18 @@ function openOmikuji(){
     box.style.pointerEvents = "none";
     box.classList.add("omikuji-crack");
     localStorage.setItem(omikujiKey(), todayKey());
-    const tier = drawOmikujiTier();
+    const { entry, meta } = drawOmikujiEntry();
     const streak = bumpOmikujiStreak();
-    pushOmikujiHistory(tier);
+    pushOmikujiHistory(entry, meta);
     const streakBonus = (streak.count > 0 && streak.count % 7 === 0);
     const bonusCoins = streakBonus ? 50 : 0;
     const bonusXp = streakBonus ? 30 : 0;
+    const isBad = meta.coins < 0;
     setTimeout(()=>{
-      playSFX('correct');
-      awardXPCoins(tier.xp + bonusXp, tier.coins + bonusCoins);
+      playSFX(isBad ? 'wrong' : 'correct');
+      awardXPCoins(meta.xp + bonusXp, meta.coins + bonusCoins);
       let cardHtml = "";
-      if(tier.guaranteedCard){
+      if(meta.guaranteedCard){
         // 大吉 menjamin kartu langka acak dari pool yang tersedia
         const pool = (VOCAB && VOCAB.length) ? VOCAB : PATTERNS;
         if(pool && pool.length){
@@ -2300,23 +2406,30 @@ function openOmikuji(){
       const streakHtml = streakBonus
         ? `<div class="os-reward os-streak-bonus">🎉 Bonus ${streak.count} Hari Beruntun! +${bonusXp} XP &nbsp; +${bonusCoins} koin</div>`
         : (streak.count >= 2 ? `<div class="os-streaknote">🔥 Beruntun ${streak.count} hari — jangan putus, ya!</div>` : "");
+      const coinLine = meta.coins < 0
+        ? `⚠️ ${meta.xp} XP &nbsp; 🪙 ${meta.coins} koin`
+        : `✨ +${meta.xp} XP &nbsp; 🪙 +${meta.coins} koin`;
       el.innerHTML = `
-        <div class="omikuji-slip" style="--tier-color:${tier.color};">
-          <div class="os-fortune" style="color:${tier.color};text-shadow:0 0 18px ${tier.color}88;">${tier.kanji}</div>
-          <div class="os-sub">${tier.name}</div>
-          <div class="os-reward">✨ +${tier.xp} XP &nbsp; 🪙 +${tier.coins} koin</div>
+        <div class="omikuji-slip ${isBad ? 'is-bad' : ''}" style="--tier-color:${meta.color};--tier-glow:${meta.glow};">
+          <div class="os-fortune" style="color:${meta.color};text-shadow:0 0 18px ${meta.color}88;">${entry.tier}</div>
+          <div class="os-title">${entry.title}</div>
+          <div class="os-pesan-jp">${entry.pesanJp}</div>
+          <div class="os-msg">${entry.artiId}</div>
+          <div class="os-forecasts">${omikujiForecastRows(entry)}</div>
+          <div class="os-lucky">
+            <span>🎨 ${entry.warna}</span><span>🔢 ${entry.angka}</span><span>🎁 ${entry.benda}</span>
+          </div>
+          <div class="os-reward ${isBad?'os-reward-bad':''}">${coinLine}</div>
           ${cardHtml}
           ${streakHtml}
-          <div class="os-msg">"${tier.msg}"</div>
           <button class="omikuji-close" id="omikujiCloseBtn">Tutup</button>
         </div>
       `;
-      spawnConfetti(window.innerWidth/2, window.innerHeight/2, tier.kanji==='大吉' ? 55 : (streakBonus ? 45 : 25));
+      spawnConfetti(window.innerWidth/2, window.innerHeight/2, entry.tier==='大吉' ? 55 : (streakBonus ? 45 : (isBad ? 0 : 25)));
       el.querySelector("#omikujiCloseBtn").addEventListener("click", ()=>{ el.remove(); renderOmikujiSlot(); });
     }, 420);
   });
 }
-
 /* ============================================================
    FUSI KARTU — gabungkan 3 kartu duplikat jadi satu versi
    berkilau (Kirakira), dgn bonus koin. Dibuka dari Album.
