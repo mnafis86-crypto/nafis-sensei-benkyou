@@ -1241,6 +1241,7 @@
      LANDING PAGE — Ruang Arcade Kabinet Neon
      ============================================================ -->
 <audio id="bgmAudio" src="gyutto.mp3" loop preload="auto"></audio>
+<audio id="songPreviewAudio" preload="none"></audio>
 <div id="landing">
   <div class="floor-glow"></div>
   <div class="arcade-stage">
@@ -1795,10 +1796,13 @@ function getPlayerProfile(){
       // migrasi data lama yang belum punya field avatar
       if(!p.avatar) p.avatar = "pelajar";
       if(!p.ownedAvatars) p.ownedAvatars = ["pelajar"];
+      // migrasi data lama yang belum punya field lagu (BGM bisa diganti)
+      if(!p.song) p.song = "gyutto";
+      if(!p.ownedSongs) p.ownedSongs = ["gyutto"];
       return p;
     }
   }catch(e){}
-  return { xp: 0, coins: 0, theme: "default", ownedThemes: ["default"], avatar: "pelajar", ownedAvatars: ["pelajar"], lastPlayDate: null, streakDays: 0 };
+  return { xp: 0, coins: 0, theme: "default", ownedThemes: ["default"], avatar: "pelajar", ownedAvatars: ["pelajar"], song: "gyutto", ownedSongs: ["gyutto"], lastPlayDate: null, streakDays: 0 };
 }
 function savePlayerProfile(p){ localStorage.setItem(playerProfileKey(), JSON.stringify(p)); }
 
@@ -1864,6 +1868,32 @@ function applyTheme(themeId){
   document.documentElement.style.setProperty("--cyan", t.colors.cyan);
   document.documentElement.style.setProperty("--sakura", t.colors.sakura);
   document.documentElement.style.setProperty("--bg", t.colors.bg || "#0A0A14");
+}
+
+/* Lagu musik latar (BGM) yang bisa dibeli pakai koin di Toko, biar
+   siswa bisa ganti suasana musik sambil belajar. "Gyutto" tetap jadi
+   lagu default gratis; lagu lain seharga 🪙 800 koin. */
+const SONG_SHOP = [
+  { id: "gyutto", name: "Gyutto (Default)", price: 0, file: "gyutto.mp3" },
+  { id: "fuyu",   name: "Fuyu no Purezento (Instrumental)", price: 800, file: "fuyu_no_purezento.mp3" },
+  { id: "koiiro", name: "Koiiro 恋色 (Piano Cover)", price: 800, file: "koiiro_piano.mp3" }
+];
+/* Ganti file lagu yang diputar di elemen <audio id="bgmAudio">. Kalau
+   musik sedang main, lagu baru langsung lanjut main (tanpa perlu
+   menekan tombol lain); kalau sedang mati/silent, cukup ganti sumbernya
+   saja supaya siap diputar saat startBGM() dipanggil berikutnya. */
+function applySong(songId){
+  const s = SONG_SHOP.find(x=>x.id===songId) || SONG_SHOP[0];
+  const audio = bgmEl();
+  if(!audio) return;
+  if(audio.getAttribute("src") === s.file) return; // sudah lagu yang sama, tidak perlu reload
+  const wasPlaying = bgmPlaying && !audio.paused;
+  audio.src = s.file;
+  if(wasPlaying){
+    audio.volume = 1;
+    const p = audio.play();
+    if(p && typeof p.catch === 'function') p.catch(()=>{});
+  }
 }
 
 /* Tambah XP+koin, tampilkan toast, dan cek level-up (banner). Dipanggil
@@ -1932,6 +1962,7 @@ function renderPlayerBar(){
   const profile = getPlayerProfile();
   const info = levelInfoFromXP(profile.xp);
   applyTheme(profile.theme || "default");
+  applySong(profile.song || "gyutto");
   bar.innerHTML = `
     <div class="pb-avatar-wrap" id="pbAvatarWrap" title="Buka Toko">
       <div class="pb-avatar">${currentAvatarThumb(40)}</div>
@@ -1944,10 +1975,12 @@ function renderPlayerBar(){
     </div>
     <div class="pb-coins">🪙 ${profile.coins}</div>
     <button class="pb-shopbtn" id="openAlbumBtn" style="border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,.08);">🃏</button>
+    <button class="pb-shopbtn" id="openSongShopBtn" title="Beli/Ganti Lagu">🎵</button>
     <button class="pb-shopbtn" id="openShopBtn">🏪</button>
   `;
   $("openShopBtn").addEventListener("click", ()=>openShop("theme"));
   $("openAlbumBtn").addEventListener("click", openAlbum);
+  $("openSongShopBtn").addEventListener("click", ()=>openShop("song"));
   $("pbAvatarWrap").addEventListener("click", ()=>openShop("avatar"));
 }
 
@@ -1963,6 +1996,7 @@ function openShop(initialTab){
       <div class="shop-tabs">
         <button class="shop-tab ${initialTab==='theme'?'active':''}" data-tab="theme">🎨 Tema</button>
         <button class="shop-tab ${initialTab==='avatar'?'active':''}" data-tab="avatar">🧑‍🎤 Avatar</button>
+        <button class="shop-tab ${initialTab==='song'?'active':''}" data-tab="song">🎵 Lagu</button>
       </div>
 
       <div class="shop-pane ${initialTab==='theme'?'active':''}" id="paneTheme">
@@ -2008,6 +2042,21 @@ function openShop(initialTab){
         </div>
       </div>
 
+      <div class="shop-pane ${initialTab==='song'?'active':''}" id="paneSong">
+        ${SONG_SHOP.map(s=>{
+          const owned = profile.ownedSongs.includes(s.id);
+          const active = profile.song === s.id;
+          return `<div class="shop-item">
+            <div class="si-swatch" style="background:rgba(0,229,255,.12);display:flex;align-items:center;justify-content:center;font-size:16px;">🎵</div>
+            <div class="si-mid"><div class="si-name">${s.name}</div><div class="si-price">${s.price===0?'Gratis':'🪙 '+s.price}</div></div>
+            <button data-kind="song-preview" data-file="${s.file}" title="Dengar cuplikan" style="flex-shrink:0;padding:7px 9px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--sub);font-size:12px;">▶</button>
+            <button data-kind="song" data-id="${s.id}" data-price="${s.price}" class="${active?'owned':''}" ${active?'disabled':''}>
+              ${active ? '✓ Dipakai' : (owned ? 'Pakai' : 'Beli')}
+            </button>
+          </div>`;
+        }).join("")}
+      </div>
+
       <button class="shop-close" id="shopCloseBtn">Tutup</button>
     </div>
   `;
@@ -2018,7 +2067,8 @@ function openShop(initialTab){
       el.querySelectorAll(".shop-tab").forEach(b=>b.classList.remove("active"));
       el.querySelectorAll(".shop-pane").forEach(p=>p.classList.remove("active"));
       tabBtn.classList.add("active");
-      el.querySelector(tabBtn.dataset.tab==='theme' ? "#paneTheme" : "#paneAvatar").classList.add("active");
+      const paneMap = { theme: "#paneTheme", avatar: "#paneAvatar", song: "#paneSong" };
+      el.querySelector(paneMap[tabBtn.dataset.tab]).classList.add("active");
     });
   });
 
@@ -2069,7 +2119,54 @@ function openShop(initialTab){
     });
   });
 
-  el.querySelector("#shopCloseBtn").addEventListener("click", ()=> el.remove());
+  // beli/pakai LAGU
+  el.querySelectorAll('button[data-kind="song"]').forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const id = btn.dataset.id, price = parseInt(btn.dataset.price);
+      const p = getPlayerProfile();
+      if(!p.ownedSongs.includes(id)){
+        if(p.coins < price){ showGameToast("🪙 Koin tidak cukup!"); return; }
+        p.coins -= price;
+        p.ownedSongs.push(id);
+        spawnConfetti(window.innerWidth/2, window.innerHeight/2, 24);
+      }
+      p.song = id;
+      savePlayerProfile(p);
+      applySong(id);
+      el.remove();
+      renderPlayerBar();
+      const s = SONG_SHOP.find(x=>x.id===id);
+      showGameToast("🎵 Lagu \""+s.name+"\" dipakai!");
+    });
+  });
+
+  // pratinjau LAGU — putar 8 detik cuplikan lewat elemen audio terpisah,
+  // tidak mengganggu musik latar (bgmAudio) yang sedang berjalan.
+  el.querySelectorAll('button[data-kind="song-preview"]').forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const preview = document.getElementById("songPreviewAudio");
+      if(!preview) return;
+      const file = btn.dataset.file;
+      const isSameAndPlaying = preview.getAttribute("src") === file && !preview.paused;
+      preview.pause();
+      el.querySelectorAll('button[data-kind="song-preview"]').forEach(b=> b.textContent = "▶");
+      if(isSameAndPlaying) return; // klik lagi utk stop
+      preview.src = file;
+      preview.currentTime = 0;
+      preview.volume = 0.9;
+      const pr = preview.play();
+      if(pr && typeof pr.catch === 'function') pr.catch(()=>{});
+      btn.textContent = "⏸";
+      clearTimeout(preview._previewTimer);
+      preview._previewTimer = setTimeout(()=>{ preview.pause(); btn.textContent = "▶"; }, 8000);
+    });
+  });
+
+  el.querySelector("#shopCloseBtn").addEventListener("click", ()=>{
+    const preview = document.getElementById("songPreviewAudio");
+    if(preview) preview.pause();
+    el.remove();
+  });
 }
 
 /* ============================================================
