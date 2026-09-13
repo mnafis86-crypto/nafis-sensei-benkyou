@@ -1987,6 +1987,12 @@ function renderPlayerBar(){
 function openShop(initialTab){
   initialTab = initialTab || "theme";
   const profile = getPlayerProfile();
+  // Musik latar (bgmAudio) dijeda selagi Toko terbuka, supaya tidak
+  // tabrakan / dobel suara dengan cuplikan pratinjau lagu. Statusnya
+  // disimpan di sini agar bisa dilanjutkan lagi begitu Toko ditutup.
+  const bgm = bgmEl();
+  const bgmWasPlaying = !!(bgmPlaying && bgm && !bgm.paused);
+  if(bgm) bgm.pause();
   const el = document.createElement("div");
   el.className = "shop-overlay";
   el.innerHTML = `
@@ -2085,7 +2091,7 @@ function openShop(initialTab){
       p.theme = id;
       savePlayerProfile(p);
       applyTheme(id);
-      el.remove();
+      closeShop();
       renderPlayerBar();
       showGameToast("🎨 Tema diterapkan!");
     });
@@ -2132,41 +2138,67 @@ function openShop(initialTab){
       }
       p.song = id;
       savePlayerProfile(p);
+      // Hentikan dulu cuplikan pratinjau (kalau ada) supaya tidak dobel
+      // dengan musik latar yang akan dilanjutkan saat Toko ditutup.
+      const previewEl = document.getElementById("songPreviewAudio");
+      if(previewEl) previewEl.pause();
       applySong(id);
-      el.remove();
+      closeShop();
       renderPlayerBar();
       const s = SONG_SHOP.find(x=>x.id===id);
       showGameToast("🎵 Lagu \""+s.name+"\" dipakai!");
     });
   });
 
-  // pratinjau LAGU — putar 8 detik cuplikan lewat elemen audio terpisah,
-  // tidak mengganggu musik latar (bgmAudio) yang sedang berjalan.
+  // pratinjau LAGU — putar cuplikan lewat elemen audio terpisah supaya
+  // tidak bentrok dengan objek bgmAudio (yang sudah dijeda selama Toko
+  // terbuka). Ada penanganan error supaya kalau file lagu belum ada /
+  // salah nama di server, siswa dapat pesan yang jelas, bukan diam saja.
   el.querySelectorAll('button[data-kind="song-preview"]').forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const preview = document.getElementById("songPreviewAudio");
       if(!preview) return;
       const file = btn.dataset.file;
-      const isSameAndPlaying = preview.getAttribute("src") === file && !preview.paused;
+      const isSameAndPlaying = preview.dataset.currentFile === file && !preview.paused;
       preview.pause();
+      clearTimeout(preview._previewTimer);
       el.querySelectorAll('button[data-kind="song-preview"]').forEach(b=> b.textContent = "▶");
       if(isSameAndPlaying) return; // klik lagi utk stop
+      preview.onerror = null;
+      preview.onerror = ()=>{
+        btn.textContent = "▶";
+        showGameToast("⚠️ Gagal memutar \""+file+"\" — pastikan file lagu sudah diupload di folder yang sama");
+      };
+      preview.dataset.currentFile = file;
       preview.src = file;
       preview.currentTime = 0;
       preview.volume = 0.9;
       const pr = preview.play();
-      if(pr && typeof pr.catch === 'function') pr.catch(()=>{});
+      if(pr && typeof pr.catch === 'function'){
+        pr.catch(()=>{
+          btn.textContent = "▶";
+          showGameToast("⚠️ Gagal memutar \""+file+"\" — pastikan file lagu sudah diupload di folder yang sama");
+        });
+      }
       btn.textContent = "⏸";
-      clearTimeout(preview._previewTimer);
       preview._previewTimer = setTimeout(()=>{ preview.pause(); btn.textContent = "▶"; }, 8000);
     });
   });
 
-  el.querySelector("#shopCloseBtn").addEventListener("click", ()=>{
+  // Tutup Toko: hentikan pratinjau (kalau masih main) & lanjutkan lagi
+  // musik latar jika sebelumnya memang sedang menyala.
+  function closeShop(){
     const preview = document.getElementById("songPreviewAudio");
-    if(preview) preview.pause();
+    if(preview){ preview.pause(); clearTimeout(preview._previewTimer); }
     el.remove();
-  });
+    if(bgmWasPlaying && bgm){
+      bgm.volume = 1;
+      const p = bgm.play();
+      if(p && typeof p.catch === 'function') p.catch(()=>{});
+      bgmPlaying = true;
+    }
+  }
+  el.querySelector("#shopCloseBtn").addEventListener("click", closeShop);
 }
 
 /* ============================================================
