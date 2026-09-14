@@ -3052,8 +3052,12 @@ function irodoriResultLabel(){
   if(setupScope === 'irodori2') return 'Irodori Shokyu 2';
   return 'Irodori (Shokyu 1 & 2)';
 }
+const JFT_SCOPE_LABELS = {
+  jft1:'Paket 1', jft2:'Paket 2', jft3:'Paket 3',
+  jft4:'Paket 4', jft5:'Paket 5', jft6:'Paket 6', jft7:'Paket 7'
+};
 function jftResultLabel(){
-  return setupScope === 'jft2' ? 'SOAL JFT 2' : 'SOAL JFT 1';
+  return JFT_SCOPE_LABELS[setupScope] || 'Paket 1';
 }
 function poolFor(scope, typeMode){
   if(typeMode === 'irodori'){
@@ -3062,7 +3066,8 @@ function poolFor(scope, typeMode){
     return IRODORI_SHOKYU1_TEST.concat(IRODORI_SHOKYU2_TEST);
   }
   if(typeMode === 'jft'){
-    return scope === 'jft2' ? JFT_SOAL_2 : JFT_SOAL_1;
+    const JFT_POOLS = { jft1:JFT_SOAL_1, jft2:JFT_SOAL_2, jft3:JFT_SOAL_3, jft4:JFT_SOAL_4, jft5:JFT_SOAL_5, jft6:JFT_SOAL_6, jft7:JFT_SOAL_7 };
+    return JFT_POOLS[scope] || JFT_SOAL_1;
   }
   const src = typeMode === 'bunpo' ? PATTERNS : (typeMode === 'dokkai' ? DOKKAI : (typeMode === 'jlpttest' ? JLPT_TEST : VOCAB));
   return src.filter(p=>matchesBook(p, scope));
@@ -3417,8 +3422,13 @@ function renderStart(){
             <button data-v="n1" class="lvl-scope-btn">N1</button>
             <button data-v="irodori1" class="irodori-scope-btn" style="display:none;">Irodori Shokyu 1</button>
             <button data-v="irodori2" class="irodori-scope-btn" style="display:none;">Irodori Shokyu 2</button>
-            <button data-v="jft1" class="jft-scope-btn" style="display:none;">SOAL JFT 1</button>
-            <button data-v="jft2" class="jft-scope-btn" style="display:none;">SOAL JFT 2</button>
+            <button data-v="jft1" class="jft-scope-btn" style="display:none;">Paket 1</button>
+            <button data-v="jft2" class="jft-scope-btn" style="display:none;">Paket 2</button>
+            <button data-v="jft3" class="jft-scope-btn" style="display:none;">Paket 3</button>
+            <button data-v="jft4" class="jft-scope-btn" style="display:none;">Paket 4</button>
+            <button data-v="jft5" class="jft-scope-btn" style="display:none;">Paket 5</button>
+            <button data-v="jft6" class="jft-scope-btn" style="display:none;">Paket 6</button>
+            <button data-v="jft7" class="jft-scope-btn" style="display:none;">Paket 7</button>
           </div>
         </div>
         <div class="setup-box" id="countBox">
@@ -3454,7 +3464,7 @@ function renderStart(){
       const vpLink = $("voicePickerLink");
       if(vpLink) vpLink.style.display = (setupType === 'listening') ? '' : 'none';
       // Irodori pakai cakupan "Shokyu 1/Shokyu 2" sendiri, bukan level N5-N1.
-      // Tryout JFT juga pakai cakupan sendiri: "SOAL JFT 1" / "SOAL JFT 2".
+      // Tryout JFT juga pakai cakupan sendiri: "Paket 1" s/d "Paket 7".
       const scopeBox = $("scopeBox");
       if(setupType === 'irodori'){
         document.querySelectorAll(".lvl-scope-btn").forEach(x=> x.style.display = 'none');
@@ -3470,8 +3480,8 @@ function renderStart(){
         document.querySelectorAll(".lvl-scope-btn").forEach(x=> x.style.display = 'none');
         document.querySelectorAll(".irodori-scope-btn").forEach(x=> x.style.display = 'none');
         document.querySelectorAll(".jft-scope-btn").forEach(x=> x.style.display = '');
-        // default ke SOAL JFT 1 kalau scope sekarang bukan salah satu paket JFT
-        if(setupScope !== 'jft1' && setupScope !== 'jft2'){
+        // default ke Paket 1 kalau scope sekarang bukan salah satu paket JFT
+        if(!setupScope.startsWith('jft')){
           setupScope = 'jft1';
           document.querySelectorAll("#scopeRow button").forEach(x=>x.classList.toggle("active", x.dataset.v==='jft1'));
         }
@@ -3483,7 +3493,7 @@ function renderStart(){
         document.querySelectorAll(".lvl-scope-btn").forEach(x=> x.style.display = '');
         document.querySelectorAll(".irodori-scope-btn").forEach(x=> x.style.display = 'none');
         document.querySelectorAll(".jft-scope-btn").forEach(x=> x.style.display = 'none');
-        if(setupScope === 'irodori1' || setupScope === 'irodori2' || setupScope === 'jft1' || setupScope === 'jft2'){
+        if(setupScope === 'irodori1' || setupScope === 'irodori2' || setupScope.startsWith('jft')){
           setupScope = 'all';
           document.querySelectorAll("#scopeRow button").forEach(x=>x.classList.toggle("active", x.dataset.v==='all'));
         }
