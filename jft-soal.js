@@ -10,6 +10,8 @@
    - JFT_SOAL_3  <- "Simulasi JFT A2 Paket 1"       (50 soal)
    - JFT_SOAL_4  <- "Simulasi JFT A2 Paket 3"       (50 soal)
    - JFT_SOAL_5  <- "Simulasi JFT A2 Paket 16"      (50 soal)
+   - JFT_SOAL_6  <- "Simulasi JFT A2 Paket 17"      (50 soal)
+   - JFT_SOAL_7  <- "Simulasi JFT A2 Paket 18"      (50 soal)
 
    CATATAN PENTING soal No.36-40 di "LATIHAN SOAL JFT 24" SENGAJA
    TIDAK dimasukkan: soal-soal itu adalah bagian mendengarkan (ada
@@ -103,7 +105,7 @@ const JFT_SOAL_2 = [
 ];
 
 /* ============================================================
-   JFT_SOAL_3, 4, 5 — dari 3 paket "Simulasi JFT A2" (50 soal/paket,
+   JFT_SOAL_3, 4, 5, 6, 7 — dari 5 paket "Simulasi JFT A2" (50 soal/paket,
    struktur: 文字・語彙 15 soal, 文法 20 soal, 読解 15 soal).
    Level soal ini setara A2 (kurang lebih N4), diberi tag level:'N4'.
 
@@ -282,4 +284,114 @@ const JFT_SOAL_5 = [
   { level:'N4', section:'SOAL JFT 5 — Dokkai', qText:'48. （同じ文章の再掲）「駅から 徒歩5分の ところに コンビニが あります。24時間 営業です。」<br>このコンビニは いつ 開いていますか。', options:['朝だけ','昼だけ','夜だけ','24時間'], correctAns:'24時間' },
   { level:'N4', section:'SOAL JFT 5 — Dokkai', qText:'49. （同じ文章の再掲）「パーティーは 土曜日の 午後3時から 始まります。場所は 市民ホールです。」<br>パーティーは どこで ありますか。', options:['学校','市民ホール','公園','駅前'], correctAns:'市民ホール' },
   { level:'N4', section:'SOAL JFT 5 — Dokkai', qText:'50. （同じ文章の再掲）「このくすりは 食後に 2錠 飲んでください。1日3回まで。」<br>このくすりは 1日 最大 何錠 飲めますか。', options:['2錠','4錠','6錠','8錠'], correctAns:'6錠' }
+];
+
+const JFT_SOAL_6 = [
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'1. つぎのことばの よみかたを えらんでください。「家族」', options:['かぞく','かそく','いえぞく','いえそく'], correctAns:'かぞく' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'2. つぎのことばの よみかたを えらんでください。「旅行」', options:['りょこう','たびこう','りょかん','たびかん'], correctAns:'りょこう' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'3. つぎのことばの よみかたを えらんでください。「温泉」', options:['おんせん','あつせん','おんえん','あつえん'], correctAns:'おんせん' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'4. つぎのことばの よみかたを えらんでください。「空気」', options:['くうき','そらき','くき','そらけ'], correctAns:'くうき' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'5. つぎのことばの よみかたを えらんでください。「海外」', options:['かいがい','うみがい','かいそと','うみそと'], correctAns:'かいがい' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'6. つぎのことばの よみかたを えらんでください。「朝食」', options:['ちょうしょく','あさしょく','ちょうしき','あさしき'], correctAns:'ちょうしょく' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'7. つぎのことばの よみかたを えらんでください。「昼食」', options:['ちゅうしょく','ひるしょく','ちゅうしき','ひるしき'], correctAns:'ちゅうしょく' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'8. つぎのことばの よみかたを えらんでください。「夕食」', options:['ゆうしょく','よるしょく','ゆうしき','よるしき'], correctAns:'ゆうしょく' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'9. つぎのことばの よみかたを えらんでください。「病気」', options:['びょうき','びょうけ','やまいき','やまいけ'], correctAns:'びょうき' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'10. つぎのことばの よみかたを えらんでください。「薬」', options:['くすり','くすれ','やく','やくり'], correctAns:'くすり' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'11. つぎのことばの よみかたを えらんでください。「医者」', options:['いしゃ','いじゃ','いしゃい','いじゃい'], correctAns:'いしゃ' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'12. つぎのことばの よみかたを えらんでください。「看護師」', options:['かんごし','かんごじ','かんごさ','かんござ'], correctAns:'かんごし' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'13. つぎのことばの よみかたを えらんでください。「郵便局」', options:['ゆうびんきょく','ゆうびんく','ゆびんきょく','ゆびんく'], correctAns:'ゆうびんきょく' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'14. つぎのことばの よみかたを えらんでください。「交番」', options:['こうばん','こうはん','こばん','こはん'], correctAns:'こうばん' },
+  { level:'N4', section:'SOAL JFT 6 — Moji/Goi', qText:'15. つぎのことばの よみかたを えらんでください。「消防署」', options:['しょうぼうしょ','しょうぼうじょ','しょぼうしょ','しょぼうじょ'], correctAns:'しょうぼうしょ' },
+
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'16. （　）に なにを いれますか。毎日 自転車（　）会社へ 行きます。', options:['で','を','に','が'], correctAns:'で' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'17. （　）に なにを いれますか。ここ（　）たばこを 吸わないでください。', options:['では','には','でが','にが'], correctAns:'では' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'18. （　）に なにを いれますか。彼に 電話（　）みましたが、出ませんでした。', options:['して','に','で','を'], correctAns:'して' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'19. （　）に なにを いれますか。子供が 庭で 遊んで（　）。', options:['います','あります','できます','なります'], correctAns:'います' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'20. （　）に なにを いれますか。電車（　）乗って、3つ目で降ります。', options:['に','で','を','が'], correctAns:'に' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'21. （　）に なにを いれますか。もっと ゆっくり 話して（　）。', options:['ください','います','あります','なります'], correctAns:'ください' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'22. （　）に なにを いれますか。ここ（　）入らないでください。', options:['に','を','が','は'], correctAns:'に' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'23. （　）に なにを いれますか。もし 雨（　）ふったら、中止です。', options:['が','に','を','で'], correctAns:'が' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'24. （　）に なにを いれますか。彼女は 歌（　）上手です。', options:['が','を','に','で'], correctAns:'が' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'25. （　）に なにを いれますか。この 映画は 見た（　）があります。', options:['こと','もの','ほう','とき'], correctAns:'こと' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'26. （　）に なにを いれますか。駅まで 歩いて（　）分かかります。', options:['十','五','三','二'], correctAns:'五' }, // AMBIGU: semua pilihan valid tanpa konteks tambahan lain di lembar asli
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'27. （　）に なにを いれますか。明日（　）晴れれば、ピクニックに 行きます。', options:['が','に','で','を'], correctAns:'が' }, // AMBIGU: semua pilihan valid tanpa konteks tambahan lain di lembar asli
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'28. （　）に なにを いれますか。この 問題は 難しすぎ（　）わかりません。', options:['て','に','で','が'], correctAns:'て' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'29. （　）に なにを いれますか。彼は まだ 来て（　）。', options:['いません','あります','なります','できます'], correctAns:'いません' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'30. （　）に なにを いれますか。ご飯を 食べてから（　）出かけます。', options:['、','で','に','が'], correctAns:'、' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'31. （　）に なにを いれますか。もっと 早く 来れ（　）、間に合いました。', options:['ば','たら','ても','なら'], correctAns:'ば' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'32. （　）に なにを いれますか。日本語が 話せる（　）に なりたいです。', options:['よう','こと','もの','ほう'], correctAns:'よう' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'33. （　）に なにを いれますか。宿題を し（　）から、遊びます。', options:['て','た','で','に'], correctAns:'て' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'34. （　）に なにを いれますか。部屋を きれい（　）してください。', options:['に','が','を','は'], correctAns:'に' },
+  { level:'N4', section:'SOAL JFT 6 — Bunpo', qText:'35. （　）に なにを いれますか。この バスは 駅（　）通ります。', options:['を','で','に','が'], correctAns:'を' },
+
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'36. 「このスーパーは 月曜から 土曜まで 開いています。日曜日は 休みです。」<br>このスーパーは いつ 休みですか。', options:['月曜','土曜','日曜','毎日'], correctAns:'日曜' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'37. 「駅から 徒歩5分の ところに コンビニが あります。24時間 営業です。」<br>このコンビニは いつ 開いていますか。', options:['朝だけ','昼だけ','夜だけ','24時間'], correctAns:'24時間' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'38. 「パーティーは 土曜日の 午後3時から 始まります。場所は 市民ホールです。」<br>パーティーは どこで ありますか。', options:['学校','市民ホール','公園','駅前'], correctAns:'市民ホール' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'39. 「このくすりは 食後に 2錠 飲んでください。1日3回まで。」<br>このくすりは 1日 最大 何錠 飲めますか。', options:['2錠','4錠','6錠','8錠'], correctAns:'6錠' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'40. 「わたしの 趣味は 料理です。特に 和食が 好きで、毎週 新しい 料理を 作ります。」<br>この人の 趣味は 何ですか。', options:['料理','音楽','スポーツ','旅行'], correctAns:'料理' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'41. （同じ文章の再掲）「このスーパーは 月曜から 土曜まで 開いています。日曜日は 休みです。」<br>このスーパーは いつ 休みですか。', options:['月曜','土曜','日曜','毎日'], correctAns:'日曜' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'42. （同じ文章の再掲）「駅から 徒歩5分の ところに コンビニが あります。24時間 営業です。」<br>このコンビニは いつ 開いていますか。', options:['朝だけ','昼だけ','夜だけ','24時間'], correctAns:'24時間' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'43. （同じ文章の再掲）「パーティーは 土曜日の 午後3時から 始まります。場所は 市民ホールです。」<br>パーティーは どこで ありますか。', options:['学校','市民ホール','公園','駅前'], correctAns:'市民ホール' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'44. （同じ文章の再掲）「このくすりは 食後に 2錠 飲んでください。1日3回まで。」<br>このくすりは 1日 最大 何錠 飲めますか。', options:['2錠','4錠','6錠','8錠'], correctAns:'6錠' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'45. （同じ文章の再掲）「わたしの 趣味は 料理です。特に 和食が 好きで、毎週 新しい 料理を 作ります。」<br>この人の 趣味は 何ですか。', options:['料理','音楽','スポーツ','旅行'], correctAns:'料理' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'46. （同じ文章の再掲）「このスーパーは 月曜から 土曜まで 開いています。日曜日は 休みです。」<br>このスーパーは いつ 休みですか。', options:['月曜','土曜','日曜','毎日'], correctAns:'日曜' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'47. （同じ文章の再掲）「駅から 徒歩5分の ところに コンビニが あります。24時間 営業です。」<br>このコンビニは いつ 開いていますか。', options:['朝だけ','昼だけ','夜だけ','24時間'], correctAns:'24時間' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'48. （同じ文章の再掲）「パーティーは 土曜日の 午後3時から 始まります。場所は 市民ホールです。」<br>パーティーは どこで ありますか。', options:['学校','市民ホール','公園','駅前'], correctAns:'市民ホール' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'49. （同じ文章の再掲）「このくすりは 食後に 2錠 飲んでください。1日3回まで。」<br>このくすりは 1日 最大 何錠 飲めますか。', options:['2錠','4錠','6錠','8錠'], correctAns:'6錠' },
+  { level:'N4', section:'SOAL JFT 6 — Dokkai', qText:'50. （同じ文章の再掲）「わたしの 趣味は 料理です。特に 和食が 好きで、毎週 新しい 料理を 作ります。」<br>この人の 趣味は 何ですか。', options:['料理','音楽','スポーツ','旅行'], correctAns:'料理' }
+];
+
+const JFT_SOAL_7 = [
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'1. つぎのことばの よみかたを えらんでください。「旅行」', options:['りょこう','たびこう','りょかん','たびかん'], correctAns:'りょこう' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'2. つぎのことばの よみかたを えらんでください。「温泉」', options:['おんせん','あつせん','おんえん','あつえん'], correctAns:'おんせん' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'3. つぎのことばの よみかたを えらんでください。「空気」', options:['くうき','そらき','くき','そらけ'], correctAns:'くうき' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'4. つぎのことばの よみかたを えらんでください。「海外」', options:['かいがい','うみがい','かいそと','うみそと'], correctAns:'かいがい' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'5. つぎのことばの よみかたを えらんでください。「朝食」', options:['ちょうしょく','あさしょく','ちょうしき','あさしき'], correctAns:'ちょうしょく' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'6. つぎのことばの よみかたを えらんでください。「昼食」', options:['ちゅうしょく','ひるしょく','ちゅうしき','ひるしき'], correctAns:'ちゅうしょく' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'7. つぎのことばの よみかたを えらんでください。「夕食」', options:['ゆうしょく','よるしょく','ゆうしき','よるしき'], correctAns:'ゆうしょく' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'8. つぎのことばの よみかたを えらんでください。「病気」', options:['びょうき','びょうけ','やまいき','やまいけ'], correctAns:'びょうき' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'9. つぎのことばの よみかたを えらんでください。「薬」', options:['くすり','くすれ','やく','やくり'], correctAns:'くすり' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'10. つぎのことばの よみかたを えらんでください。「医者」', options:['いしゃ','いじゃ','いしゃい','いじゃい'], correctAns:'いしゃ' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'11. つぎのことばの よみかたを えらんでください。「看護師」', options:['かんごし','かんごじ','かんごさ','かんござ'], correctAns:'かんごし' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'12. つぎのことばの よみかたを えらんでください。「郵便局」', options:['ゆうびんきょく','ゆうびんく','ゆびんきょく','ゆびんく'], correctAns:'ゆうびんきょく' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'13. つぎのことばの よみかたを えらんでください。「交番」', options:['こうばん','こうはん','こばん','こはん'], correctAns:'こうばん' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'14. つぎのことばの よみかたを えらんでください。「消防署」', options:['しょうぼうしょ','しょうぼうじょ','しょぼうしょ','しょぼうじょ'], correctAns:'しょうぼうしょ' },
+  { level:'N4', section:'SOAL JFT 7 — Moji/Goi', qText:'15. つぎのことばの よみかたを えらんでください。「花見」', options:['はなみ','かみ','はなけ','かじ'], correctAns:'はなみ' },
+
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'16. （　）に なにを いれますか。ここ（　）たばこを 吸わないでください。', options:['では','には','でが','にが'], correctAns:'では' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'17. （　）に なにを いれますか。彼に 電話（　）みましたが、出ませんでした。', options:['して','に','で','を'], correctAns:'して' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'18. （　）に なにを いれますか。子供が 庭で 遊んで（　）。', options:['います','あります','できます','なります'], correctAns:'います' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'19. （　）に なにを いれますか。電車（　）乗って、3つ目で降ります。', options:['に','で','を','が'], correctAns:'に' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'20. （　）に なにを いれますか。もっと ゆっくり 話して（　）。', options:['ください','います','あります','なります'], correctAns:'ください' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'21. （　）に なにを いれますか。ここ（　）入らないでください。', options:['に','を','が','は'], correctAns:'に' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'22. （　）に なにを いれますか。もし 雨（　）ふったら、中止です。', options:['が','に','を','で'], correctAns:'が' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'23. （　）に なにを いれますか。彼女は 歌（　）上手です。', options:['が','を','に','で'], correctAns:'が' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'24. （　）に なにを いれますか。この 映画は 見た（　）があります。', options:['こと','もの','ほう','とき'], correctAns:'こと' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'25. （　）に なにを いれますか。駅まで 歩いて（　）分かかります。', options:['十','五','三','二'], correctAns:'五' }, // AMBIGU: semua pilihan valid tanpa konteks tambahan lain di lembar asli
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'26. （　）に なにを いれますか。明日（　）晴れれば、ピクニックに 行きます。', options:['が','に','で','を'], correctAns:'が' }, // AMBIGU: semua pilihan valid tanpa konteks tambahan lain di lembar asli
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'27. （　）に なにを いれますか。この 問題は 難しすぎ（　）わかりません。', options:['て','に','で','が'], correctAns:'て' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'28. （　）に なにを いれますか。彼は まだ 来て（　）。', options:['いません','あります','なります','できます'], correctAns:'いません' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'29. （　）に なにを いれますか。ご飯を 食べてから（　）出かけます。', options:['、','で','に','が'], correctAns:'、' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'30. （　）に なにを いれますか。もっと 早く 来れ（　）、間に合いました。', options:['ば','たら','ても','なら'], correctAns:'ば' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'31. （　）に なにを いれますか。日本語が 話せる（　）に なりたいです。', options:['よう','こと','もの','ほう'], correctAns:'よう' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'32. （　）に なにを いれますか。宿題を し（　）から、遊びます。', options:['て','た','で','に'], correctAns:'て' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'33. （　）に なにを いれますか。部屋を きれい（　）してください。', options:['に','が','を','は'], correctAns:'に' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'34. （　）に なにを いれますか。この バスは 駅（　）通ります。', options:['を','で','に','が'], correctAns:'を' },
+  { level:'N4', section:'SOAL JFT 7 — Bunpo', qText:'35. （　）に なにを いれますか。毎日 自転車（　）会社へ 行きます。', options:['で','を','に','が'], correctAns:'で' },
+
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'36. 「駅から 徒歩5分の ところに コンビニが あります。24時間 営業です。」<br>このコンビニは いつ 開いていますか。', options:['朝だけ','昼だけ','夜だけ','24時間'], correctAns:'24時間' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'37. 「パーティーは 土曜日の 午後3時から 始まります。場所は 市民ホールです。」<br>パーティーは どこで ありますか。', options:['学校','市民ホール','公園','駅前'], correctAns:'市民ホール' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'38. 「このくすりは 食後に 2錠 飲んでください。1日3回まで。」<br>このくすりは 1日 最大 何錠 飲めますか。', options:['2錠','4錠','6錠','8錠'], correctAns:'6錠' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'39. 「わたしの 趣味は 料理です。特に 和食が 好きで、毎週 新しい 料理を 作ります。」<br>この人の 趣味は 何ですか。', options:['料理','音楽','スポーツ','旅行'], correctAns:'料理' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'40. 「このスーパーは 月曜から 土曜まで 開いています。日曜日は 休みです。」<br>このスーパーは いつ 休みですか。', options:['月曜','土曜','日曜','毎日'], correctAns:'日曜' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'41. （同じ文章の再掲）「駅から 徒歩5分の ところに コンビニが あります。24時間 営業です。」<br>このコンビニは いつ 開いていますか。', options:['朝だけ','昼だけ','夜だけ','24時間'], correctAns:'24時間' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'42. （同じ文章の再掲）「パーティーは 土曜日の 午後3時から 始まります。場所は 市民ホールです。」<br>パーティーは どこで ありますか。', options:['学校','市民ホール','公園','駅前'], correctAns:'市民ホール' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'43. （同じ文章の再掲）「このくすりは 食後に 2錠 飲んでください。1日3回まで。」<br>このくすりは 1日 最大 何錠 飲めますか。', options:['2錠','4錠','6錠','8錠'], correctAns:'6錠' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'44. （同じ文章の再掲）「わたしの 趣味は 料理です。特に 和食が 好きで、毎週 新しい 料理を 作ります。」<br>この人の 趣味は 何ですか。', options:['料理','音楽','スポーツ','旅行'], correctAns:'料理' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'45. （同じ文章の再掲）「このスーパーは 月曜から 土曜まで 開いています。日曜日は 休みです。」<br>このスーパーは いつ 休みですか。', options:['月曜','土曜','日曜','毎日'], correctAns:'日曜' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'46. （同じ文章の再掲）「駅から 徒歩5分の ところに コンビニが あります。24時間 営業です。」<br>このコンビニは いつ 開いていますか。', options:['朝だけ','昼だけ','夜だけ','24時間'], correctAns:'24時間' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'47. （同じ文章の再掲）「パーティーは 土曜日の 午後3時から 始まります。場所は 市民ホールです。」<br>パーティーは どこで ありますか。', options:['学校','市民ホール','公園','駅前'], correctAns:'市民ホール' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'48. （同じ文章の再掲）「このくすりは 食後に 2錠 飲んでください。1日3回まで。」<br>このくすりは 1日 最大 何錠 飲めますか。', options:['2錠','4錠','6錠','8錠'], correctAns:'6錠' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'49. （同じ文章の再掲）「わたしの 趣味は 料理です。特に 和食が 好きで、毎週 新しい 料理を 作ります。」<br>この人の 趣味は 何ですか。', options:['料理','音楽','スポーツ','旅行'], correctAns:'料理' },
+  { level:'N4', section:'SOAL JFT 7 — Dokkai', qText:'50. （同じ文章の再掲）「このスーパーは 月曜から 土曜まで 開いています。日曜日は 休みです。」<br>このスーパーは いつ 休みですか。', options:['月曜','土曜','日曜','毎日'], correctAns:'日曜' }
 ];
