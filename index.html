@@ -3054,7 +3054,8 @@ function irodoriResultLabel(){
 }
 const JFT_SCOPE_LABELS = {
   jft1:'Paket 1', jft2:'Paket 2', jft3:'Paket 3',
-  jft4:'Paket 4', jft5:'Paket 5', jft6:'Paket 6', jft7:'Paket 7'
+  jft4:'Paket 4', jft5:'Paket 5', jft6:'Paket 6', jft7:'Paket 7',
+  jft8:'Paket 8', jft9:'Paket 9'
 };
 function jftResultLabel(){
   return JFT_SCOPE_LABELS[setupScope] || 'Paket 1';
@@ -3077,6 +3078,8 @@ function poolFor(scope, typeMode){
       if(s === 'jft5') return typeof JFT_SOAL_5 !== 'undefined' ? JFT_SOAL_5 : [];
       if(s === 'jft6') return typeof JFT_SOAL_6 !== 'undefined' ? JFT_SOAL_6 : [];
       if(s === 'jft7') return typeof JFT_SOAL_7 !== 'undefined' ? JFT_SOAL_7 : [];
+      if(s === 'jft8') return typeof JFT_SOAL_8 !== 'undefined' ? JFT_SOAL_8 : [];
+      if(s === 'jft9') return typeof JFT_SOAL_9 !== 'undefined' ? JFT_SOAL_9 : [];
       return [];
     }
     return jftPoolFor(scope);
@@ -3441,6 +3444,8 @@ function renderStart(){
             <button data-v="jft5" class="jft-scope-btn" style="display:none;">Paket 5</button>
             <button data-v="jft6" class="jft-scope-btn" style="display:none;">Paket 6</button>
             <button data-v="jft7" class="jft-scope-btn" style="display:none;">Paket 7</button>
+            <button data-v="jft8" class="jft-scope-btn" style="display:none;">Paket 8</button>
+            <button data-v="jft9" class="jft-scope-btn" style="display:none;">Paket 9</button>
           </div>
         </div>
         <div class="setup-box" id="countBox">
