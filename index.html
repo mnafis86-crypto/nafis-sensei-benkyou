@@ -2736,6 +2736,7 @@ function showBossIntro(callback){
 <script src="kanji-terjemahan.js"></script>
 <script src="kotoba-terjemahan.js"></script>
 <script src="irodori.js"></script>
+<script src="jft-soal.js"></script>
 <script src="trivia.js"></script>
 
 <script>
@@ -3051,11 +3052,17 @@ function irodoriResultLabel(){
   if(setupScope === 'irodori2') return 'Irodori Shokyu 2';
   return 'Irodori (Shokyu 1 & 2)';
 }
+function jftResultLabel(){
+  return setupScope === 'jft2' ? 'SOAL JFT 2' : 'SOAL JFT 1';
+}
 function poolFor(scope, typeMode){
   if(typeMode === 'irodori'){
     if(scope === 'irodori1') return IRODORI_SHOKYU1_TEST;
     if(scope === 'irodori2') return IRODORI_SHOKYU2_TEST;
     return IRODORI_SHOKYU1_TEST.concat(IRODORI_SHOKYU2_TEST);
+  }
+  if(typeMode === 'jft'){
+    return scope === 'jft2' ? JFT_SOAL_2 : JFT_SOAL_1;
   }
   const src = typeMode === 'bunpo' ? PATTERNS : (typeMode === 'dokkai' ? DOKKAI : (typeMode === 'jlpttest' ? JLPT_TEST : VOCAB));
   return src.filter(p=>matchesBook(p, scope));
@@ -3198,6 +3205,22 @@ function makeQuestionForJLPT(item, rng){
   };
 }
 
+/* Khusus mode "Tryout JFT": SATU SET UTUH, urutan soal & urutan pilihan jawaban
+   TIDAK diacak sama sekali — persis seperti lembar kerja aslinya (a/b/c/d tetap
+   di posisi yang sama). Ini beda dari makeQuestionForJLPT di atas yang mengacak
+   urutan pilihan tiap sesi. */
+function makeQuestionForJFT(item){
+  const plainText = item.qText.replace(/<[^>]+>/g,'');
+  const correct = { jp: plainText, meaning_id: `Jawaban: ${item.correctAns}`, level: item.level };
+  return {
+    type: 'jlpt_mc',
+    correct,
+    qText: item.section ? `<span style="font-size:11px;color:var(--sub);font-weight:700;letter-spacing:.5px;">[${item.section}]</span><br>${item.qText}` : item.qText,
+    correctAns: item.correctAns,
+    options: item.options.slice() // urutan asli, tidak di-shuffle
+  };
+}
+
 /* Bangun soal-soal Dokkai dari 1 "correct" (= 1 bacaan/passage).
    Berbeda dari pola/kosakata, 1 bacaan bisa menghasilkan BEBERAPA soal
    beruntun (mis. bacaan cloze punya soal ア/イ/ウ). Semua soal itu tetap
@@ -3225,6 +3248,11 @@ function makeQuestionsForDokkai(passage, rng){
 }
 
 function buildQuestions(scope, count, typeMode){
+  // Tryout JFT: SELALU seluruh paket, urutan ASLI, tidak pernah diacak/dipotong,
+  // berapa pun "count" yang sedang aktif di layar setup (diabaikan sepenuhnya).
+  if(typeMode === 'jft'){
+    return poolFor(scope, typeMode).map(item => makeQuestionForJFT(item));
+  }
   const pool = poolFor(scope, typeMode);
   if(!pool.length) return [];
   const wide = typeMode === 'bunpo' ? PATTERNS : VOCAB;
@@ -3321,6 +3349,11 @@ function unlockNextLevelIfPassed(packetIndexJustPlayed, accuracyPercent){
 }
 
 function buildQuestionsForPacket(scope, count, typeMode, packetIndex){
+  // Tryout JFT tidak punya sistem paket/level berjenjang — kalau mode Ujian
+  // kebetulan aktif bareng tipe ini, tetap kembalikan 1 set utuh yang sama.
+  if(typeMode === 'jft'){
+    return poolFor(scope, typeMode).map(item => makeQuestionForJFT(item));
+  }
   const plan = buildPacketPlan(scope, count, typeMode);
   const items = plan.packets[packetIndex] || [];
   const pool = poolFor(scope, typeMode);
@@ -3367,6 +3400,7 @@ function renderStart(){
             <button data-v="kotoba" class="active"><span class="opt-icon">🔤</span><span class="opt-label">Kosakata &amp; Kanji</span></button>
             <button data-v="dokkai"><span class="opt-icon">📖</span><span class="opt-label">Dokkai<small>Bacaan</small></span></button>
             <button data-v="jlpttest"><span class="opt-icon">📝</span><span class="opt-label">Tes Kosakata<small>JLPT</small></span></button>
+            <button data-v="jft"><span class="opt-icon">🏆</span><span class="opt-label">Tryout JFT<small>Paket Lengkap</small></span></button>
             <button data-v="irodori"><span class="opt-icon">🈴</span><span class="opt-label">Irodori<small>Shokyu 1 / 2</small></span></button>
             <button data-v="listening"><span class="opt-icon">🎧</span><span class="opt-label">Dengar &amp; Tebak</span></button>
           </div>
@@ -3383,6 +3417,8 @@ function renderStart(){
             <button data-v="n1" class="lvl-scope-btn">N1</button>
             <button data-v="irodori1" class="irodori-scope-btn" style="display:none;">Irodori Shokyu 1</button>
             <button data-v="irodori2" class="irodori-scope-btn" style="display:none;">Irodori Shokyu 2</button>
+            <button data-v="jft1" class="jft-scope-btn" style="display:none;">SOAL JFT 1</button>
+            <button data-v="jft2" class="jft-scope-btn" style="display:none;">SOAL JFT 2</button>
           </div>
         </div>
         <div class="setup-box" id="countBox">
@@ -3418,24 +3454,41 @@ function renderStart(){
       const vpLink = $("voicePickerLink");
       if(vpLink) vpLink.style.display = (setupType === 'listening') ? '' : 'none';
       // Irodori pakai cakupan "Shokyu 1/Shokyu 2" sendiri, bukan level N5-N1.
+      // Tryout JFT juga pakai cakupan sendiri: "SOAL JFT 1" / "SOAL JFT 2".
       const scopeBox = $("scopeBox");
       if(setupType === 'irodori'){
         document.querySelectorAll(".lvl-scope-btn").forEach(x=> x.style.display = 'none');
         document.querySelectorAll(".irodori-scope-btn").forEach(x=> x.style.display = '');
+        document.querySelectorAll(".jft-scope-btn").forEach(x=> x.style.display = 'none');
         // default ke Shokyu 1 kalau scope sekarang bukan salah satu dari keduanya
         if(setupScope !== 'irodori1' && setupScope !== 'irodori2'){
           setupScope = 'irodori1';
           document.querySelectorAll("#scopeRow button").forEach(x=>x.classList.toggle("active", x.dataset.v==='irodori1'));
         }
         if(scopeBox) scopeBox.style.display = '';
+      } else if(setupType === 'jft'){
+        document.querySelectorAll(".lvl-scope-btn").forEach(x=> x.style.display = 'none');
+        document.querySelectorAll(".irodori-scope-btn").forEach(x=> x.style.display = 'none');
+        document.querySelectorAll(".jft-scope-btn").forEach(x=> x.style.display = '');
+        // default ke SOAL JFT 1 kalau scope sekarang bukan salah satu paket JFT
+        if(setupScope !== 'jft1' && setupScope !== 'jft2'){
+          setupScope = 'jft1';
+          document.querySelectorAll("#scopeRow button").forEach(x=>x.classList.toggle("active", x.dataset.v==='jft1'));
+        }
+        if(scopeBox) scopeBox.style.display = '';
+        // Tryout JFT selalu 1 set utuh, tidak ada pilihan jumlah soal / mode ujian berjenjang.
+        $("countBox") && ($("countBox").style.display = 'none');
+        $("packetBox") && ($("packetBox").style.display = 'none');
       } else {
         document.querySelectorAll(".lvl-scope-btn").forEach(x=> x.style.display = '');
         document.querySelectorAll(".irodori-scope-btn").forEach(x=> x.style.display = 'none');
-        if(setupScope === 'irodori1' || setupScope === 'irodori2'){
+        document.querySelectorAll(".jft-scope-btn").forEach(x=> x.style.display = 'none');
+        if(setupScope === 'irodori1' || setupScope === 'irodori2' || setupScope === 'jft1' || setupScope === 'jft2'){
           setupScope = 'all';
           document.querySelectorAll("#scopeRow button").forEach(x=>x.classList.toggle("active", x.dataset.v==='all'));
         }
         if(scopeBox) scopeBox.style.display = '';
+        toggleSetupBoxesForMode();
       }
       updateCountHint();
     });
@@ -3482,6 +3535,11 @@ function toggleSetupBoxesForMode(){
     $("packetBox") && ($("packetBox").style.display = "none");
   } else {
     countBox.style.display = "";
+  }
+  // Tryout JFT: 1 set utuh, "jumlah soal" tidak relevan — sembunyikan apa pun mode-nya.
+  if(setupType === 'jft'){
+    countBox.style.display = "none";
+    $("packetBox") && ($("packetBox").style.display = "none");
   }
   // Trivia punya kategori & jumlah soal sendiri (di layar renderTriviaStart),
   // tidak pakai Jenis Kuis / Cakupan Level / Jumlah Soal bawaan sama sekali.
@@ -3534,7 +3592,7 @@ function renderCountRow(){
 function renderPacketRow(){
   const box = $("packetBox");
   if(!box) return;
-  if(setupMode !== "ujian"){ box.style.display = "none"; return; }
+  if(setupMode !== "ujian" || setupType === "jft"){ box.style.display = "none"; return; }
   box.style.display = "";
   const plan = buildPacketPlan(setupScope, setupCount, setupType);
   const unlockedCount = Math.min(getUnlockedLevelCount(), plan.numPackets);
@@ -4032,7 +4090,7 @@ function renderQuestionActual(){
   gState.locked = false;
   const isBoss = gState.qi === gState.bossIndex;
 
-  let typeLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : (setupType === "jlpttest" ? "Tes Kosakata (JLPT)" : (setupType === "irodori" ? irodoriResultLabel() : (setupType === "listening" ? "🎧 Dengar & Tebak" : "Kosakata & Kanji"))));
+  let typeLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : (setupType === "jlpttest" ? "Tes Kosakata (JLPT)" : (setupType === "irodori" ? irodoriResultLabel() : (setupType === "jft" ? jftResultLabel() : (setupType === "listening" ? "🎧 Dengar & Tebak" : "Kosakata & Kanji")))));
   let paketTag = gState.paketLabel ? ` &middot; ${gState.paketLabel}` : "";
 
   const bodyHtml = q.type === 'susun_kalimat' ? `
@@ -4400,7 +4458,7 @@ function renderResult(){
   const grade = gradeFor(acc);
   const dateStr = gState.startedAt.toLocaleString("id-ID");
 
-  const materiLabel = setupType === 'bunpo' ? 'Pola Kalimat' : (setupType === 'dokkai' ? 'Dokkai (Bacaan)' : (setupType === 'jlpttest' ? 'Tes Kosakata (JLPT)' : (setupType === 'irodori' ? irodoriResultLabel() : (setupType === 'listening' ? '🎧 Dengar & Tebak' : 'Kosakata & Kanji'))));
+  const materiLabel = setupType === 'bunpo' ? 'Pola Kalimat' : (setupType === 'dokkai' ? 'Dokkai (Bacaan)' : (setupType === 'jlpttest' ? 'Tes Kosakata (JLPT)' : (setupType === 'irodori' ? irodoriResultLabel() : (setupType === 'jft' ? jftResultLabel() : (setupType === 'listening' ? '🎧 Dengar & Tebak' : 'Kosakata & Kanji')))));
 
   let justUnlocked = false;
   if(setupMode === "ujian"){
@@ -4658,7 +4716,7 @@ function renderResultCardToImage(opts){
 /* Dipanggil dari tombol "Unduh Kartu Hasil" tepat setelah kuis selesai —
    data diambil dari gState/setupType yang masih "hidup" di sesi ini. */
 function downloadResultCard(grade, acc, total, dateStr){
-  const materiLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : (setupType === "jlpttest" ? "Tes Kosakata (JLPT)" : (setupType === "irodori" ? irodoriResultLabel() : "Kosakata & Kanji")));
+  const materiLabel = setupType === "bunpo" ? "Pola Kalimat" : (setupType === "dokkai" ? "Dokkai (Bacaan)" : (setupType === "jlpttest" ? "Tes Kosakata (JLPT)" : (setupType === "irodori" ? irodoriResultLabel() : (setupType === "jft" ? jftResultLabel() : "Kosakata & Kanji"))));
   renderResultCardToImage({
     materiLabel,
     paketLabel: gState.paketLabel || "-",
