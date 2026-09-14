@@ -3066,8 +3066,20 @@ function poolFor(scope, typeMode){
     return IRODORI_SHOKYU1_TEST.concat(IRODORI_SHOKYU2_TEST);
   }
   if(typeMode === 'jft'){
-    const JFT_POOLS = { jft1:JFT_SOAL_1, jft2:JFT_SOAL_2, jft3:JFT_SOAL_3, jft4:JFT_SOAL_4, jft5:JFT_SOAL_5, jft6:JFT_SOAL_6, jft7:JFT_SOAL_7 };
-    return JFT_POOLS[scope] || JFT_SOAL_1;
+    function jftPoolFor(s){
+      // typeof di sini AMAN dipakai walau variabelnya belum/tidak pernah dideklarasikan
+      // sama sekali (mis. jft-soal.js versi lama yang belum punya JFT_SOAL_6/7) —
+      // tidak akan melempar ReferenceError, cukup mengembalikan array kosong.
+      if(s === 'jft1') return typeof JFT_SOAL_1 !== 'undefined' ? JFT_SOAL_1 : [];
+      if(s === 'jft2') return typeof JFT_SOAL_2 !== 'undefined' ? JFT_SOAL_2 : [];
+      if(s === 'jft3') return typeof JFT_SOAL_3 !== 'undefined' ? JFT_SOAL_3 : [];
+      if(s === 'jft4') return typeof JFT_SOAL_4 !== 'undefined' ? JFT_SOAL_4 : [];
+      if(s === 'jft5') return typeof JFT_SOAL_5 !== 'undefined' ? JFT_SOAL_5 : [];
+      if(s === 'jft6') return typeof JFT_SOAL_6 !== 'undefined' ? JFT_SOAL_6 : [];
+      if(s === 'jft7') return typeof JFT_SOAL_7 !== 'undefined' ? JFT_SOAL_7 : [];
+      return [];
+    }
+    return jftPoolFor(scope);
   }
   const src = typeMode === 'bunpo' ? PATTERNS : (typeMode === 'dokkai' ? DOKKAI : (typeMode === 'jlpttest' ? JLPT_TEST : VOCAB));
   return src.filter(p=>matchesBook(p, scope));
